@@ -1,0 +1,56 @@
+Tables
+------
+project
+plate_type
+plate_format
+plate_set
+hit_list
+plate
+pmsession
+sample
+well
+hits
+assay_run
+assay_type
+assay_result
+user
+
+
+Functions
+---------
+new_project(_descr character varying, _project_name character VARYING, _project_owner INTEGER)
+
+new_plate_set(_descr VARCHAR(30),_plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_format_id INTEGER, _plate_type_id INTEGER, _project_id INTEGER, _with_samples boolean)
+
+new_hit_list(_descr VARCHAR(250), _project_id INTEGER)
+
+new_plate(_plate_type_id INTEGER, _plate_set_id INTEGER, _project_id INTEGER, _plate_format_id INTEGER,  _include_sample BOOLEAN)
+
+new_sample(_project_id INTEGER, _plate_id INTEGER, _well_id,  _accs_id INTEGER)
+
+new_assay_run( _name VARCHAR(30), _descr VARCHAR(30), _assay_type_id INTEGER, _plate_set_id INTEGER)
+
+
+Functions Needed
+----------------
+
+create user and assign rights
+Upload plate data
+flag hits
+Upload a hit list 
+Rearray hits into plates
+Generate robotic control (and subsequenct plates/ plateset) file for rearraying
+give wells a number by column
+regroup plates into new plate set
+
+collapse 4 96 well plates into 1 384 well plate
+
+COPY assay_result(sample_id, response, assay_run_id) 
+FROM 'C:\temp\postgresql\sample-data.csv' DELIMITER ',' CSV HEADER;
+
+SELECT * FROM plate WHERE plate_set_id = 6;
+SELECT * FROM samples WHERE 
+
+
+
+

@@ -1,0 +1,51 @@
+PostgreSQL 9.2
+
+db name: postgres
+username: postgres
+password: postgres
+
+chcp 1252        //to change the code page
+C:\> "c:\Program Files (x86)\PostgreSQL\9.2\bin\psql.exe" --username=postgres
+
+
+CREATE FUNCTION sales_tax(real) RETURNS real AS $$
+DECLARE
+    subtotal ALIAS FOR $1;
+BEGIN
+    RETURN subtotal * 0.06;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+Info
+https://rob.conery.io/2015/02/08/inserting-using-new-record-postgres/
+
+DROP FUNCTION
+\d+ project to show column names
+\dt  tables in current schema
+\df drop functions
+
+\i to import a file
+
+\l to list databases
+\dn to list schemas
+
+\f+ to list functions
+
+select current_user;   -- to show current user
+
+To delete schema as postgres must:
+
+drop schema plate_manager cascade;
+CREATE SCHEMA plate_manager AUTHORIZATION pm_admin;
+CREATE EXTENSION pgcrypto;
+
+then as pm_admin:
+
+set schema 'plate_manager';
+SET search_path = plate_manager;  
+
+ NET STOP postgresql-9.3 

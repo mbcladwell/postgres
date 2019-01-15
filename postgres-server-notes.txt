@@ -1,0 +1,75 @@
+
+## Installation
+
+username and password are 'postgres'
+
+
+
+## Initialize database
+
+root# mkdir /usr/local/pgsql
+root# chown postgres /usr/local/pgsql
+root# su postgres
+postgres$ initdb -D /usr/local/pgsql/data
+
+popular locations for data director:
+ /usr/local/pgsql/data 
+ /var/lib/pgsql/data 
+
+
+## start database
+
+The database server program is called postgres
+$ postgres -D /usr/local/pgsql/data >logfile 2>&1 &
+
+instaed use: 
+$pg_ctl start -l logfile
+
+	
+but must be run by postgres user so:
+su postgres -c 'pg_ctl start -D /usr/local/pgsql/data -l serverlog'
+
+to stop:
+
+pg_ctl stop [-D datadir] [-m s[mart] | f[ast] | i[mmediate] ] [-W] [-t seconds] [-s]
+
+
+## to res
+
+su - postgres
+/usr/bin/pg_ctl reload
+
+OR
+
+SELECT pg_reload_conf();    from psql
+
+https://www.postgresql.org/docs/current/static/auth-pg-hba-conf.html
+
+nano /etc/postgresql/10/main/pg_hba.conf
+
+# Allow any user from host 192.168.12.10 to connect to database
+# "postgres" if the user's password is correctly supplied.
+#
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+host    postgres        all             192.168.1.9/24        trust
+
+$ip addr show             //from server
+192.168.1.7/24
+
+# grep listen /etc/postgresql/10/main/postgresql.conf
+listen_addresses = 'localhost'
+
+#nano /etc/postgresql/10/main/postgresql.conf
+
+# grep listen /etc/postgresql/10/main/postgresql.conf
+listen_addresses = '*'
+
+
+/usr/lib/postgresql/10/bin/pg_ctl restart -D "/etc/postgresql/10/main"
+
+# psql -U postgres -h 192.168.1.7
+Welcome to psql 8.1.11 (server 8.4.18), the PostgreSQL interactive terminal.
+postgres=#
+
+
+

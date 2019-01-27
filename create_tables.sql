@@ -230,16 +230,6 @@ CREATE TABLE plate_set
         FOREIGN KEY (project_id) REFERENCES project(id));
 
 
-----------------------------
-DROP TABLE IF EXISTS hit_list CASCADE;
-
-CREATE TABLE hit_list
-(id SERIAL PRIMARY KEY,
- hitlist_sys_name VARCHAR(30),
-        descr VARCHAR(250),
-	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
- project_id INTEGER,
- FOREIGN KEY (project_id) REFERENCES project(id));
    
 
 
@@ -251,8 +241,7 @@ DROP TABLE IF EXISTS sample CASCADE;
 CREATE TABLE plate (id SERIAL PRIMARY KEY,
 		plate_sys_name VARCHAR(30),
         	plate_type_id INTEGER,
-        	plate_seq_num INTEGER, --sequence order in a plate set 
-	        project_id INTEGER,
+  	        project_id INTEGER,
 		plate_size_id INTEGER,
 	        updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
                 FOREIGN KEY (project_id) REFERENCES project(id),
@@ -276,10 +265,8 @@ CREATE TABLE sample (id SERIAL PRIMARY KEY,
 		sample_sys_name VARCHAR(20),
 		project_id INTEGER,
 		type VARCHAR(30),  --positive, negative, unknown, blank
-        	plate_id INTEGER, 
                 accs_id INTEGER,
-		FOREIGN KEY (project_id) REFERENCES project(id),
-		FOREIGN KEY (plate_id) REFERENCES plate(id));
+		FOREIGN KEY (project_id) REFERENCES project(id));
 
 
 
@@ -302,15 +289,27 @@ CREATE TABLE well_sample (
 
 
 ----------------------------
-DROP TABLE IF EXISTS hits CASCADE;
-CREATE TABLE hits
+DROP TABLE IF EXISTS hit_list CASCADE;
+
+CREATE TABLE hit_list
 (id SERIAL PRIMARY KEY,
- 
+ hitlist_sys_name VARCHAR(30),
+        descr VARCHAR(250),
+	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
+ project_id INTEGER,
+ FOREIGN KEY (project_id) REFERENCES project(id));
+
+
+DROP TABLE IF EXISTS hit_sample CASCADE;
+CREATE TABLE hit_sample
+(
  hitlist_id INTEGER,
   sample_id INTEGER,
 
  FOREIGN KEY (hitlist_id) REFERENCES hit_list(id),
  FOREIGN KEY (sample_id) REFERENCES sample(id));
+
+----------------------------
    
 
 DROP TABLE IF EXISTS assay_run CASCADE;
@@ -339,7 +338,7 @@ INSERT INTO assay_type (assay_type_name) VALUES ('FACS');
 
 DROP TABLE IF EXISTS assay_result CASCADE;
 
-CREATE TABLE assay_result (id SERIAL PRIMARY KEY,
+CREATE TABLE assay_result (
 		sample_id INTEGER,
                 response REAL,
                 assay_run_id INTEGER,

@@ -20,7 +20,7 @@ $BODY$
 
 -----Plate_set-------------------------------------------
 
-DROP FUNCTION IF exists new_plate_set(_descr VARCHAR(30), _plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_size_id INTEGER,  _plate_type_id INTEGER, _project_id INTEGER);
+DROP FUNCTION IF exists new_plate_set(_descr VARCHAR(30), _plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_size_id INTEGER,  _plate_type_id INTEGER, _project_id INTEGER, _with_samples boolean);
 
 CREATE OR REPLACE FUNCTION new_plate_set(_descr VARCHAR(30),_plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_size_id INTEGER, _plate_type_id INTEGER, _project_id INTEGER, _with_samples boolean)
   RETURNS void AS
@@ -52,6 +52,34 @@ SELECT new_plate_set('using loop','ps-name-by-user',20,3,1,1,TRUE);
 select COUNT(*) FROM plate;
 SELECT COUNT(*) FROM sample;
 SELECT COUNT(*) FROM well;
+
+-----Plate_set from group-------------------------------------------
+
+DROP FUNCTION IF exists new_plate_set_from_group(_descr VARCHAR(30), _plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_size_id INTEGER,  _plate_type_id INTEGER, _project_id INTEGER);
+
+CREATE OR REPLACE FUNCTION new_plate_set_from_group(_descr VARCHAR(30),_plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_size_id INTEGER, _plate_type_id INTEGER, _project_id INTEGER)
+  RETURNS integer AS
+$BODY$
+DECLARE
+   ps_id INTEGER;
+    
+BEGIN
+   
+   INSERT INTO plate_set(descr, plate_set_name, num_plates, plate_size_id, plate_type_id, project_id)
+   VALUES (_descr, _plate_set_name, _num_plates, _plate_size_id, _plate_type_id, _project_id )
+   RETURNING id INTO ps_id;
+   UPDATE plate_set SET plate_set_sys_name = 'PS-'||ps_id WHERE id=ps_id;
+
+RETURN ps_id;
+
+
+END;
+
+
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+
 
 ---hit_list-------------------------
    

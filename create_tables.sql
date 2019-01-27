@@ -29,7 +29,7 @@ $BODY$
 DROP TRIGGER IF EXISTS calculate_by_row_number ON well_numbers;
 
 DROP TABLE IF EXISTS well_numbers CASCADE;
-CREATE TABLE well_numbers(plate_size INTEGER,
+CREATE TABLE well_numbers(plate_format INTEGER,
 			well_name VARCHAR(5), 
                            row VARCHAR(2),
 			   row_num INTEGER,
@@ -76,7 +76,7 @@ BEGIN
    LOOP
       FOREACH r  IN ARRAY row_names
      LOOP
-       INSERT INTO well_numbers(plate_size, well_name, ROW, row_num, col, total_col_count, by_col, by_row, quad, parent_well )
+       INSERT INTO well_numbers(plate_format, well_name, ROW, row_num, col, total_col_count, by_col, by_row, quad, parent_well )
                           VALUES( plt_size, concat(r,colm), r, rownum, colm, 12, i, NULL , NULL, NULL);
        i := i +1;
        IF rownum = 8 THEN rownum :=1; ELSE rownum := rownum+1; END if;
@@ -94,7 +94,7 @@ BEGIN
    LOOP
       FOREACH r  IN ARRAY row_names
      LOOP
-       INSERT INTO well_numbers(plate_size, well_name, ROW, row_num, col,total_col_count,  by_col, quad, parent_well )
+       INSERT INTO well_numbers(plate_format, well_name, ROW, row_num, col,total_col_count,  by_col, quad, parent_well )
        VALUES( plt_size, concat(r,colm), r, rownum, colm, 24, i, NULL, NULL);
        i := i +1;
        IF rownum = 16 THEN rownum :=1; ELSE rownum := rownum+1; END if;
@@ -112,7 +112,7 @@ BEGIN
    LOOP
       FOREACH r  IN ARRAY row_names
      LOOP
-       INSERT INTO well_numbers(plate_size, well_name, row,row_num, col, total_col_count,  by_col, quad, parent_well ) VALUES( plt_size, concat(r,colm), r, rownum, colm, 48, i, NULL, NULL);
+       INSERT INTO well_numbers(plate_format, well_name, row,row_num, col, total_col_count,  by_col, quad, parent_well ) VALUES( plt_size, concat(r,colm), r, rownum, colm, 48, i, NULL, NULL);
        i := i +1;
        IF rownum = 32 THEN rownum :=1; ELSE rownum := rownum+1; END if;
    END LOOP;
@@ -188,7 +188,7 @@ CREATE TABLE project
 
 
 ------------------------------------------------
-DROP TABLE IF EXISTS plate_size CASCADE;
+DROP TABLE IF EXISTS plate_format CASCADE;
 DROP TABLE IF EXISTS plate_type CASCADE;
 
 CREATE TABLE plate_type
@@ -203,12 +203,12 @@ INSERT INTO plate_type (plate_type_name) VALUES ('archive');
 INSERT INTO plate_type (plate_type_name) VALUES ('replicate');
 
 
-CREATE TABLE plate_size (id SERIAL PRIMARY KEY,
+CREATE TABLE plate_format (id SERIAL PRIMARY KEY,
 	format INTEGER, rownum INTEGER, colnum INTEGER);
 
-INSERT INTO plate_size (format, rownum, colnum) VALUES ( 96, 8, 12);
-INSERT INTO plate_size (format, rownum, colnum) VALUES (384, 16, 24);
-INSERT INTO plate_size (format, rownum, colnum) VALUES (1536, 32, 48);
+INSERT INTO plate_format (format, rownum, colnum) VALUES ( 96, 8, 12);
+INSERT INTO plate_format (format, rownum, colnum) VALUES (384, 16, 24);
+INSERT INTO plate_format (format, rownum, colnum) VALUES (1536, 32, 48);
 
 
 -----------------------------
@@ -221,12 +221,12 @@ CREATE TABLE plate_set
         descr VARCHAR(250),
         plate_set_sys_name VARCHAR(30),
         num_plates INTEGER,
-        plate_size_id INTEGER,
+        plate_format_id INTEGER,
         plate_type_id INTEGER,
         project_id INTEGER,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
         FOREIGN KEY (plate_type_id) REFERENCES plate_type(id),
-        FOREIGN KEY (plate_size_id) REFERENCES plate_size(id),
+        FOREIGN KEY (plate_format_id) REFERENCES plate_format(id),
         FOREIGN KEY (project_id) REFERENCES project(id));
 
 
@@ -242,11 +242,11 @@ CREATE TABLE plate (id SERIAL PRIMARY KEY,
 		plate_sys_name VARCHAR(30),
         	plate_type_id INTEGER,
   	        project_id INTEGER,
-		plate_size_id INTEGER,
+		plate_format_id INTEGER,
 	        updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
                 FOREIGN KEY (project_id) REFERENCES project(id),
                 FOREIGN KEY (plate_type_id) REFERENCES plate_type(id),
-		FOREIGN KEY (plate_size_id) REFERENCES plate_size(id));
+		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id));
 
 ----------------------------------------------------------------------------
 DROP TABLE IF EXISTS plate_plate_set CASCADE;
@@ -264,7 +264,6 @@ CREATE TABLE plate_plate_set (
 CREATE TABLE sample (id SERIAL PRIMARY KEY,
 		sample_sys_name VARCHAR(20),
 		project_id INTEGER,
-		type VARCHAR(30),  --positive, negative, unknown, blank
                 accs_id INTEGER,
 		FOREIGN KEY (project_id) REFERENCES project(id));
 
@@ -346,4 +345,289 @@ CREATE TABLE assay_result (
 		FOREIGN KEY (sample_id) REFERENCES sample(id));
 
 
+----------------------------
+
+DROP TABLE IF EXISTS plate_layout_name CASCADE;
+
+CREATE TABLE plate_layout_name (
+		id SERIAL PRIMARY KEY,
+                name VARCHAR(30),
+                descr VARCHAR(30),
+                plate_format_id INTEGER,
+		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id));
+	
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls column 12', 'singlecates', 1);		
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls column 12', 'duplicates', 1);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls columns 23, 24', 'quadruplicates', 2);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 23, 24', 'octuplicates', 2);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 47, 48', 'quadruplicates', 3);
+
+
+DROP TABLE IF EXISTS well_type CASCADE;
+CREATE TABLE well_type (
+		id SERIAL PRIMARY KEY,
+                name VARCHAR(30));
+    
+INSERT INTO well_type (name) VALUES ('unknown');
+INSERT INTO well_type (name) VALUES ('positive');
+INSERT INTO well_type (name) VALUES ('negative');
+INSERT INTO well_type (name) VALUES ('blank');
+
+
+DROP TABLE IF EXISTS plate_layout CASCADE;
+
+CREATE TABLE plate_layout (
+		plate_layout_name_id INTEGER,
+                well_by_col INTEGER,
+                well_type_id INTEGER,
+		FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id),
+                FOREIGN KEY (well_type_id) REFERENCES well_type(id));
+
+
+
+
+--INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls column 12', 'singlecates', 1);		
+
+DROP FUNCTION IF EXISTS f96_layout( _plate_layout_name_id INTEGER,  _well_type_id INTEGER);
+CREATE OR REPLACE FUNCTION f96_layout(_plate_layout_name_id INTEGER, _well_type_id INTEGER)
+  RETURNS void AS
+$BODY$
+
+BEGIN
+FOR i IN 1..92 loop  --96 well plate 4 controls
+   INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id)
+   VALUES ( _plate_layout_name_id, i,  _well_type_id);
+END LOOP;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+SELECT f96_layout(1,1);
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 1, 93, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 1, 94, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 1, 95, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 1, 96, 4);
+
+DROP FUNCTION IF EXISTS f96_layout( _plate_layout_name_id INTEGER,  _well_type_id INTEGER);
+
+--INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls column 12', 'duplicates', 1);
+
+DROP FUNCTION IF EXISTS f96_8_layout( _plate_layout_name_id INTEGER,  _well_type_id INTEGER);
+CREATE OR REPLACE FUNCTION f96_8_layout(_plate_layout_name_id INTEGER, _well_type_id INTEGER)
+  RETURNS void AS
+$BODY$
+
+BEGIN
+FOR i IN 1..88 loop  --96 well plate 8 controls
+   INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id)
+   VALUES ( _plate_layout_name_id, i,  _well_type_id);
+END LOOP;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+SELECT f96_8_layout(2,1);
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 2, 89, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 2, 90, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 2, 91, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 2, 92, 2);
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 2, 93, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 2, 94, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 2, 95, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 2, 96, 4);
+
+DROP FUNCTION IF EXISTS f96_8_layout( _plate_layout_name_id INTEGER,  _well_type_id INTEGER);
+
+
+
+
+---384 well layouts
+
+
+--INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 contols columns 23, 24', 'quadruplicates', 2);
+
+DROP FUNCTION IF EXISTS f384_4_layout( _plate_layout_name_id INTEGER,  _well_type_id INTEGER);
+CREATE OR REPLACE FUNCTION f384_4_layout(_plate_layout_name_id INTEGER, _well_type_id INTEGER)
+  RETURNS void AS
+$BODY$
+
+BEGIN
+FOR i IN 1..360 loop 
+   INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id)
+   VALUES ( _plate_layout_name_id, i,  _well_type_id);
+END LOOP;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+SELECT f384_4_layout(3,1);
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 361, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 362, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 363, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 364, 2);
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 365, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 366, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 367, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 368, 4);
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 369, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 370, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 371, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 372, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 373, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 374, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 375, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 376, 1);
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 377, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 378, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 379, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 380, 2);
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 381, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 382, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 383, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 3, 384, 4);
+
+DROP FUNCTION IF EXISTS f384_4_layout( _plate_layout_name_id INTEGER,  _well_type_id INTEGER);
+
+
+
+--INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 contols columns 23, 24', 'octuplicates', 2);
+
+DROP FUNCTION IF EXISTS f384_8_layout( _plate_layout_name_id INTEGER,  _well_type_id INTEGER);
+CREATE OR REPLACE FUNCTION f384_8_layout(_plate_layout_name_id INTEGER, _well_type_id INTEGER)
+  RETURNS void AS
+$BODY$
+
+BEGIN
+FOR i IN 1..352 loop 
+   INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id)
+   VALUES ( _plate_layout_name_id, i,  _well_type_id);
+END LOOP;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+SELECT f384_8_layout(4,1);
+
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 353, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 354, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 355, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 356, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 357, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 358, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 359, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 360, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 361, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 362, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 363, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 364, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 365, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 366, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 367, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 368, 4);
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 369, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 370, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 371, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 372, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 373, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 374, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 375, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 376, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 377, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 378, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 379, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 380, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 381, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 382, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 383, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 4, 384, 4);
+
+DROP FUNCTION IF EXISTS f384_8_layout( _plate_layout_name_id INTEGER,  _well_type_id INTEGER);
+
+
+--INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 contols columns 47, 48', 'quadruplicates', 3);
+
+DROP FUNCTION IF EXISTS f1536_4_layout( _plate_layout_name_id INTEGER,  _well_type_id INTEGER);
+CREATE OR REPLACE FUNCTION f1536_4_layout(_plate_layout_name_id INTEGER, _well_type_id INTEGER)
+  RETURNS void AS
+$BODY$
+
+BEGIN
+FOR i IN 1..1488 loop 
+   INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id)
+   VALUES ( _plate_layout_name_id, i,  _well_type_id);
+END LOOP;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+SELECT f1536_4_layout(5,1);
+
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1489, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1490, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1491, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1492, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1493, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1494, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1495, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1496, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1497, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1498, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1499, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1500, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1501, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1502, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1503, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1504, 4);
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1505, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1506, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1507, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1508, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1509, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1510, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1511, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1512, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1513, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1514, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1515, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1516, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1517, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1518, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1519, 1);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1520, 1);
+
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1521, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1522, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1523, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1524, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1525, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1526, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1527, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1528, 2);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1529, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1530, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1531, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1532, 3);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1533, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1534, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1535, 4);
+INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1536, 4);
+
+DROP FUNCTION IF EXISTS f1536_4_layout( _plate_layout_name_id INTEGER,  _well_type_id INTEGER);
 

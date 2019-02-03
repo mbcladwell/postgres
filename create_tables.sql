@@ -254,11 +254,11 @@ DROP TABLE IF EXISTS plate_plate_set CASCADE;
 CREATE TABLE plate_plate_set (
         	plate_set_id INTEGER,
         	plate_id INTEGER,
+		plate_order INTEGER,
                 FOREIGN KEY (plate_set_id) REFERENCES plate_set(id),
                 FOREIGN KEY (plate_id) REFERENCES plate(id));
 
-
-  
+ 
 ----------------------------------------------------------------------------
 
 CREATE TABLE sample (id SERIAL PRIMARY KEY,
@@ -319,9 +319,11 @@ CREATE TABLE assay_run (id serial PRIMARY KEY,
                descr VARCHAR(250),
 		assay_type_id INTEGER,
                 plate_set_id INTEGER,
+		plate_layout_name_id INTEGER,
                 updated  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
                FOREIGN KEY (plate_set_id) REFERENCES plate_set(id),
-		FOREIGN KEY (assay_type_id) REFERENCES assay_type(ID));
+               FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id),
+		FOREIGN KEY (assay_type_id) REFERENCES assay_type(id));
 
 
 DROP TABLE IF EXISTS assay_type CASCADE;
@@ -630,4 +632,18 @@ INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUE
 INSERT INTO plate_layout( plate_layout_name_id, well_by_col, well_type_id) VALUES ( 5, 1536, 4);
 
 DROP FUNCTION IF EXISTS f1536_4_layout( _plate_layout_name_id INTEGER,  _well_type_id INTEGER);
+
+-----------------------------------
+
+DROP TABLE IF EXISTS temp_data CASCADE;
+
+CREATE TABLE temp_data (
+                plate INTEGER NOT NULL,
+                well INTEGER NOT NULL,
+                response REAL,
+		PRIMARY KEY (plate, well));
+
+
+
+
 

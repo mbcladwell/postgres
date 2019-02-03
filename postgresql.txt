@@ -49,3 +49,6 @@ set schema 'plate_manager';
 SET search_path = plate_manager;  
 
  NET STOP postgresql-9.3 
+
+psql -U pm_admin -h 192.168.1.7 -d pmdb
+

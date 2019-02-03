@@ -31,6 +31,7 @@ DECLARE
    p_type INTEGER;
    p_form INTEGER;
    prj_id INTEGER;
+   plt_id INTEGER;
    w_spls BOOLEAN := _with_samples;
 BEGIN
    
@@ -41,7 +42,9 @@ BEGIN
 
 FOR i IN 1..n_plates loop
 	     -- _plate_type_id INTEGER, _plate_set_id INTEGER, _project_id INTEGER, _plate_format_id INTEGER, include_sample BOOLEAN
-	    perform new_plate(p_type, ps_id, prj_id, p_form, w_spls);
+	    SELECT new_plate(p_type, ps_id, prj_id, p_form, w_spls) INTO plt_id;
+	    UPDATE plate_plate_set SET plate_order = i WHERE plate_set_id = ps_id AND plate_id = plt_id;
+
 END LOOP;
 
 END;
@@ -69,6 +72,7 @@ BEGIN
    VALUES (_descr, _plate_set_name, _num_plates, _plate_format_id, _plate_type_id, _project_id )
    RETURNING id INTO ps_id;
    UPDATE plate_set SET plate_set_sys_name = 'PS-'||ps_id WHERE id=ps_id;
+
 
 RETURN ps_id;
 
@@ -106,7 +110,7 @@ DROP FUNCTION new_plate(INTEGER, INTEGER,INTEGER,INTEGER,  BOOLEAN);
 --plate_format   1:96 8x12;           2:384 16x24;         3:1536 32x48 
 
 CREATE OR REPLACE FUNCTION new_plate(_plate_type_id INTEGER, _plate_set_id INTEGER, _project_id INTEGER, _plate_format_id INTEGER,  _include_sample BOOLEAN)
-  RETURNS void AS
+  RETURNS integer AS
 $BODY$
 DECLARE
    plt_id INTEGER;
@@ -164,6 +168,7 @@ CASE _plate_format_id
    INSERT INTO plate_plate_set(plate_set_id, plate_id)
    VALUES (ps_id, plt_id );
 
+RETURN plt_id;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
@@ -202,20 +207,22 @@ $BODY$
 
 -----Assay_run---------------------
 
-DROP FUNCTION new_assay_run(  VARCHAR(30), VARCHAR(30), INTEGER,  INTEGER);
+DROP FUNCTION new_assay_run(  VARCHAR(30), VARCHAR(30), INTEGER,  INTEGER, INTEGER);
 
-CREATE OR REPLACE FUNCTION new_assay_run( _assay_run_name VARCHAR(30), _descr VARCHAR(30), _assay_type_id INTEGER, _plate_set_id INTEGER)
-  RETURNS void AS
+CREATE OR REPLACE FUNCTION new_assay_run( _assay_run_name VARCHAR(30), _descr VARCHAR(30), _assay_type_id INTEGER, _plate_set_id INTEGER, _plate_layout_name_id INTEGER)
+  RETURNS integer AS
 $BODY$
 DECLARE
    v_id integer;
 BEGIN
    
-   INSERT INTO assay_run(assay_run_name , descr, assay_type_id, plate_set_id)
-   VALUES (_assay_run_name, _descr, _assay_type_id, _plate_set_id)
+   INSERT INTO assay_run(assay_run_name , descr, assay_type_id, plate_set_id, plate_layout_name_id)
+   VALUES (_assay_run_name, _descr, _assay_type_id, _plate_set_id, _plate_layout_name_id)
    RETURNING id INTO v_id;
 
     UPDATE assay_run SET assay_run_sys_name = 'AR-'||v_id WHERE id=v_id;
+
+RETURN v_id;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
@@ -226,5 +233,37 @@ $BODY$
 
 
 -----plate_type----------------------------
+
+
+DROP FUNCTION get_plate_ids_for_sys_names( VARCHAR[], VARCHAR(30), VARCHAR(30));
+
+CREATE OR REPLACE FUNCTION get_plate_ids_for_sys_names( _sys_names VARCHAR[], _table VARCHAR(30), _sys_name VARCHAR(30))
+  RETURNS integer[] AS
+$BODY$
+DECLARE
+   sn varchar(20);
+   an_int integer;
+   sys_ids integer[];
+
+BEGIN
+   
+  FOREACH sn IN ARRAY _sys_names
+     LOOP
+
+    
+     PERFORM array_append(sys_ids, (SELECT id FROM plate WHERE plate_sys_name = 'PLT-1'));
+
+
+    END LOOP;
+
+RETURN sys_ids;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE;
+
+
+SELECT get_plate_ids_for_sys_names('{"PLT-1","PLT-2","PLT-3"}', 'plate', 'plate_sys_name');
+
+
 
 

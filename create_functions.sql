@@ -235,25 +235,31 @@ $BODY$
 -----plate_type----------------------------
 
 
-DROP FUNCTION get_plate_ids_for_sys_names( VARCHAR[], VARCHAR(30), VARCHAR(30));
+--https://hub.packtpub.com/how-to-implement-dynamic-sql-in-postgresql-10/
 
-CREATE OR REPLACE FUNCTION get_plate_ids_for_sys_names( _sys_names VARCHAR[], _table VARCHAR(30), _sys_name VARCHAR(30))
+DROP FUNCTION get_ids_for_sys_names( VARCHAR[], VARCHAR(30), VARCHAR(30));
+
+CREATE OR REPLACE FUNCTION get_ids_for_sys_names( _sys_names VARCHAR[], _table VARCHAR(30), _sys_name VARCHAR(30))
   RETURNS integer[] AS
 $BODY$
 DECLARE
    sn varchar(20);
    an_int integer;
-   sys_ids integer[];
+   sys_ids INTEGER[];
+   sql_statement VARCHAR;
+   sql_statement2 VARCHAR;
+   
+   temp INTEGER;
 
 BEGIN
-   
+
+ sql_statement := 'SELECT id FROM ' || _table || ' WHERE ' || _sys_name   || ' = ';
+
   FOREACH sn IN ARRAY _sys_names
      LOOP
-
-    
-     PERFORM array_append(sys_ids, (SELECT id FROM plate WHERE plate_sys_name = 'PLT-1'));
-
-
+     sql_statement2 := sql_statement || quote_literal(sn);
+     EXECUTE sql_statement2 INTO temp;
+     sys_ids := array_append(sys_ids, temp );
     END LOOP;
 
 RETURN sys_ids;
@@ -262,7 +268,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE;
 
 
-SELECT get_plate_ids_for_sys_names('{"PLT-1","PLT-2","PLT-3"}', 'plate', 'plate_sys_name');
+--SELECT get_ids_for_sys_names('{"PLT-1","PLT-2","PLT-3"}', 'plate', 'plate_sys_name');
 
 
 

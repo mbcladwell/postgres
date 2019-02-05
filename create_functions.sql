@@ -85,6 +85,39 @@ $BODY$
 
 
 
+--associate multiple plate IDs with a plate set ID----------------------
+
+DROP FUNCTION IF exists assoc_plate_ids_with_plate_set_id( _plate_ids INTEGER[], _plate_set_id INTEGER);
+CREATE OR REPLACE FUNCTION assoc_plate_ids_with_plate_set_id(_plate_ids int[], _plate_set_id int)
+  RETURNS void AS
+$BODY$
+DECLARE
+   pid int;
+   plate_ids int[];
+   counter INTEGER;
+   sql_statement VARCHAR(300);
+   
+BEGIN
+counter := 1;
+--plate_ids := sort(_plate_ids);
+sql_statement := 'INSERT INTO plate_plate_set (plate_set_id, plate_id, plate_order) VALUES ';
+
+  FOREACH pid IN ARRAY _plate_ids
+     LOOP
+     sql_statement := sql_statement || '(' || _plate_set_id || ', '  ||  pid || ', ' || counter || '),';
+     counter = counter + 1;
+    END LOOP;
+
+     sql_statement := SUBSTRING(sql_statement, 1, CHAR_LENGTH(sql_statement)-1) || ';';
+     EXECUTE sql_statement;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+SELECT assoc_plate_ids_with_plate_set_id('{100,101,102}', 10);
+
+
 ---hit_list-------------------------
    
 CREATE OR REPLACE FUNCTION new_hit_list(_descr VARCHAR(250), _project_id INTEGER)

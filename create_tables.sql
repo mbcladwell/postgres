@@ -1,6 +1,7 @@
 
 
 CREATE EXTENSION pgcrypto;
+CREATE EXTENSION intarray;
 
 
 DROP  FUNCTION IF EXISTS calc_by_row_num_func()  CASCADE;

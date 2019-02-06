@@ -95,27 +95,28 @@ DECLARE
    pid int;
    plate_ids int[];
    counter INTEGER;
-   sql_statement VARCHAR(300);
+   sql_statement VARCHAR;
    
 BEGIN
 counter := 1;
---plate_ids := sort(_plate_ids);
+SELECT sort(_plate_ids) INTO plate_ids;
 sql_statement := 'INSERT INTO plate_plate_set (plate_set_id, plate_id, plate_order) VALUES ';
 
-  FOREACH pid IN ARRAY _plate_ids
+  FOREACH pid IN ARRAY plate_ids
      LOOP
      sql_statement := sql_statement || '(' || _plate_set_id || ', '  ||  pid || ', ' || counter || '),';
      counter = counter + 1;
     END LOOP;
 
      sql_statement := SUBSTRING(sql_statement, 1, CHAR_LENGTH(sql_statement)-1) || ';';
+     --RAISE notice 'sqlstatement: (%)', sql_statement;
      EXECUTE sql_statement;
 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
 
-SELECT assoc_plate_ids_with_plate_set_id('{100,101,102}', 10);
+--SELECT assoc_plate_ids_with_plate_set_id('{101,100,102}', 10);
 
 
 ---hit_list-------------------------

@@ -44,7 +44,7 @@ CREATE TABLE well_numbers(plate_format INTEGER,
 CREATE TRIGGER calculate_by_row_number
 before INSERT ON well_numbers
 FOR EACH row EXECUTE PROCEDURE calc_by_row_num_func();
-
+CREATE INDEX ON well_numbers(by_col);
 
 
 -----well_numbers-------------------------
@@ -187,6 +187,7 @@ CREATE TABLE project
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
         FOREIGN KEY (pmuser_id) REFERENCES pmuser(id));
 
+CREATE INDEX ON project(pmuser_id);
 
 ------------------------------------------------
 DROP TABLE IF EXISTS plate_format CASCADE;
@@ -230,6 +231,9 @@ CREATE TABLE plate_set
         FOREIGN KEY (plate_format_id) REFERENCES plate_format(id),
         FOREIGN KEY (project_id) REFERENCES project(id));
 
+CREATE INDEX ON plate_set(plate_format_id);
+CREATE INDEX ON plate_set(plate_type_id);
+CREATE INDEX ON plate_set(project_id);
 
    
 
@@ -249,6 +253,10 @@ CREATE TABLE plate (id SERIAL PRIMARY KEY,
                 FOREIGN KEY (plate_type_id) REFERENCES plate_type(id),
 		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id));
 
+CREATE INDEX ON plate(plate_type_id);
+CREATE INDEX ON plate(project_id);
+CREATE INDEX ON plate(plate_format_id);
+
 ----------------------------------------------------------------------------
 DROP TABLE IF EXISTS plate_plate_set CASCADE;
 
@@ -259,6 +267,8 @@ CREATE TABLE plate_plate_set (
                 FOREIGN KEY (plate_set_id) REFERENCES plate_set(id),
                 FOREIGN KEY (plate_id) REFERENCES plate(id));
 
+CREATE INDEX ON plate_plate_set(plate_set_id);
+CREATE INDEX ON plate_plate_set(plate_id);
  
 ----------------------------------------------------------------------------
 
@@ -268,6 +278,7 @@ CREATE TABLE sample (id SERIAL PRIMARY KEY,
                 accs_id INTEGER,
 		FOREIGN KEY (project_id) REFERENCES project(id));
 
+CREATE INDEX ON sample(project_id);
 
 
 DROP TABLE IF EXISTS well CASCADE;
@@ -276,6 +287,7 @@ CREATE TABLE well (id SERIAL PRIMARY KEY,
 		plate_id INTEGER,
 		FOREIGN KEY (plate_id) REFERENCES plate(id));
 
+CREATE INDEX ON well(plate_id);
 
 ----------------------------------------------------------------------------
 DROP TABLE IF EXISTS well_sample CASCADE;
@@ -286,6 +298,8 @@ CREATE TABLE well_sample (
                 FOREIGN KEY (well_id) REFERENCES well(id),
                 FOREIGN KEY (sample_id) REFERENCES sample(id));
 
+CREATE INDEX ON well_sample(well_id);
+CREATE INDEX ON well_sample(sample_id);
 
 
 ----------------------------
@@ -299,6 +313,8 @@ CREATE TABLE hit_list
  project_id INTEGER,
  FOREIGN KEY (project_id) REFERENCES project(id));
 
+CREATE INDEX ON hit_list(project_id);
+
 
 DROP TABLE IF EXISTS hit_sample CASCADE;
 CREATE TABLE hit_sample
@@ -308,6 +324,10 @@ CREATE TABLE hit_sample
 
  FOREIGN KEY (hitlist_id) REFERENCES hit_list(id),
  FOREIGN KEY (sample_id) REFERENCES sample(id));
+
+CREATE INDEX ON hit_sample(hitlist_id);
+CREATE INDEX ON hit_sample(sample_id);
+
 
 ----------------------------
    
@@ -325,6 +345,10 @@ CREATE TABLE assay_run (id serial PRIMARY KEY,
                FOREIGN KEY (plate_set_id) REFERENCES plate_set(id),
                FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id),
 		FOREIGN KEY (assay_type_id) REFERENCES assay_type(id));
+
+CREATE INDEX ON assay_run(assay_type_id);
+CREATE INDEX ON assay_run(plate_set_id);
+CREATE INDEX ON assay_run(plate_layout_name_id);
 
 
 DROP TABLE IF EXISTS assay_type CASCADE;
@@ -347,6 +371,8 @@ CREATE TABLE assay_result (
 		FOREIGN KEY (assay_run_id) REFERENCES assay_run(id),
 		FOREIGN KEY (sample_id) REFERENCES sample(id));
 
+CREATE INDEX ON assay_result(assay_run_id);
+CREATE INDEX ON assay_result(sample_id);
 
 ----------------------------
 
@@ -358,7 +384,10 @@ CREATE TABLE plate_layout_name (
                 descr VARCHAR(30),
                 plate_format_id INTEGER,
 		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id));
+
+CREATE INDEX ON plate_layout_name(plate_format_id);
 	
+
 INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls column 12', 'singlecates', 1);		
 INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls column 12', 'duplicates', 1);
 INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls columns 23, 24', 'quadruplicates', 2);
@@ -386,6 +415,9 @@ CREATE TABLE plate_layout (
 		FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id),
                 FOREIGN KEY (well_type_id) REFERENCES well_type(id));
 
+CREATE INDEX ON plate_layout(plate_layout_name_id);
+CREATE INDEX ON plate_layout(well_type_id);
+CREATE INDEX ON plate_layout(well_by_col);
 
 
 
@@ -643,6 +675,10 @@ CREATE TABLE temp_data (
                 well INTEGER NOT NULL,
                 response REAL,
 		PRIMARY KEY (plate, well));
+
+CREATE INDEX ON temp_data(plate);
+CREATE INDEX ON temp_data(well);
+
 
 
 

@@ -12,11 +12,7 @@
 plate_set_id = 10
 
 
-SELECT sample.id, temp_data.response FROM temp_data,  plate_layout, plate, well, sample, well_sample, plate_plate_set, plate_set, well_numbers  WHERE  plate_layout.plate_layout_name_id = 5 AND plate_set.id = 10 AND well_numbers.plate_format =1536 AND well.plate_id = plate.id AND well_sample.well_id = well.id AND well_sample.sample_id = sample.id AND plate_plate_set.plate_id = plate.id AND plate_plate_set.plate_set_id=plate_set.id;
-
-
-
-
+SELECT sample.id, temp_data.response FROM temp_data, plate, well, sample, well_sample, plate_plate_set, plate_set  WHERE  plate_set.id = 10 AND well.plate_id = plate.id AND well_sample.well_id = well.id AND well_sample.sample_id = sample.id AND plate_plate_set.plate_id = plate.id AND plate_plate_set.plate_set_id=plate_set.id AND plate_plate_set.plate_order = temp_data.plate;
 
 plate_layout_name.id = plate_layout.plate_layout_name_id
 well_type.id = plate_layout.well_type_id
@@ -25,5 +21,19 @@ well.well_name = well_number.well_name
 
 
 
- 
+this worked
+SELECT temp_data.plate, temp_data.response, sample.id FROM temp_data, plate_plate_set, plate, well,sample, well_sample WHERE plate_plate_set.plate_set_id = 10 AND temp_data.plate = plate_plate_set.plate_order AND well.plate_id = plate.id AND plate_plate_set.plate_id = plate.id AND plate_plate_set.plate_set_id = plate_set_id AND well_sample.sample_id = sample.id AND well_sample.well_id = well.id;
+
+
+
+
+
+
+
+
+
+
+
+
+
 

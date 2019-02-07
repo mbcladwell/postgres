@@ -1,0 +1,26 @@
+ select * from assay_result limit 5;
+ select * from assay_run limit 5;
+ select * from assay_type limit 5;
+ select * from hit_list limit 5;
+ select * from hit_sample limit 5;
+ select * from hits limit 5;
+ select * from plate limit 5;
+ select * from plate_format limit 5;
+select * from  plate_layout limit 5;
+select * from  plate_layout_name limit 5;
+select * from  plate_plate_set limit 5;
+select * from  plate_set limit 5;
+select * from plate_size limit 5;
+ select * from plate_type limit 5;
+ select * from pmsession limit 5;
+ select * from pmuser limit 5;
+ select * from pmuser_permissions limit 5;
+ select * from project limit 5;
+ select * from sample limit 5;
+ select * from temp_data limit 5;
+ select * from well limit 5;
+ select * from well_numbers limit 5;
+ select * from well_sample limit 5;
+ select * from well_type limit 5;
+
+

@@ -1,0 +1,122 @@
+psql -U pm_admin -h 192.168.1.7 -d pmdb
+
+
+pmdb=> select * from assay_run;
+
+id | assay_run_sys_name | assay_run_name |  descr   | assay_type_id | plate_set_id | plate_layout_name_id |            updated            
+----+--------------------+----------------+----------+---------------+--------------+----------------------+-------------------------------
+  1 | AR-1               | test           | testdesc |             1 |            1 |                    1 | 2019-01-29 12:38:02.166734-05
+  5 | AR-5               | tt             | tt       |             1 |           10 |                    5 | 2019-01-29 15:48:31.472666-05
+  6 | AR-6               | tt             | tt       |             1 |           10 |                    5 | 2019-01-30 07:48:21.456821-05
+  7 | AR-7               | tt             | tt       |             1 |           10 |                    5 | 2019-01-30 07:49:30.277951-05
+  8 | AR-8               | tt             | tt       |             1 |           10 |                    5 | 2019-01-30 07:50:51.09554-05
+  9 | AR-9               | tt             | tt       |             1 |           10 |                    5 | 2019-01-30 07:52:42.946962-05
+
+pmdb=> select * from plate_format;
+
+ id | format | rownum | colnum 
+----+--------+--------+--------
+  1 |     96 |      8 |     12
+  2 |    384 |     16 |     24
+  3 |   1536 |     32 |     48
+
+pmdb=> select * from plate_layout_name;
+
+ id |           name            |     descr      | plate_format_id 
+----+---------------------------+----------------+-----------------
+  1 | 4 controls column 12      | singlecates    |               1
+  2 | 8 controls column 12      | duplicates     |               1
+  3 | 4 controls columns 23, 24 | quadruplicates |               2
+  4 | 8 controls columns 23, 24 | octuplicates   |               2
+  5 | 8 controls columns 47, 48 | quadruplicates |               3
+
+
+pmdb=> select * from plate limit 5;
+
+ id | plate_sys_name | plate_type_id | project_id | plate_format_id |            updated            
+----+----------------+---------------+------------+-----------------+-------------------------------
+  1 | PLT-1          |             1 |         10 |               1 | 2019-01-31 07:20:07.945973-05
+  2 | PLT-2          |             1 |         10 |               1 | 2019-01-31 07:20:07.945973-05
+  3 | PLT-3          |             1 |         10 |               1 | 2019-01-31 07:20:07.945973-05
+  4 | PLT-4          |             1 |         10 |               1 | 2019-01-31 07:20:07.945973-05
+  5 | PLT-5          |             1 |         10 |               1 | 2019-01-31 07:20:07.945973-05
+
+
+pmdb=> select * from plate_layout limit 5;
+
+ plate_layout_name_id | well_by_col | well_type_id 
+----------------------+-------------+--------------
+                    1 |           1 |            1
+                    1 |           2 |            1
+                    1 |           3 |            1
+                    1 |           4 |            1
+                    1 |           5 |            1
+
+
+pmdb=> select * from plate_layout_name;
+
+ id |           name            |     descr      | plate_format_id 
+----+---------------------------+----------------+-----------------
+  1 | 4 controls column 12      | singlecates    |               1
+  2 | 8 controls column 12      | duplicates     |               1
+  3 | 4 controls columns 23, 24 | quadruplicates |               2
+  4 | 8 controls columns 23, 24 | octuplicates   |               2
+  5 | 8 controls columns 47, 48 | quadruplicates |               3
+
+
+
+select * from plate_set;
+
+ id |  plate_set_name  |    descr    | plate_set_sys_name | num_plates | plate_format_id | plate_type_id | project_id |            updated            
+----+------------------+-------------+--------------------+------------+-----------------+---------------+------------+-------------------------------
+  1 | ps-name-by-user1 | using loop1 | PS-1               |         20 |               1 |             1 |         10 | 2019-01-29 06:44:00.308627-05
+  2 | ps-name-by-user2 | using loop2 | PS-2               |         20 |               1 |             1 |         10 | 2019-01-29 06:44:00.736645-05
+  3 | ps-name-by-user3 | using loop3 | PS-3               |         20 |               2 |             1 |         10 | 2019-01-29 06:44:01.174929-05
+  4 | ps-name-by-user4 | using loop4 | PS-4               |         20 |               2 |             1 |         10 | 2019-01-29 06:44:02.769877-05
+
+
+
+pmdb=> select * from temp_data;
+
+ plate | well |  response  
+-------+------+------------
+     1 |    1 |    0.22774
+     1 |    2 |   0.226496
+     1 |    3 |   0.269745
+     1 |    4 |   0.280769
+     1 |    5 |   0.500923
+
+
+pmdb=> select * from well limit 5;;
+
+ id | well_name | plate_id 
+----+-----------+----------
+  1 | A01       |        1
+  2 | A02       |        1
+  3 | A03       |        1
+  4 | A04       |        1
+  5 | A05       |        1
+
+
+pmdb=> select * from well_numbers;
+
+ plate_format | well_name | row | row_num | col | total_col_count | by_row | by_col | quad | parent_well 
+--------------+-----------+-----+---------+-----+-----------------+--------+--------+------+-------------
+           96 | A01       | A   |       1 | 01  |              12 |      1 |      1 |    1 | 
+           96 | B01       | B   |       2 | 01  |              12 |     13 |      2 |    3 | 
+           96 | C01       | C   |       3 | 01  |              12 |     25 |      3 |    1 | 
+           96 | D01       | D   |       4 | 01  |              12 |     37 |      4 |    3 | 
+           96 | E01       | E   |       5 | 01  |              12 |     49 |      5 |    1 | 
+           96 | F01       | F   |       6 | 01  |              12 |     61 |      6 |    3 | 
+
+
+pmdb=> select * from well_type;
+
+ id |   name   
+----+----------
+  1 | unknown
+  2 | positive
+  3 | negative
+  4 | blank
+(4 rows)
+

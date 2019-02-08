@@ -1,5 +1,10 @@
 psql -U pm_admin -h 192.168.1.7 -d pmdb
 
+pmdb=> select * from assay_result;
+
+ sample_id | response | assay_run_id 
+-----------+----------+--------------
+
 
 pmdb=> select * from assay_run;
 
@@ -11,6 +16,19 @@ id | assay_run_sys_name | assay_run_name |  descr   | assay_type_id | plate_set_
   7 | AR-7               | tt             | tt       |             1 |           10 |                    5 | 2019-01-30 07:49:30.277951-05
   8 | AR-8               | tt             | tt       |             1 |           10 |                    5 | 2019-01-30 07:50:51.09554-05
   9 | AR-9               | tt             | tt       |             1 |           10 |                    5 | 2019-01-30 07:52:42.946962-05
+
+
+select * from plate;
+
+id | plate_sys_name | plate_type_id | project_id | plate_format_id |            updated            
+----+----------------+---------------+------------+-----------------+-------------------------------
+  1 | PLT-1          |             1 |         10 |               1 | 2019-01-31 07:20:07.945973-05
+  2 | PLT-2          |             1 |         10 |               1 | 2019-01-31 07:20:07.945973-05
+  3 | PLT-3          |             1 |         10 |               1 | 2019-01-31 07:20:07.945973-05
+  4 | PLT-4          |             1 |         10 |               1 | 2019-01-31 07:20:07.945973-05
+  5 | PLT-5          |             1 |         10 |               1 | 2019-01-31 07:20:07.945973-05
+
+
 
 pmdb=> select * from plate_format;
 

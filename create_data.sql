@@ -37,6 +37,7 @@ SELECT new_plate_set('using loop5','ps-name-by-user5',20,3,1,9,TRUE);
 SELECT new_plate_set('using loop5','ps-name-by-user5',20,3,1,9,TRUE);
 SELECT new_plate_set('using loop5','ps-name-by-user5',20,3,1,9,TRUE);
 
+SELECT new_plate_set('for data import','ps-name-96 well',2,1,1,1,TRUE);
 
 
 --SELECT * FROM plate_set;

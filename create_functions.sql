@@ -182,10 +182,10 @@ CASE _plate_format_id
 
 
     UPDATE plate SET plate_sys_name = 'PLT-'||plt_id WHERE id=plt_id;
+   FOREACH c IN ARRAY col_names
+     LOOP
    FOREACH r  IN ARRAY row_names
    LOOP
-   FOREACH C IN ARRAY col_names
-     LOOP
        INSERT INTO well(well_name, plate_id) VALUES(concat(r,c), plt_id)
        RETURNING id INTO w_id;
        IF spl_include THEN 

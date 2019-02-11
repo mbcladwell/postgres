@@ -205,12 +205,12 @@ INSERT INTO plate_type (plate_type_name) VALUES ('archive');
 INSERT INTO plate_type (plate_type_name) VALUES ('replicate');
 
 
-CREATE TABLE plate_format (id SERIAL PRIMARY KEY,
-	format INTEGER, rownum INTEGER, colnum INTEGER);
+CREATE TABLE plate_format (id INTEGER PRIMARY KEY,
+	format VARCHAR(6), rownum INTEGER, colnum INTEGER);
 
-INSERT INTO plate_format (format, rownum, colnum) VALUES ( 96, 8, 12);
-INSERT INTO plate_format (format, rownum, colnum) VALUES (384, 16, 24);
-INSERT INTO plate_format (format, rownum, colnum) VALUES (1536, 32, 48);
+INSERT INTO plate_format (id, format, rownum, colnum) VALUES ( 96, '96', 8, 12);
+INSERT INTO plate_format (id, format, rownum, colnum) VALUES (384, '384',16, 24);
+INSERT INTO plate_format (id, format, rownum, colnum) VALUES (1536, '1536', 32, 48);
 
 
 -----------------------------
@@ -330,7 +330,29 @@ CREATE INDEX ON hit_sample(sample_id);
 
 
 ----------------------------
-   
+
+
+DROP TABLE IF EXISTS plate_layout_name CASCADE;
+
+CREATE TABLE plate_layout_name (
+		id SERIAL PRIMARY KEY,
+                name VARCHAR(30),
+                descr VARCHAR(30),
+                plate_format_id INTEGER,
+		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id));
+
+CREATE INDEX ON plate_layout_name(plate_format_id);
+	
+
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls column 12', 'singlecates', 96);		
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls column 12', 'duplicates', 96);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls columns 23, 24', 'quadruplicates', 384);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 23, 24', 'octuplicates', 384);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 47, 48', 'quadruplicates', 1536);
+
+----------------------------
+
+
 
 DROP TABLE IF EXISTS assay_run CASCADE;
 
@@ -375,24 +397,6 @@ CREATE INDEX ON assay_result(assay_run_id);
 CREATE INDEX ON assay_result(sample_id);
 
 ----------------------------
-
-DROP TABLE IF EXISTS plate_layout_name CASCADE;
-
-CREATE TABLE plate_layout_name (
-		id SERIAL PRIMARY KEY,
-                name VARCHAR(30),
-                descr VARCHAR(30),
-                plate_format_id INTEGER,
-		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id));
-
-CREATE INDEX ON plate_layout_name(plate_format_id);
-	
-
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls column 12', 'singlecates', 1);		
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls column 12', 'duplicates', 1);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls columns 23, 24', 'quadruplicates', 2);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 23, 24', 'octuplicates', 2);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 47, 48', 'quadruplicates', 3);
 
 
 DROP TABLE IF EXISTS well_type CASCADE;

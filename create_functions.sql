@@ -164,13 +164,13 @@ DECLARE
 BEGIN
 --spl_include := _include_sample;
 CASE _plate_format_id
-   WHEN 1 THEN
+   WHEN 96 THEN
    row_names := row_holder[1:8];
    col_names := col_holder[1:12];
-   WHEN 2 THEN
+   WHEN 384 THEN
    row_names := row_holder[1:16];
    col_names := col_holder[1:24];
-   WHEN 3 THEN
+   WHEN 1536 THEN
    row_names := row_holder[1:32];
    col_names := col_holder[1:48];
    ELSE

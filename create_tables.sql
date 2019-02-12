@@ -219,6 +219,7 @@ DROP SEQUENCE IF EXISTS plate_set_id_seq;
 
 CREATE TABLE plate_set
 (id SERIAL PRIMARY KEY,
+        barcode VARCHAR(30),
 	plate_set_name VARCHAR(30),
         descr VARCHAR(250),
         plate_set_sys_name VARCHAR(30),
@@ -226,11 +227,14 @@ CREATE TABLE plate_set
         plate_format_id INTEGER,
         plate_type_id INTEGER,
         project_id INTEGER,
+	plate_layout_name_id INTEGER,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
         FOREIGN KEY (plate_type_id) REFERENCES plate_type(id),
         FOREIGN KEY (plate_format_id) REFERENCES plate_format(id),
-        FOREIGN KEY (project_id) REFERENCES project(id));
+        FOREIGN KEY (project_id) REFERENCES project(id)
+	FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id));
 
+CREATE INDEX ON plate_set(barcode);
 CREATE INDEX ON plate_set(plate_format_id);
 CREATE INDEX ON plate_set(plate_type_id);
 CREATE INDEX ON plate_set(project_id);
@@ -246,15 +250,12 @@ DROP TABLE IF EXISTS sample CASCADE;
 CREATE TABLE plate (id SERIAL PRIMARY KEY,
 		plate_sys_name VARCHAR(30),
         	plate_type_id INTEGER,
-  	        project_id INTEGER,
 		plate_format_id INTEGER,
 	        updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
-                FOREIGN KEY (project_id) REFERENCES project(id),
                 FOREIGN KEY (plate_type_id) REFERENCES plate_type(id),
 		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id));
 
 CREATE INDEX ON plate(plate_type_id);
-CREATE INDEX ON plate(project_id);
 CREATE INDEX ON plate(plate_format_id);
 
 ----------------------------------------------------------------------------

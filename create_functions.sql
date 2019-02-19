@@ -170,7 +170,6 @@ $BODY$
 -----Plate-----------------------
 
 DROP FUNCTION new_plate(INTEGER, INTEGER,INTEGER,INTEGER,  BOOLEAN);
---plate_format   1:96 8x12;           2:384 16x24;         3:1536 32x48 
 
 CREATE OR REPLACE FUNCTION new_plate(_plate_type_id INTEGER, _plate_set_id INTEGER, _project_id INTEGER, _plate_format_id INTEGER,  _include_sample BOOLEAN)
   RETURNS integer AS
@@ -226,6 +225,55 @@ CASE _plate_format_id
 
        END IF;
    END LOOP;
+   END LOOP;
+
+   INSERT INTO plate_plate_set(plate_set_id, plate_id)
+   VALUES (ps_id, plt_id );
+
+RETURN plt_id;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+
+---Plate2-------------------------------------------------------------------------
+
+DROP FUNCTION new_plate2(INTEGER, INTEGER,INTEGER,INTEGER, INTEGER, BOOLEAN);
+
+CREATE OR REPLACE FUNCTION new_plate2(_plate_type_id INTEGER, _plate_set_id INTEGER, _project_id INTEGER, _plate_format_id INTEGER, _plate_layout_name_id INTEGER,  _include_sample BOOLEAN)
+  RETURNS integer AS
+$BODY$
+DECLARE
+   plt_id INTEGER;
+   ps_id INTEGER = _plate_set_id;
+   prj_id INTEGER;
+   pf_id INTEGER;
+   play_id INTEGER;
+   w_id INTEGER;
+   s_id INTEGER;
+   spl_include BOOLEAN := _include_sample;
+
+ INSERT INTO plate(plate_type_id,  project_id, plate_format_id, plate_layout_name_id)
+   VALUES (_plate_type_id,  _project_id, _plate_format_id, _plate_layout_name_id )
+   RETURNING id, project_id INTO plt_id, prj_id;
+
+    UPDATE plate SET plate_sys_name = 'PLT-'||plt_id WHERE id=plt_id;
+
+
+   FOR temprow  IN 
+	SELECT well_by_col FROM plate_layout WHERE plate_layout.plate_layout_name_id = _plate_layout_name_id ;
+   LOOP
+       INSERT INTO well(well_name, plate_id) VALUES(concat(r,c), plt_id)
+       RETURNING id INTO w_id;
+
+       IF spl_include THEN 
+       INSERT INTO sample( project_id) VALUES (prj_id)
+       RETURNING id INTO s_id;
+       UPDATE sample SET sample_sys_name = 'SPL-'||s_id WHERE id=s_id;
+
+       INSERT INTO well_sample(well_id, sample_id)VALUES(w_id, s_id);
+
+       END IF;
    END LOOP;
 
    INSERT INTO plate_plate_set(plate_set_id, plate_id)

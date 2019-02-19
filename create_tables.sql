@@ -251,9 +251,11 @@ CREATE TABLE plate (id SERIAL PRIMARY KEY,
 		plate_sys_name VARCHAR(30),
         	plate_type_id INTEGER,
 		plate_format_id INTEGER,
+		plate_layout_name_id INTEGER,
 	        updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
                 FOREIGN KEY (plate_type_id) REFERENCES plate_type(id),
-		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id));
+		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id), 
+		FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id));
 
 CREATE INDEX ON plate(plate_type_id);
 CREATE INDEX ON plate(plate_format_id);

@@ -20,9 +20,9 @@ $BODY$
 
 -----Plate_set-------------------------------------------
 
-DROP FUNCTION IF exists new_plate_set(_descr VARCHAR(30), _plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_format_id INTEGER,  _plate_type_id INTEGER, _project_id INTEGER, _with_samples boolean);
+DROP FUNCTION IF exists new_plate_set(_descr VARCHAR(30), _plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_format_id INTEGER,  _plate_type_id INTEGER, _project_id INTEGER, _plate_layout_id INTEGER, _with_samples boolean);
 
-CREATE OR REPLACE FUNCTION new_plate_set(_descr VARCHAR(30),_plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_format_id INTEGER, _plate_type_id INTEGER, _project_id INTEGER, _with_samples boolean)
+CREATE OR REPLACE FUNCTION new_plate_set(_descr VARCHAR(30),_plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_format_id INTEGER, _plate_type_id INTEGER, _project_id INTEGER, _plate_layout_id INTEGER, _with_samples boolean)
   RETURNS void AS
 $BODY$
 DECLARE
@@ -32,17 +32,18 @@ DECLARE
    p_form INTEGER;
    prj_id INTEGER;
    plt_id INTEGER;
+   play_id INTEGER;
    w_spls BOOLEAN := _with_samples;
 BEGIN
    
-   INSERT INTO plate_set(descr, plate_set_name, num_plates, plate_format_id, plate_type_id, project_id)
-   VALUES (_descr, _plate_set_name, _num_plates, _plate_format_id, _plate_type_id, _project_id )
-   RETURNING ID, plate_format_id, num_plates, project_id, plate_type_id INTO ps_id, p_form, n_plates, prj_id, p_type;
+   INSERT INTO plate_set(descr, plate_set_name, num_plates, plate_format_id, plate_type_id, project_id, plate_layout_id)
+   VALUES (_descr, _plate_set_name, _num_plates, _plate_format_id, _plate_type_id, _project_id, _plate_layout_id )
+   RETURNING ID, plate_format_id, num_plates, project_id, plate_type_id, plate_layout_id INTO ps_id, p_form, n_plates, prj_id, p_type, play_id;
    UPDATE plate_set SET plate_set_sys_name = 'PS-'||ps_id WHERE id=ps_id;
 
 FOR i IN 1..n_plates loop
 	     -- _plate_type_id INTEGER, _plate_set_id INTEGER, _project_id INTEGER, _plate_format_id INTEGER, include_sample BOOLEAN
-	    SELECT new_plate(p_type, ps_id, prj_id, p_form, w_spls) INTO plt_id;
+	    SELECT new_plate(p_type, ps_id, prj_id, p_form, play_id, w_spls) INTO plt_id;
 	    UPDATE plate_plate_set SET plate_order = i WHERE plate_set_id = ps_id AND plate_id = plt_id;
 
 END LOOP;
@@ -169,9 +170,9 @@ $BODY$
 
 -----Plate-----------------------
 
-DROP FUNCTION new_plate(INTEGER, INTEGER,INTEGER,INTEGER,  BOOLEAN);
+DROP FUNCTION new_plate_old(INTEGER, INTEGER,INTEGER,INTEGER,  BOOLEAN);
 
-CREATE OR REPLACE FUNCTION new_plate(_plate_type_id INTEGER, _plate_set_id INTEGER, _project_id INTEGER, _plate_format_id INTEGER,  _include_sample BOOLEAN)
+CREATE OR REPLACE FUNCTION new_plate_old(_plate_type_id INTEGER, _plate_set_id INTEGER, _project_id INTEGER, _plate_format_id INTEGER,  _include_sample BOOLEAN)
   RETURNS integer AS
 $BODY$
 DECLARE
@@ -216,6 +217,7 @@ CASE _plate_format_id
    LOOP
        INSERT INTO well(well_name, plate_id) VALUES(concat(r,c), plt_id)
        RETURNING id INTO w_id;
+       
        IF spl_include THEN 
        INSERT INTO sample( project_id) VALUES (prj_id)
        RETURNING id INTO s_id;
@@ -236,11 +238,11 @@ $BODY$
   LANGUAGE plpgsql VOLATILE;
 
 
----Plate2-------------------------------------------------------------------------
+---Plate modified for sample generation-------------------------------------------------------------------------
 
-DROP FUNCTION new_plate2(INTEGER, INTEGER,INTEGER,INTEGER, INTEGER, BOOLEAN);
+DROP FUNCTION new_plate(INTEGER, INTEGER,INTEGER,INTEGER, INTEGER, BOOLEAN);
 
-CREATE OR REPLACE FUNCTION new_plate2(_plate_type_id INTEGER, _plate_set_id INTEGER, _project_id INTEGER, _plate_format_id INTEGER, _plate_layout_name_id INTEGER,  _include_sample BOOLEAN)
+CREATE OR REPLACE FUNCTION new_plate(_plate_type_id INTEGER, _plate_set_id INTEGER, _project_id INTEGER, _plate_format_id INTEGER, _plate_layout_name_id INTEGER,  _include_sample BOOLEAN)
   RETURNS integer AS
 $BODY$
 DECLARE
@@ -248,44 +250,72 @@ DECLARE
    ps_id INTEGER = _plate_set_id;
    prj_id INTEGER;
    pf_id INTEGER;
-   play_id INTEGER;
    w_id INTEGER;
    s_id INTEGER;
    spl_include BOOLEAN := _include_sample;
+   row_holder   VARCHAR[] := ARRAY['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF'];
+   row_names VARCHAR[];
+   r VARCHAR(2);	
+   col_holder   VARCHAR[] := ARRAY['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48'];
+   col_names VARCHAR[];
+   c VARCHAR(2);	
 
- INSERT INTO plate(plate_type_id,  project_id, plate_format_id, plate_layout_name_id)
-   VALUES (_plate_type_id,  _project_id, _plate_format_id, _plate_layout_name_id )
+BEGIN
+--spl_include := _include_sample;
+
+   INSERT INTO plate(plate_type_id,  project_id, plate_format_id)
+   VALUES (_plate_type_id,  _project_id, _plate_format_id)
    RETURNING id, project_id INTO plt_id, prj_id;
 
     UPDATE plate SET plate_sys_name = 'PLT-'||plt_id WHERE id=plt_id;
 
 
-   FOR temprow  IN 
-	SELECT well_by_col FROM plate_layout WHERE plate_layout.plate_layout_name_id = _plate_layout_name_id ;
+CASE _plate_format_id
+   WHEN 96 THEN
+   row_names := row_holder[1:8];
+   col_names := col_holder[1:12];
+   WHEN 384 THEN
+   row_names := row_holder[1:16];
+   col_names := col_holder[1:24];
+   WHEN 1536 THEN
+   row_names := row_holder[1:32];
+   col_names := col_holder[1:48];
+   ELSE
+   END CASE;
+
+
+FOREACH c IN ARRAY col_names
+     LOOP
+   FOREACH r  IN ARRAY row_names
    LOOP
        INSERT INTO well(well_name, plate_id) VALUES(concat(r,c), plt_id)
        RETURNING id INTO w_id;
-
-       IF spl_include THEN 
+       
+       IF spl_include THEN
+       IF (SELECT by_col FROM well_numbers WHERE well_name = concat(r,c) AND well_numbers.plate_format = _plate_format_id) IN (SELECT well_by_col  FROM plate_layout, plate_layout_name  WHERE plate_layout.plate_layout_name_id = plate_layout_name.id AND plate_layout.well_type_id = 1 AND plate_layout.plate_layout_name_id = _plate_layout_name_id) THEN
        INSERT INTO sample( project_id) VALUES (prj_id)
        RETURNING id INTO s_id;
        UPDATE sample SET sample_sys_name = 'SPL-'||s_id WHERE id=s_id;
 
        INSERT INTO well_sample(well_id, sample_id)VALUES(w_id, s_id);
-
+      END IF;
        END IF;
+   END LOOP;
    END LOOP;
 
    INSERT INTO plate_plate_set(plate_set_id, plate_id)
    VALUES (ps_id, plt_id );
 
 RETURN plt_id;
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
 
 
---SELECT new_plate(1,1,1,1,3, TRUE);
+--SELECT new_plate(1,11,1,96,1, TRUE);
+
+
 SELECT * FROM sample;
 SELECT * FROM well;
 SELECT * FROM plate;

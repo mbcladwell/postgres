@@ -213,6 +213,29 @@ INSERT INTO plate_format (id, format, rownum, colnum) VALUES (384, '384',16, 24)
 INSERT INTO plate_format (id, format, rownum, colnum) VALUES (1536, '1536', 32, 48);
 
 
+----------------------------
+
+
+DROP TABLE IF EXISTS plate_layout_name CASCADE;
+
+CREATE TABLE plate_layout_name (
+		id SERIAL PRIMARY KEY,
+                name VARCHAR(30),
+                descr VARCHAR(30),
+                plate_format_id INTEGER,
+		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id));
+
+CREATE INDEX ON plate_layout_name(plate_format_id);
+	
+
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls column 12', 'singlecates', 96);		
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls column 12', 'duplicates', 96);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls columns 23, 24', 'quadruplicates', 384);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 23, 24', 'octuplicates', 384);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 47, 48', 'quadruplicates', 1536);
+
+
+
 -----------------------------
 DROP TABLE IF EXISTS plate_set CASCADE;
 DROP SEQUENCE IF EXISTS plate_set_id_seq;
@@ -231,7 +254,7 @@ CREATE TABLE plate_set
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
         FOREIGN KEY (plate_type_id) REFERENCES plate_type(id),
         FOREIGN KEY (plate_format_id) REFERENCES plate_format(id),
-        FOREIGN KEY (project_id) REFERENCES project(id)
+        FOREIGN KEY (project_id) REFERENCES project(ID),
 	FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id));
 
 CREATE INDEX ON plate_set(barcode);
@@ -239,7 +262,6 @@ CREATE INDEX ON plate_set(plate_format_id);
 CREATE INDEX ON plate_set(plate_type_id);
 CREATE INDEX ON plate_set(project_id);
 
-   
 
 
 ----------------------------
@@ -331,30 +353,7 @@ CREATE TABLE hit_sample
 CREATE INDEX ON hit_sample(hitlist_id);
 CREATE INDEX ON hit_sample(sample_id);
 
-
 ----------------------------
-
-
-DROP TABLE IF EXISTS plate_layout_name CASCADE;
-
-CREATE TABLE plate_layout_name (
-		id SERIAL PRIMARY KEY,
-                name VARCHAR(30),
-                descr VARCHAR(30),
-                plate_format_id INTEGER,
-		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id));
-
-CREATE INDEX ON plate_layout_name(plate_format_id);
-	
-
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls column 12', 'singlecates', 96);		
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls column 12', 'duplicates', 96);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls columns 23, 24', 'quadruplicates', 384);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 23, 24', 'octuplicates', 384);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 47, 48', 'quadruplicates', 1536);
-
-----------------------------
-
 
 
 DROP TABLE IF EXISTS assay_run CASCADE;

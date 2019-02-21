@@ -103,6 +103,15 @@ select * from plate_set;
   4 | ps-name-by-user4 | using loop4 | PS-4               |         20 |               2 |             1 |         10 | 2019-01-29 06:44:02.769877-05
 
 
+pmdb=> select * from sample limit 5;
+ id | sample_sys_name | project_id | accs_id 
+----+-----------------+------------+---------
+  1 | SPL-1           |         10 |        
+  2 | SPL-2           |         10 |        
+  3 | SPL-3           |         10 |        
+  4 | SPL-4           |         10 |        
+  5 | SPL-5           |         10 |       
+
 
 pmdb=> select * from temp_data;
 

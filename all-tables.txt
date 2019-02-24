@@ -29,24 +29,24 @@ id | plate_sys_name | plate_type_id | project_id | plate_format_id |            
   5 | PLT-5          |             1 |         10 |               1 | 2019-01-31 07:20:07.945973-05
 
 
+pmdb=> SELECT * FROM plate_format;
+  id  | format | rownum | colnum 
+------+--------+--------+--------
+   96 | 96     |      8 |     12
+  384 | 384    |     16 |     24
+ 1536 | 1536   |     32 |     48
 
-pmdb=> select * from plate_format;
-
- id | format | rownum | colnum 
-----+--------+--------+--------
-  1 |     96 |      8 |     12
-  2 |    384 |     16 |     24
-  3 |   1536 |     32 |     48
 
 pmdb=> select * from plate_layout_name;
 
  id |           name            |     descr      | plate_format_id 
 ----+---------------------------+----------------+-----------------
-  1 | 4 controls column 12      | singlecates    |               1
-  2 | 8 controls column 12      | duplicates     |               1
-  3 | 4 controls columns 23, 24 | quadruplicates |               2
-  4 | 8 controls columns 23, 24 | octuplicates   |               2
-  5 | 8 controls columns 47, 48 | quadruplicates |               3
+  1 | 4 controls column 12      | singlecates    |              96
+  2 | 8 controls column 12      | duplicates     |              96
+  3 | 4 controls columns 23, 24 | quadruplicates |             384
+  4 | 8 controls columns 23, 24 | octuplicates   |             384
+  5 | 8 controls columns 47, 48 | quadruplicates |            1536
+(5 rows)
 
 
 pmdb=> select * from plate limit 5;

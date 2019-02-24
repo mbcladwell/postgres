@@ -410,6 +410,29 @@ $BODY$
 
 --SELECT get_ids_for_sys_names('{"PLT-1","PLT-2","PLT-3"}', 'plate', 'plate_sys_name');
 
+---------Number of samples in a plate set-----------------------------------------------------------------
 
+DROP FUNCTION get_number_samples_for_psid( _psid INTEGER );
+
+CREATE OR REPLACE FUNCTION get_number_samples_for_psid( _psid INTEGER) 
+  RETURNS integer AS
+$BODY$
+DECLARE
+   num_samples INTEGER;
+   sql_statement VARCHAR;
+  --plate_layout_name_id INTEGER;
+
+BEGIN
+
+     --sql_statement := 'SELECT plate_layout_name_id FROM plate_set WHERE id = ' || _psid;
+     --EXECUTE sql_statement INTO plate_layout_name_id;
+
+      sql_statement := 'SELECT count(sample_id) FROM well_sample WHERE well_sample.well_id IN (SELECT well.id FROM well WHERE well.plate_id  IN (SELECT plate_id FROM plate_plate_set WHERE plate_plate_set.plate_set_id = ' || _psid || '))'; 
+      EXECUTE sql_statement INTO num_samples;
+
+RETURN num_samples;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE;
 
 

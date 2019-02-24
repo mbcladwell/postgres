@@ -17,43 +17,6 @@
 
 plate_set.id = 1
 
-SELECT plate_plate_set.plate_id, plate_plate_set.plate_order, well.well_name, well.id, sample.id FROM plate, plate_plate_set, well, sample, well_sample WHERE plate_plate_set.plate_set_id = 1  AND plate_plate_set.plate_id = plate.id AND well.plate_id = plate.id AND well_sample.well_id = well.id AND well_sample.sample_id = sample.id ORDER BY plate_plate_set.plate_id, plate_plate_set.plate_order, well.id;
-
-DECLARE sample_ids VARCHAR[] := (SELECT sample.id FROM plate, plate_plate_set, well, sample, well_sample WHERE plate_plate_set.plate_set_id = 1  AND plate_plate_set.plate_id = plate.id AND well.plate_id = plate.id AND well_sample.well_id = well.id AND well_sample.sample_id = sample.id ORDER BY plate_plate_set.plate_id, plate_plate_set.plate_order, well.id);
-
-DO
-$$
-DECLARE
-    rec   record;
-    nbrow bigint;
-BEGIN
-   FOR rec IN
-      SELECT *
-      FROM   pg_tables
-      WHERE  tablename NOT LIKE 'pg\_%'
-      ORDER  BY tablename
-   LOOP
-      EXECUTE 'SELECT count(*) FROM '
-        || quote_ident(rec.schemaname) || '.'
-        || quote_ident(rec.tablename)
-      INTO nbrow;
-      -- Do something with nbrow
-   END LOOP;
-END
-$$;
-
-
-DROP FUNCTION IF exists test( _old_plate_set_id INTEGER, _new_plate_set_id INTEGER);
-CREATE OR REPLACE FUNCTION test(_old_plate_set_id INTEGER, _new_plate_set_id INTEGER)
-  RETURNS void AS
-$BODY$
-DECLARE
-   old_psid int := _old_plate_set_id;
-   new_psid int := _new_plate_set_id;
-   counter INTEGER;
-   sql_statement VARCHAR;
-all_sample_ids VARCHAR[];
-num_plates INTEGER;
 
    
 BEGIN
@@ -98,3 +61,6 @@ SELECT well_by_col  FROM plate_layout, plate_layout_name  WHERE plate_layout.pla
 
 
 select well.well_name, sample.sample_sys_name from plate, well, well_sample, sample where plate.id = 418 AND well_sample.well_id= well.id and well_sample.sample_id=sample.id and well.plate_id=418;
+
+
+SELECT plate_set.plate_set_sys_name AS \"PlateSetID\", plate_set_name As \"Name\", format AS \"Format\", num_plates AS \"# plates\" , plate_type.plate_type_name AS \"Type\", plate_layout_name.name AS \"Layout\", descr AS \"Description\" FROM plate_set, plate_format, plate_type, plate_layout_name WHERE plate_format.id = plate_set.plate_format_id AND plate_set.plate_layout_name_id = plate_layout_name.id  AND plate_set.plate_type_id = plate_type.id AND project_id = (select id from project where project_sys_name like 'PRJ-10') ORDER BY plate_set.id DESC;

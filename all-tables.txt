@@ -95,12 +95,24 @@ pmdb=> select * from plate_plate_set limit 5;
 
 select * from plate_set;
 
- id |  plate_set_name  |    descr    | plate_set_sys_name | num_plates | plate_format_id | plate_type_id | project_id |            updated            
-----+------------------+-------------+--------------------+------------+-----------------+---------------+------------+-------------------------------
-  1 | ps-name-by-user1 | using loop1 | PS-1               |         20 |               1 |             1 |         10 | 2019-01-29 06:44:00.308627-05
-  2 | ps-name-by-user2 | using loop2 | PS-2               |         20 |               1 |             1 |         10 | 2019-01-29 06:44:00.736645-05
-  3 | ps-name-by-user3 | using loop3 | PS-3               |         20 |               2 |             1 |         10 | 2019-01-29 06:44:01.174929-05
-  4 | ps-name-by-user4 | using loop4 | PS-4               |         20 |               2 |             1 |         10 | 2019-01-29 06:44:02.769877-05
+ id | barcode |  plate_set_name  |    descr    | plate_set_sys_name | num_plates | plate_format_id | plate_type_id | project_id | plate_layout_name_id |            updated            
+----+---------+------------------+-------------+--------------------+------------+-----------------+---------------+------------+----------------------+-------------------------------
+  2 |         | ps-name-by-user1 | using loop1 | PS-2               |         20 |              96 |             1 |         10 |                    1 | 2019-02-21 16:24:28.359402-05
+  3 |         | ps-name-by-user2 | using loop2 | PS-3               |         20 |              96 |             1 |         10 |                    1 | 2019-02-21 16:25:11.018774-05
+  4 |         | ps-name-by-user3 | using loop3 | PS-4               |         20 |             384 |             1 |         10 |                    3 | 2019-02-21 16:25:12.373142-05
+  5 |         | ps-name-by-user4 | using loop4 | PS-5               |         20 |             384 |             1 |         10 |                    3 | 2019-02-21 16:25:19.678123-05
+  6 |         | ps-name-by-user5 | using loop5 | PS-6               |         20 |             384 |             1 |         10 |                    3 | 2019-02-21 16:25:26.976821-05
+
+
+pmdb=> select * from plate_type limit 5;
+ id | plate_type_name 
+----+-----------------
+  1 | assay
+  2 | rearray
+  3 | master
+  4 | daughter
+  5 | archive
+
 
 
 pmdb=> select * from sample limit 5;

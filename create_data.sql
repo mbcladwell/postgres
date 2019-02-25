@@ -68,9 +68,9 @@ select new_assay_run( 'assay_run5', 'descr for assay run 5', 1, 2, 1);
 
 
 
-INSERT INTO assay_result ( sample_id,  response, assay_run_id) VALUES ( 1,  0.2345,6 );
-INSERT INTO assay_result ( sample_id,  response, assay_run_id) VALUES ( 1,  0.345, 6);
-INSERT INTO assay_result ( sample_id, response, assay_run_id) VALUES ( 1,  0.457, 6);
-INSERT INTO assay_result ( sample_id, response, assay_run_id) VALUES ( 1,  0.9345, 6);
-INSERT INTO assay_result ( sample_id, response, assay_run_id) VALUES ( 1,  0.25, 6);
+INSERT INTO assay_result ( sample_id,  response, assay_run_id) VALUES ( 1,  0.2345,1 );
+INSERT INTO assay_result ( sample_id,  response, assay_run_id) VALUES ( 1,  0.345, 1);
+INSERT INTO assay_result ( sample_id, response, assay_run_id) VALUES ( 1,  0.457, 1);
+INSERT INTO assay_result ( sample_id, response, assay_run_id) VALUES ( 1,  0.9345, 1);
+INSERT INTO assay_result ( sample_id, response, assay_run_id) VALUES ( 1,  0.25, 1);
 

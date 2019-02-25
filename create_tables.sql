@@ -228,11 +228,11 @@ CREATE TABLE plate_layout_name (
 CREATE INDEX ON plate_layout_name(plate_format_id);
 	
 
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls column 12', 'singlecates', 96);		
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls column 12', 'duplicates', 96);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4 controls columns 23, 24', 'quadruplicates', 384);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 23, 24', 'octuplicates', 384);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8 controls columns 47, 48', 'quadruplicates', 1536);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4;1x;Y;E12-H12', 'singlecates', 96);		
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8;1x;Y;A12-H12', 'duplicates', 96);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4;1x;Y;I23-P24', 'quadruplicates', 384);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8;1x;Y;A23-P24', 'octuplicates', 384);
+INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8;1x;Y;Q47-AF48', 'quadruplicates', 1536);
 
 
 
@@ -418,6 +418,7 @@ CREATE TABLE plate_layout (
 		plate_layout_name_id INTEGER,
                 well_by_col INTEGER,
                 well_type_id INTEGER,
+		rep VARCHAR(2),
 		FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id),
                 FOREIGN KEY (well_type_id) REFERENCES well_type(id));
 
@@ -685,6 +686,17 @@ CREATE TABLE temp_data (
 CREATE INDEX ON temp_data(plate);
 CREATE INDEX ON temp_data(well);
 
+---------------------------------------------------
+
+DROP TABLE IF EXISTS layout_source_dest CASCADE;
+
+CREATE TABLE layout_source_dest (
+                src INTEGER NOT NULL,
+                dest INTEGER NOT NULL;)
+
+
+INSERT INTO layout_source_dest( src, dest ) VALUES (1,3);
+INSERT INTO layout_source_dest( src, dest ) VALUES (2,4);
 
 
 

@@ -133,32 +133,27 @@ DROP FUNCTION IF EXISTS fill_well_numbers_a();
 
 --users------------------------------------------------------
 
-DROP TABLE IF EXISTS pmuser_permissions CASCADE;
-DROP SEQUENCE IF EXISTS  pmuser_permissions_id_seq CASCADE;
-DROP INDEX IF EXISTS pmuser_permissions_pkey CASCADE;
-CREATE TABLE pmuser_permissions
+DROP TABLE IF EXISTS pmuser_groups CASCADE;
+CREATE TABLE pmuser_groups
 (id SERIAL PRIMARY KEY,
-        permissions VARCHAR(30),
+        usergroup VARCHAR(30),
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp);
 
-INSERT INTO pmuser_permissions (permissions) VALUES ('administrator');
-INSERT INTO pmuser_permissions (permissions) VALUES ('superpmuser');
-INSERT INTO pmuser_permissions (permissions) VALUES ('user');
+INSERT INTO pmuser_groups (usergroup) VALUES ('administrator');
+INSERT INTO pmuser_groups (usergroup) VALUES ('user');
 
 DROP TABLE IF EXISTS pmuser CASCADE;
-DROP SEQUENCE IF EXISTS  pmuser_id_seq CASCADE;
-DROP INDEX IF EXISTS pmuser_pkey CASCADE;
 CREATE TABLE pmuser
 (id SERIAL PRIMARY KEY,
-        permissions INTEGER,
-	pmuser_name VARCHAR(30),
-	email VARCHAR(30) NOT NULL UNIQUE,
+        usergroup INTEGER,
+	pmuser_name VARCHAR(30) NOT NULL UNIQUE,
+	tags VARCHAR(30) ,
         password VARCHAR(64) NOT NULL,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp);
 
 --INSERT INTO pmuser ( pmuser_name, email, permissions, password) VALUES ('admin1', 'pmadmin@postgres', 1, crypt('welcome',gen_salt('bf')));
-INSERT INTO pmuser ( pmuser_name, email, permissions, password) VALUES ('admin1', 'pmadmin@postgres', 1, 'welcome');
-INSERT INTO pmuser ( pmuser_name, email, permissions, password) VALUES ('user1', 'pmadmin2@postgres', 1, 'welcome');
+INSERT INTO pmuser ( pmuser_name, tags, usergroup, password) VALUES ('admin', 'pmadmin@postgres', 1, 'welcome');
+INSERT INTO pmuser ( pmuser_name, tags, usergroup, password) VALUES ('user', 'pmadmin2@postgres', 1, 'welcome');
 
 
 select * from pmuser;

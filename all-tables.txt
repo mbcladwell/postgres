@@ -136,7 +136,7 @@ pmdb=> select * from temp_data;
      1 |    5 |   0.500923
 
 
-pmdb=> select * from well limit 5;;
+pmdb=> select * from well limit 5;
 
  id | well_name | plate_id 
 ----+-----------+----------

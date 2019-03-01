@@ -1,4 +1,20 @@
 
+---User
+
+DROP FUNCTION IF EXISTS new_user(_name character varying, _tags character VARYING, _password CHARACTER VARYING, _group INTEGER);
+CREATE OR REPLACE FUNCTION new_user(_name character varying, _tags character VARYING, _password CHARACTER VARYING, _group INTEGER)
+  RETURNS void AS
+$BODY$
+BEGIN
+   INSERT INTO pmuser(usergroup, pmuser_name, tags, password)
+   VALUES (_group, _name, _tags, _password);
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+
+
+
 ----Project
 
 

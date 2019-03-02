@@ -452,3 +452,35 @@ $BODY$
   LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE;
 
 
+------new plate layout
+
+DROP FUNCTION new_plate_layout(  VARCHAR(30), VARCHAR(30), INTEGER,  VARCHAR[][]);
+
+CREATE OR REPLACE FUNCTION new_plate_layout( _plate_layout_name VARCHAR(30), _descr VARCHAR(30), _plate_format_id INTEGER, _data VARCHAR[][])
+  RETURNS integer AS
+$BODY$
+DECLARE
+   src_id integer;
+   dest_id INTEGER;
+   dest_name VARCHAR(30);
+BEGIN
+
+
+   INSERT INTO plate_layout_name(name, descr, plate_format_id)
+   VALUES (_plate_layout_name, _descr, _plate_format_id)
+   RETURNING id INTO src_id;
+
+dest_name := _plate_layout_name || '-dest';
+
+   INSERT INTO plate_layout_name(name, descr, plate_format_id)
+   VALUES (_plate_layout_name, _descr, _plate_format_id)
+   RETURNING id INTO dest_id;
+
+INSERT INTO layout_source_dest(src, dest) VALUES (src_id, dest_id);
+
+
+ 
+RETURN plname_id;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;

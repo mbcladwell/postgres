@@ -215,19 +215,66 @@ DROP TABLE IF EXISTS plate_layout_name CASCADE;
 
 CREATE TABLE plate_layout_name (
 		id SERIAL PRIMARY KEY,
+		sys_name VARCHAR(30),
                 name VARCHAR(30),
                 descr VARCHAR(30),
                 plate_format_id INTEGER,
+		replicates INTEGER,
+		use_edge INTEGER,
+		num_controls INTEGER,
+		control_loc VARCHAR(30),
+		source_dest VARCHAR(30),
 		FOREIGN KEY (plate_format_id) REFERENCES plate_format(id));
 
 CREATE INDEX ON plate_layout_name(plate_format_id);
 	
 
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4;1x;Y;E12-H12', 'singlecates', 96);		
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8;1x;Y;A12-H12', 'duplicates', 96);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('4;1x;Y;I23-P24', 'quadruplicates', 384);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8;1x;Y;A23-P24', 'octuplicates', 384);
-INSERT INTO plate_layout_name (name, descr, plate_format_id) VALUES ('8;1x;Y;Q47-AF48', 'quadruplicates', 1536);
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-1','4 controls col 12', 'singlicates', 96, 1,1,4,'E12-H12','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-2','4 controls cols 23,24', 'singlicates', 384, 1,1,4,'I23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-3','4 controls cols 23,24', 'duplicates', 384, 2,1,4,'I23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-4','4 controls cols 23,24', 'quadruplicates', 384, 4,1,4,'I23-P24','dest');
+
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-5','8 controls col 12', 'singlicates', 96, 1,1,8,'A12-H12','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-6','8 controls cols 23,24', 'singlicates', 384, 1,1,8,'A23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-7','8 controls cols 23,24', 'duplicates', 384, 2,1,8,'A23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-8','8 controls cols 23,24', 'quadruplicates', 384, 4,1,8,'A23-P24','dest');
+
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-9','8 controls col 24', 'singlicates', 384, 1,1,8,'I24-P24','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-10','8 controls cols 47,48', 'singlicates', 1536, 1,1,8,'Q47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-11','8 controls cols 47,48', 'duplicates', 1536, 2,1,8,'Q47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-12','8 controls cols 47,48', 'quadruplicates', 1536, 4,1,8,'Q47-AF48','dest');
+
+
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-13','16 controls col 24', 'singlicates', 384, 1,1,16,'A24-P24','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-14','16 controls cols 47,48', 'singlicates', 1536, 1,1,16,'A47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-15','16 controls cols 47,48', 'duplicates', 1536, 2,1,16,'A47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-16','16 controls cols 47,48', 'quadruplicates', 1536, 4,1,16,'A47-AF48','dest');
+
+
+DROP TABLE IF EXISTS layout_source_dest CASCADE;
+
+CREATE TABLE layout_source_dest (
+                src INTEGER NOT NULL,
+                dest INTEGER NOT NULL);
+
+
+INSERT INTO layout_source_dest( src, dest ) VALUES (1,2);
+INSERT INTO layout_source_dest( src, dest ) VALUES (1,3);
+INSERT INTO layout_source_dest( src, dest ) VALUES (1,4);
+
+INSERT INTO layout_source_dest( src, dest ) VALUES (5,6);
+INSERT INTO layout_source_dest( src, dest ) VALUES (5,7);
+INSERT INTO layout_source_dest( src, dest ) VALUES (5,8);
+
+INSERT INTO layout_source_dest( src, dest ) VALUES (9,10);
+INSERT INTO layout_source_dest( src, dest ) VALUES (9,11);
+INSERT INTO layout_source_dest( src, dest ) VALUES (9,12);
+
+INSERT INTO layout_source_dest( src, dest ) VALUES (13,14);
+INSERT INTO layout_source_dest( src, dest ) VALUES (13,15);
+INSERT INTO layout_source_dest( src, dest ) VALUES (13,16);
+
+
 
 
 
@@ -682,17 +729,6 @@ CREATE INDEX ON temp_data(plate);
 CREATE INDEX ON temp_data(well);
 
 ---------------------------------------------------
-
-DROP TABLE IF EXISTS layout_source_dest CASCADE;
-
-CREATE TABLE layout_source_dest (
-                src INTEGER NOT NULL,
-                dest INTEGER NOT NULL;)
-
-
-INSERT INTO layout_source_dest( src, dest ) VALUES (1,3);
-INSERT INTO layout_source_dest( src, dest ) VALUES (2,4);
-
 
 
 

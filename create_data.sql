@@ -73,4 +73,3 @@ INSERT INTO assay_result ( sample_id,  response, assay_run_id) VALUES ( 1,  0.34
 INSERT INTO assay_result ( sample_id, response, assay_run_id) VALUES ( 1,  0.457, 1);
 INSERT INTO assay_result ( sample_id, response, assay_run_id) VALUES ( 1,  0.9345, 1);
 INSERT INTO assay_result ( sample_id, response, assay_run_id) VALUES ( 1,  0.25, 1);
-

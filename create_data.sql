@@ -17,25 +17,25 @@ SELECT * FROM project;
 
 SELECT new_plate_set('using loop1','ps-name-by-user1',20,96,1,10,1,TRUE);
 SELECT new_plate_set('using loop2','ps-name-by-user2',20,96,1,10,1,TRUE);
-SELECT new_plate_set('using loop3','ps-name-by-user3',20,384,1,10,3,TRUE);
-SELECT new_plate_set('using loop4','ps-name-by-user4',20,384,1,10,3,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,1,10,3,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,10,3,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,10,3,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,10,5,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,10,5,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,10,5,TRUE);
+SELECT new_plate_set('using loop3','ps-name-by-user3',20,384,1,10,15,TRUE);
+SELECT new_plate_set('using loop4','ps-name-by-user4',20,384,1,10,15,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,1,10,15,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,10,15,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,10,15,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,10,43,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,10,43,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,10,43,TRUE);
 
 SELECT new_plate_set('using loop1','ps-name-by-user1',20,96,1,9,1,TRUE);
 SELECT new_plate_set('using loop2','ps-name-by-user2',20,96,1,9,1,TRUE);
-SELECT new_plate_set('using loop3','ps-name-by-user3',20,384,1,9,3,TRUE);
-SELECT new_plate_set('using loop4','ps-name-by-user4',20,384,1,9,3,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,1,9,3,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,9,3,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,9,3,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,5,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,5,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,5,TRUE);
+SELECT new_plate_set('using loop3','ps-name-by-user3',20,384,1,9,15,TRUE);
+SELECT new_plate_set('using loop4','ps-name-by-user4',20,384,1,9,15,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,1,9,15,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,9,15,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,9,15,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,43,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,43,TRUE);
+SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,43,TRUE);
 
 SELECT new_plate_set('for data import','ps-name-96 well',2,96,1,1,1,TRUE);
 

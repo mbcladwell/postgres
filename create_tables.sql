@@ -230,7 +230,7 @@ CREATE TABLE plate_layout_name (
 CREATE INDEX ON plate_layout_name(plate_format_id);
 	
 -- 96 well plate 4 controls
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-1','4 controls col 12', 'ST', 96,1,1,1,4,'E12-H12','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-1','4 controls col 12', '1S1T', 96,1,1,1,4,'E12-H12','source');
 
 INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-2','4 controls cols 23,24', '1S4T', 384, 1,4,1,4,'I23-P24','dest');
 INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, control_loc, source_dest) VALUES ('LYT-3','4 controls cols 23,24', '1S2T', 384, 1,2,1,4,'I23-P24','dest');

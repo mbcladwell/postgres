@@ -36,6 +36,8 @@ $BODY$
 
 -----Plate_set-------------------------------------------
 
+--does not return anything
+-- new_plate_set2 returns ps_id
 DROP FUNCTION IF exists new_plate_set(_descr VARCHAR(30), _plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_format_id INTEGER,  _plate_type_id INTEGER, _project_id INTEGER, _plate_layout_name_id INTEGER, _with_samples boolean);
 
 CREATE OR REPLACE FUNCTION new_plate_set(_descr VARCHAR(30),_plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_format_id INTEGER, _plate_type_id INTEGER, _project_id INTEGER, _plate_layout_name_id INTEGER, _with_samples boolean)
@@ -64,9 +66,49 @@ FOR i IN 1..n_plates loop
 
 END LOOP;
 
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
+
+--returns ps_id
+DROP FUNCTION IF exists new_plate_set2(_descr VARCHAR(30), _plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_format_id INTEGER,  _plate_type_id INTEGER, _project_id INTEGER, _plate_layout_name_id INTEGER, _with_samples boolean);
+
+CREATE OR REPLACE FUNCTION new_plate_set2(_descr VARCHAR(30),_plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_format_id INTEGER, _plate_type_id INTEGER, _project_id INTEGER, _plate_layout_name_id INTEGER, _with_samples boolean)
+  RETURNS INTEGER AS
+$BODY$
+DECLARE
+   ps_id INTEGER;
+   n_plates INTEGER;
+   p_type INTEGER;
+   p_form INTEGER;
+   prj_id INTEGER;
+   plt_id INTEGER;
+   play_n_id INTEGER;
+   w_spls BOOLEAN := _with_samples;
+BEGIN
+   
+   INSERT INTO plate_set(descr, plate_set_name, num_plates, plate_format_id, plate_type_id, project_id, plate_layout_name_id)
+   VALUES (_descr, _plate_set_name, _num_plates, _plate_format_id, _plate_type_id, _project_id, _plate_layout_name_id )
+   RETURNING ID, plate_format_id, num_plates, project_id, plate_type_id, plate_layout_name_id INTO ps_id, p_form, n_plates, prj_id, p_type, play_n_id;
+   UPDATE plate_set SET plate_set_sys_name = 'PS-'||ps_id WHERE id=ps_id;
+
+FOR i IN 1..n_plates loop
+	     -- _plate_type_id INTEGER, _plate_set_id INTEGER, _project_id INTEGER, _plate_format_id INTEGER, include_sample BOOLEAN
+	    SELECT new_plate(p_type, ps_id, p_form, play_n_id, w_spls) INTO plt_id;
+	    UPDATE plate_plate_set SET plate_order = i WHERE plate_set_id = ps_id AND plate_id = plt_id;
+
+END LOOP;
+
+RETURN ps_id;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+
+
+
+
 
 --SELECT new_plate_set('using loop','ps-name-by-user',20,3,1,1,TRUE);
 select COUNT(*) FROM plate;

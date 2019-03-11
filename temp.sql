@@ -16,21 +16,14 @@
 5 plates 384 well format
 
 plate_set.id = 21   2 plates
+plate_set.id = 31   2 plates
+
 
 --DialogReformatPlateSet provides  dmf,  name, description new_plate_format_id, type_id, layout_id
 			   --old_plate_set_id, old_num_plates
-   
-BEGIN
 
-sql_statement := 'SELECT ARRAY(SELECT sample.id FROM plate, plate_plate_set, well, sample, well_sample WHERE plate_plate_set.plate_set_id = ' || old_psid || ' AND plate_plate_set.plate_id = plate.id AND well.plate_id = plate.id AND well_sample.well_id = well.id AND well_sample.sample_id = sample.id ORDER BY plate_plate_set.plate_id, plate_plate_set.plate_order, well.id)';
+SELECT * FROM plate_set WHERE plate_set.id = 21;
+SELECT * FROM well LIMIT 5;
 
-    RAISE notice 'sql_statement: (%)', sql_statement;
+SELECT well.plate_id, well.well_name, well.ID, sample.id FROM plate_plate_set, well, well_sample, sample  WHERE plate_plate_set.plate_set_id = 21 AND plate_plate_set.plate_id = well.plate_id AND well_sample.well_id=well.ID AND well_sample.sample_id=sample.id ORDER BY plate_plate_set.plate_order, well.id;
 
-     EXECUTE sql_statement INTO all_sample_ids;
-     num_plates := ceiling( array_length(all_sample_ids ,1)/384); 
-    RAISE notice 'ids: (%)', all_sample_ids;
-
-
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE;

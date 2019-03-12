@@ -54,23 +54,33 @@ CREATE OR REPLACE FUNCTION reformat_plate_set(source_plate_set_id INTEGER, n_rep
  RETURNS void AS
 $BODY$
 DECLARE
-all_well_ids INTEGER[];
-
+all_source_well_ids INTEGER[];
+all_dest_well_ids INTEGER[];
+ w INTEGER;
 BEGIN
+
+
+
+
 
 CREATE TEMP TABLE sources(plate_id INT, well_name VARCHAR(10), well_id INT);
 
 FOR i IN 1..n_reps_source loop
-INSERT INTO sources select well.plate_id, well.well_name, well.id  FROM plate_plate_set, well  WHERE plate_plate_set.plate_set_id = source_plate_set_id AND plate_plate_set.plate_id = well.plate_id   ORDER BY plate_plate_set.plate_order, well.ID;
+INSERT INTO sources select well.plate_id, well.well_name, well.id AS well_id FROM plate_plate_set, well  WHERE plate_plate_set.plate_set_id = source_plate_set_id AND plate_plate_set.plate_id = well.plate_id   ORDER BY plate_plate_set.plate_order, well.ID;
 END LOOP;
 
-SELECT ARRAY (SELECT well.ID FROM sources) INTO all_wells_ids;
+SELECT ARRAY (SELECT well_id FROM sources) INTO all_source_well_ids;
 
 
-CREATE TEMP TABLE dest(plate_id INT, well_name VARCHAR(10), well_id INT);
+--CREATE TEMP TABLE dest(plate_id INT, well_name VARCHAR(10), well_id INT);
 
-INSERT INTO dest select well.plate_id, well.well_name, well.id  FROM plate_plate_set, well  WHERE plate_plate_set.plate_set_id = dest_plate_set_id AND plate_plate_set.plate_id = well.plate_id   ORDER BY plate_plate_set.plate_order, well.ID;
+SELECT ARRAY( SELECT well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = dest_plate_set_id AND plate_plate_set.plate_id = well.plate_id   ORDER BY plate_plate_set.plate_order, well.ID) INTO all_dest_well_ids ;
 
+   FOREACH w  IN ARRAY all_source_well_ids LOOP
+INSERT INTO well_sample (well_id, sample_id) VALUES
+(all_dest_well_ids[w], (SELECT sample.ID FROM sample, well, well_sample WHERE well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID AND well.ID= all_source_well_ids[w] ));
+
+END LOOP;
 
 
 
@@ -80,7 +90,7 @@ $BODY$
 ------------------------------------
 
 DROP TABLE sources;
-DROP TABLE dest;
+--DROP TABLE dest;
 
 SELECT reformat_plate_set(21, 4, 31 );
 
@@ -88,42 +98,13 @@ SELECT reformat_plate_set(21, 4, 31 );
 SELECT * FROM sources LIMIT 5;
 SELECT * FROM dest LIMIT 5;
 
+SELECT COUNT(*) FROM well_sample;
+
 
 SELECT dest.plate_id AS dest_plate_id, dest.well_name AS dest_well_name, dest.well_id AS dest_well_id, by_col, quad FROM dest JOIN temp1 ON(dest.well_name = temp1.well_name) ORDER BY dest.plate_id, temp1.quad, temp1.by_col;
 
 
 Create TEMP TABLE temp2 as (SELECT dest.plate_id AS dest_plate_id, dest.well_name AS dest_well_name, dest.well_id AS dest_well_id, by_col, quad FROM dest JOIN temp1 ON(dest.well_name = temp1.well_name) ORDER BY dest.plate_id, temp1.quad, temp1.by_col);
 
-SELECT * FROM temp2 LIMIT 5;
 
-ALTER TABLE temp2  ADD COLUMN source_well_id INTEGER;
-
-
-
-DECLARE 
-   t_curs cursor for 
-      select * from the_table;
-   t_row the_table%rowtype;
-BEGIN
-    FOR t_row in t_curs LOOP
-        update the_table
-            set resid = 1.0
-        where current of t_curs;
-    END LOOP;
-END;
-
-
-
-
-DECLARE 
-   t2_curs cursor FOR temp2;
-   t2_row temp2%rowtype;
-   source_curs cursor FOR sources;
-   source_row sources%rowtype;
-BEGIN
-    FOR t2_row in t2_curs LOOP
-        update temp2
-            set temp2.source_well_id = sources.well_id 
-        where current of t2_curs;
-    END LOOP;
-END;
+SELECT * FROM well WHERE well.plate_id =406;

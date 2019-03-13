@@ -1,3 +1,4 @@
+-- -*- mode: sql; sql-product: postgres; -*-
 
 --https://postgres.cz/wiki/PostgreSQL_SQL_Tricks
 
@@ -45,22 +46,30 @@ FOR i IN 1..n_reps_source loop
 INSERT INTO sources select well.plate_id, well.well_name, well.id  FROM plate_plate_set, well  WHERE plate_plate_set.plate_set_id = source_plate_set_id AND plate_plate_set.plate_id = well.plate_id   ORDER BY plate_plate_set.plate_order, well.ID;
 END LOOP;
 
---select the wells in all plates
+--------------------------------------
+
+--CREATE OR REPLACE FUNCTION new_plate_set(_descr VARCHAR(30),_plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_format_id INTEGER, _plate_type_id INTEGER, _project_id INTEGER, _plate_layout_name_id INTEGER, _with_samples boolean)
+ -- RETURNS integer AS
 
 
---------------------------------------------
-DROP FUNCTION IF exists reformat_plate_set(source_plate_set_id INTEGER, n_reps_source INTEGER, dest_plate_set_id INTEGER);
-CREATE OR REPLACE FUNCTION reformat_plate_set(source_plate_set_id INTEGER, n_reps_source INTEGER, dest_plate_set_id INTEGER)
+
+DROP FUNCTION IF exists reformat_plate_set(source_plate_set_id INTEGER, source_num_plates INTEGER, n_reps_source INTEGER, dest_descr VARCHAR(30), dest_plate_set_name VARCHAR(30), dest_num_plates INTEGER, dest_plate_format_id INTEGER, dest_plate_type_id INTEGER, project_id INTEGER, dest_plate_layout_name_id INTEGER );
+
+
+
+CREATE OR REPLACE FUNCTION reformat_plate_set(source_plate_set_id INTEGER, source_num_plates INTEGER, n_reps_source INTEGER, dest_descr VARCHAR(30), dest_plate_set_name VARCHAR(30), dest_num_plates INTEGER, dest_plate_format_id INTEGER, dest_plate_type_id INTEGER, project_id INTEGER, dest_plate_layout_name_id INTEGER )
  RETURNS void AS
 $BODY$
 DECLARE
+
+dest_plate_set_id INTEGER;
 all_source_well_ids INTEGER[];
 all_dest_well_ids INTEGER[];
  w INTEGER;
+
 BEGIN
-
-
-
+--here I am creating the destination plate set, no samples included
+SELECT insertPlateSet(dest_descr ,dest_plate_set_name, dest_num_plates, dest_plate_format_id, dest_plate_type_id, project_id, dest_plate_layout_name_id, false) INTO dest_plate_set_id;
 
 
 CREATE TEMP TABLE sources(plate_id INT, well_name VARCHAR(10), well_id INT);
@@ -83,10 +92,11 @@ INSERT INTO well_sample (well_id, sample_id) VALUES
 END LOOP;
 
 
-
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
+
+
 ------------------------------------
 
 DROP TABLE sources;

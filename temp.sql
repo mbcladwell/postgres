@@ -56,7 +56,7 @@ END LOOP;
 DROP FUNCTION IF exists reformat_plate_set(source_plate_set_id INTEGER, source_num_plates INTEGER, n_reps_source INTEGER, dest_descr VARCHAR(30), dest_plate_set_name VARCHAR(30), dest_num_plates INTEGER, dest_plate_format_id INTEGER, dest_plate_type_id INTEGER, project_id INTEGER, dest_plate_layout_name_id INTEGER );
 
 CREATE OR REPLACE FUNCTION reformat_plate_set(source_plate_set_id INTEGER, source_num_plates INTEGER, n_reps_source INTEGER, dest_descr VARCHAR(30), dest_plate_set_name VARCHAR(30), dest_num_plates INTEGER, dest_plate_format_id INTEGER, dest_plate_type_id INTEGER, project_id INTEGER, dest_plate_layout_name_id INTEGER )
- RETURNS void AS
+ RETURNS integer AS
 $BODY$
 DECLARE
 
@@ -79,28 +79,18 @@ END LOOP;
 
 SELECT ARRAY (SELECT well_id FROM sources) INTO all_source_well_ids;
 
-RAISE notice 'all_source_well_ids[0]: (%)', all_source_well_ids[0];
-RAISE notice 'all_source_well_ids[1]: (%)', all_source_well_ids[1];
-RAISE notice 'all_source_well_ids[2]: (%)', all_source_well_ids[2];
-RAISE notice 'all_source_well_ids[3]: (%)', all_source_well_ids[3];
-
 
 SELECT ARRAY (SELECT  dest.id  FROM ( SELECT plate_plate_set.plate_ID, well.well_name,  well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = 40  AND plate_plate_set.plate_id = well.plate_id) AS dest JOIN (SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=dest_plate_format_id)  AS foo ON (dest.well_name=foo.well_name) ORDER BY plate_id, quad, by_col) INTO all_dest_well_ids;
 
-RAISE notice 'all_dest_well_ids[0]: (%)', all_dest_well_ids[0];
-RAISE notice 'all_dest_well_ids[1]: (%)', all_dest_well_ids[1];
-RAISE notice 'all_dest_well_ids[2]: (%)', all_dest_well_ids[2];
-RAISE notice 'all_dest_well_ids[3]: (%)', all_dest_well_ids[3];
 
-
-   FOREACH w  IN ARRAY all_source_well_ids LOOP
+FOR w IN 1..array_length(all_source_well_ids,1)  LOOP
 INSERT INTO well_sample (well_id, sample_id) VALUES
 (all_dest_well_ids[w], (SELECT sample.ID FROM sample, well, well_sample WHERE well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID AND well.ID= all_source_well_ids[w] ));
-
 END LOOP;
 
 DROP TABLE sources;
 
+RETURN dest_plate_set_id;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
@@ -108,10 +98,13 @@ $BODY$
 
 ------------------------------------
 
+SELECT reformat_plate_set( 21, 2, 2, 'ertertertert', 'ertertertert', 1, 384, 1, 1, 4);
+
+
+
+
 DROP TABLE sources;
 --DROP TABLE dest;
-
-SELECT reformat_plate_set(21, 4, 31 );
 
 
 SELECT * FROM sources LIMIT 5;
@@ -130,7 +123,6 @@ SELECT * FROM well WHERE well.plate_id =406;
 
 SELECT new_plate_set('descr','name', 1, 384, 1, 1, 2, FALSE) INTO ps_id;
 
-SELECT reformat_plate_set( 21, 2, 2, 'ertertertert', 'ertertertert', 1, 384, 1, 1, 4);
 
 -------------------
 
@@ -154,3 +146,24 @@ SELECT plate_id, well_id, by_col, quad   FROM dest JOIN (SELECT well_numbers.wel
 SELECT plate_id, dest.id, by_col, quad   FROM ( SELECT plate_plate_set.plate_ID, well.well_name,  well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = 40  AND plate_plate_set.plate_id = well.plate_id) AS dest JOIN (SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=384)  AS foo ON (dest.well_name=foo.well_name) ORDER BY plate_id, quad, by_col;
 
 
+ SELECT * FROM plate_plate_set WHERE plate_plate_set.plate_set_id = 70;
+
+ SELECT * FROM plate WHERE plate.ID = 461;
+ 
+SELECT * FROM well WHERE well.plate_id =457;
+
+SELECT * FROM well_sample, well, sample WHERE well.plate_id =461 AND well.ID = well_sample.well_id AND sample.ID = well_sample.sample_id;
+
+SELECT * FROM well_sample WHERE well_sample.sample_id = 263110;
+
+  FOREACH w  IN ARRAY all_source_well_ids LOOP
+INSERT INTO well_sample (well_id, sample_id) VALUES
+(all_dest_well_ids[w], (SELECT sample.ID FROM sample, well, well_sample WHERE well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID AND well.ID= all_source_well_ids[w] ));
+
+SELECT sample.ID FROM sample, well, well_sample WHERE well_sample.well_id=well.id AND well_sample.sample_id=sample.ID AND well.ID= 268801;
+
+
+INSERT INTO well_sample (well_id, sample_id) VALUES (274849, 263041);
+
+
+ SELECT plate.plate_sys_name AS "PlateID", plate_plate_set.plate_order AS "Order",  plate_type.plate_type_name As "Type", plate_format.format AS "Format" FROM plate_set, plate, plate_type, plate_format, plate_plate_set WHERE plate_plate_set.plate_set_id = (select id from plate_set where plate_set_sys_name LIKE 'PS-70') AND plate.plate_type_id = plate_type.id AND plate_plate_set.plate_id = plate.id AND plate_plate_set.plate_set_id = plate_set.id  AND plate_format.id = plate.plate_format_id ORDER BY plate_plate_set.plate_order DESC;

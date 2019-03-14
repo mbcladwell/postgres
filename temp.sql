@@ -64,6 +64,7 @@ dest_plate_set_id INTEGER;
 all_source_well_ids INTEGER[];
 all_dest_well_ids INTEGER[];
  w INTEGER;
+holder INTEGER;
 
 BEGIN
 --here I am creating the destination plate set, no samples included
@@ -71,24 +72,30 @@ SELECT new_plate_set(dest_descr ,dest_plate_set_name, dest_num_plates, dest_plat
 
 RAISE notice 'dest_plate_set_id: (%)', dest_plate_set_id;
 
-CREATE TEMP TABLE sources(plate_id INT, well_name VARCHAR(10), well_id INT);
+CREATE TEMP TABLE temp1(plate_id INT, well_name VARCHAR(10), well_id INT);
 
-FOR i IN 1..n_reps_source loop
-INSERT INTO sources select well.plate_id, well.well_name, well.id AS well_id FROM plate_plate_set, well  WHERE plate_plate_set.plate_set_id = source_plate_set_id AND plate_plate_set.plate_id = well.plate_id   ORDER BY plate_plate_set.plate_order, well.ID;
+FOR i IN 1..n_reps_source LOOP
+INSERT INTO temp1 select well.plate_id, well.well_name, well.id AS well_id FROM plate_plate_set, well  WHERE plate_plate_set.plate_set_id = source_plate_set_id AND plate_plate_set.plate_id = well.plate_id   ORDER BY plate_plate_set.plate_order, well.ID;
 END LOOP;
 
-SELECT ARRAY (SELECT well_id FROM sources) INTO all_source_well_ids;
+SELECT ARRAY (SELECT well_id FROM temp1) INTO all_source_well_ids;
 
 
-SELECT ARRAY (SELECT  dest.id  FROM ( SELECT plate_plate_set.plate_ID, well.well_name,  well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = 40  AND plate_plate_set.plate_id = well.plate_id) AS dest JOIN (SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=dest_plate_format_id)  AS foo ON (dest.well_name=foo.well_name) ORDER BY plate_id, quad, by_col) INTO all_dest_well_ids;
+SELECT ARRAY (SELECT  dest.id  FROM ( SELECT plate_plate_set.plate_ID, well.well_name,  well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = dest_plate_set_id  AND plate_plate_set.plate_id = well.plate_id) AS dest JOIN (SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=dest_plate_format_id)  AS foo ON (dest.well_name=foo.well_name) ORDER BY plate_id, quad, by_col) INTO all_dest_well_ids;
 
 
 FOR w IN 1..array_length(all_source_well_ids,1)  LOOP
-INSERT INTO well_sample (well_id, sample_id) VALUES
-(all_dest_well_ids[w], (SELECT sample.ID FROM sample, well, well_sample WHERE well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID AND well.ID= all_source_well_ids[w] ));
+SELECT sample.id FROM sample, well, well_sample WHERE well_sample.well_id=well.id AND well_sample.sample_id=sample.id AND well.id= all_source_well_ids[w] INTO holder;
+INSERT INTO well_sample (well_id, sample_id) VALUES (all_dest_well_ids[w], holder );
+
+
+RAISE notice  'w: (%)', w;
+RAISE notice  'all_source_well_ids[w]: (%)', all_source_well_ids[w];
+RAISE notice  'all_dest_well_ids[w]: (%)', all_dest_well_ids[w];
+
 END LOOP;
 
-DROP TABLE sources;
+DROP TABLE temp1;
 
 RETURN dest_plate_set_id;
 END;
@@ -103,41 +110,6 @@ SELECT reformat_plate_set( 21, 2, 2, 'ertertertert', 'ertertertert', 1, 384, 1, 
 
 
 
-DROP TABLE sources;
---DROP TABLE dest;
-
-
-SELECT * FROM sources LIMIT 5;
-SELECT * FROM dest LIMIT 5;
-
-SELECT COUNT(*) FROM well_sample;
-
-
-SELECT dest.plate_id AS dest_plate_id, dest.well_name AS dest_well_name, dest.well_id AS dest_well_id, by_col, quad FROM dest JOIN temp1 ON(dest.well_name = temp1.well_name) ORDER BY dest.plate_id, temp1.quad, temp1.by_col;
-
-
-Create TEMP TABLE temp2 as (SELECT dest.plate_id AS dest_plate_id, dest.well_name AS dest_well_name, dest.well_id AS dest_well_id, by_col, quad FROM dest JOIN temp1 ON(dest.well_name = temp1.well_name) ORDER BY dest.plate_id, temp1.quad, temp1.by_col);
-
-
-SELECT * FROM well WHERE well.plate_id =406;
-
-SELECT new_plate_set('descr','name', 1, 384, 1, 1, 2, FALSE) INTO ps_id;
-
-
--------------------
-
-CREATE TEMP TABLE dest(plate_id INT, well_name VARCHAR(10), well_id INT);
-
-INSERT INTO dest  SELECT plate_plate_set.plate_ID, well.well_name,  well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = 40  AND plate_plate_set.plate_id = well.plate_id;
-
-
-CREATE TEMP TABLE temp_w_n(well_name VARCHAR(10), by_col INT, quad INT);
-
-INSERT INTO temp_w_n SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=384;
-
---get the array of well ids here
-SELECT plate_id, well_id, by_col, quad   FROM dest JOIN temp_w_n ON(dest.well_name=temp_w_n.well_name) ORDER BY plate_id, quad, by_col;
-
 
 --this works
 SELECT plate_id, well_id, by_col, quad   FROM dest JOIN (SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=384)  AS foo ON (dest.well_name=foo.well_name) ORDER BY plate_id, quad, by_col;
@@ -146,13 +118,13 @@ SELECT plate_id, well_id, by_col, quad   FROM dest JOIN (SELECT well_numbers.wel
 SELECT plate_id, dest.id, by_col, quad   FROM ( SELECT plate_plate_set.plate_ID, well.well_name,  well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = 40  AND plate_plate_set.plate_id = well.plate_id) AS dest JOIN (SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=384)  AS foo ON (dest.well_name=foo.well_name) ORDER BY plate_id, quad, by_col;
 
 
- SELECT * FROM plate_plate_set WHERE plate_plate_set.plate_set_id = 70;
+ SELECT * FROM plate_plate_set WHERE plate_plate_set.plate_set_id = 23;
 
- SELECT * FROM plate WHERE plate.ID = 461;
+ SELECT * FROM plate WHERE plate.ID = 405;
  
-SELECT * FROM well WHERE well.plate_id =457;
+SELECT * FROM well WHERE well.plate_id =405;
 
-SELECT * FROM well_sample, well, sample WHERE well.plate_id =461 AND well.ID = well_sample.well_id AND sample.ID = well_sample.sample_id;
+SELECT * FROM well_sample, well, sample WHERE well.plate_id =405 AND well.ID = well_sample.well_id AND sample.ID = well_sample.sample_id;
 
 SELECT * FROM well_sample WHERE well_sample.sample_id = 263110;
 
@@ -165,5 +137,13 @@ SELECT sample.ID FROM sample, well, well_sample WHERE well_sample.well_id=well.i
 
 INSERT INTO well_sample (well_id, sample_id) VALUES (274849, 263041);
 
+SELECT plate.id FROM plate WHERE plate.plate_sys_name = 'PLT-401';
 
- SELECT plate.plate_sys_name AS "PlateID", plate_plate_set.plate_order AS "Order",  plate_type.plate_type_name As "Type", plate_format.format AS "Format" FROM plate_set, plate, plate_type, plate_format, plate_plate_set WHERE plate_plate_set.plate_set_id = (select id from plate_set where plate_set_sys_name LIKE 'PS-70') AND plate.plate_type_id = plate_type.id AND plate_plate_set.plate_id = plate.id AND plate_plate_set.plate_set_id = plate_set.id  AND plate_format.id = plate.plate_format_id ORDER BY plate_plate_set.plate_order DESC;
+SELECT * FROM well WHERE well.plate_id=403;
+
+
+SELECT * FROM well_sample, well WHERE well.plate_id=403 AND well.ID = well_sample.well_id;
+
+
+SELECT new_plate_set('descr','name', 1, 384, 1, 1, 2, FALSE) INTO ps_id2;
+SELECT * FROM sample;

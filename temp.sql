@@ -47,15 +47,13 @@ SELECT * FROM plate_set WHERE plate_set.ID = 10;
 
 DROP FUNCTION IF exists get_scatter_plot_data(_assay_run_id integer);
 
-CREATE OR REPLACE FUNCTION get_scatter_plot_data(_assay_run_id integer)
-  RETURNS TABLE(plate INTEGER, well INTEGER, response REAL, bkgrnd_sub REAL,   norm REAL,   norm_pos REAL,  well_type_id INTEGER,  replicates INTEGER,  target VARCHAR(2) ) AS
+CREATE OR REPLACE FUNCTION get_scatter_plot_data(_assay_run_id INTEGER)
+  RETURNS TABLE( plate INTEGER, well INTEGER, response REAL, bkgrnd_sub REAL,   norm REAL,   norm_pos REAL,  well_type_id INTEGER,  replicates VARCHAR(2), target VARCHAR(2) ) AS
 $BODY$
-DECLARE
-   format INTEGER;
 BEGIN
 
 RETURN query
- SELECT assay_result.plate, assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM assay_result JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)  WHERE assay_result.assay_run_id = _assay_run_id AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = _assay_run_id);
+ SELECT assay_result.plate, assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM assay_result JOIN plate_layout  ON assay_result.well = plate_layout.well_by_col  WHERE assay_result.assay_run_id = _assay_run_id AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = _assay_run_id);
 
 END;
 $BODY$
@@ -67,4 +65,9 @@ SELECT get_scatter_plot_data(9);
 
 
 
+
+
 SELECT assay_result.assay_run_id, assay_result.plate,assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM assay_result JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)  WHERE assay_result.assay_run_id = 9 AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = 9) LIMIT 5;
+
+
+SELECT assay_result.plate, assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_type_id, plate_layout.replicates FROM assay_result JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)  WHERE assay_result.assay_run_id = 9 AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = 9) LIMIT 5;

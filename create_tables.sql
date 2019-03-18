@@ -546,14 +546,18 @@ INSERT INTO assay_type (assay_type_name) VALUES ('FACS');
 DROP TABLE IF EXISTS assay_result CASCADE;
 
 CREATE TABLE assay_result (
-		sample_id INTEGER,
+		assay_run_id INTEGER,
+		plate INTEGER,
+		well INTEGER,
                 response REAL,
-                assay_run_id INTEGER,
-		FOREIGN KEY (assay_run_id) REFERENCES assay_run(id),
-		FOREIGN KEY (sample_id) REFERENCES sample(id));
+                bkgrnd_sub REAL,
+		norm REAL,        -- max unknown signal set to 1
+		norm_pos REAL,    --positive control set to 1
+		FOREIGN KEY (assay_run_id) REFERENCES assay_run(id));
+		
 
 CREATE INDEX ON assay_result(assay_run_id);
-CREATE INDEX ON assay_result(sample_id);
+
 
 ----------------------------
 
@@ -586,18 +590,5 @@ CREATE INDEX ON plate_layout(well_by_col);
 
 
 -----------------------------------
-
-DROP TABLE IF EXISTS temp_data CASCADE;
-
-CREATE TABLE temp_data (
-                plate INTEGER NOT NULL,
-                well INTEGER NOT NULL,
-                response REAL,
-		PRIMARY KEY (plate, well));
-
-CREATE INDEX ON temp_data(plate);
-CREATE INDEX ON temp_data(well);
-
----------------------------------------------------
 
 \i ./plate_layouts_for_import.sql

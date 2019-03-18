@@ -524,7 +524,7 @@ END LOOP;
 SELECT ARRAY (SELECT well_id FROM temp1) INTO all_source_well_ids;
 
 
-SELECT ARRAY (SELECT  dest.id  FROM ( SELECT plate_plate_set.plate_ID, well.well_name,  well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = dest_plate_set_id  AND plate_plate_set.plate_id = well.plate_id) AS dest JOIN (SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=dest_plate_format_id)  AS foo ON (dest.well_name=foo.well_name) ORDER BY plate_id, quad, by_col) INTO all_dest_well_ids;
+SELECT ARRAY (SELECT  dest.id  FROM ( SELECT plate_plate_set.plate_ID, well.well_name,  well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = dest_plate_set_id  AND plate_plate_set.plate_id = well.plate_id) AS dest JOIXN (SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=dest_plate_format_id)  AS foo ON (dest.well_name=foo.well_name) ORDER BY plate_id, quad, by_col) INTO all_dest_well_ids;
 
 
 FOR w IN 1..array_length(all_source_well_ids,1)  LOOP
@@ -541,6 +541,50 @@ END LOOP;
 DROP TABLE temp1;
 
 RETURN dest_plate_set_id;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+
+-------update raw data with normalized
+
+
+DROP FUNCTION IF exists process_assay_run_data(_assay_run_id integer);
+
+CREATE OR REPLACE FUNCTION process_assay_run_data(_assay_run_id integer)
+  RETURNS void AS
+$BODY$
+DECLARE
+   plates INTEGER[];   
+   background decimal;
+   positives decimal;
+   negatives DECIMAL;
+   unk_max DECIMAL;
+   norm_factor DECIMAL;
+   format INTEGER;
+BEGIN
+
+CREATE TEMP TABLE data_set  ON COMMIT DROP AS SELECT assay_result.assay_run_id, assay_result.plate,assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM assay_result JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)  WHERE assay_result.assay_run_id = _assay_run_id AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = _assay_run_id);
+
+SELECT ARRAY (SELECT distinct plate FROM data_set WHERE data_set.assay_run_id = _assay_run_id  ORDER BY plate) INTO plates;
+
+FOR plate_var IN 1..array_length(plates,1) LOOP
+
+SELECT AVG(data_set.response) FROM data_set WHERE data_set.plate = plate_var AND data_set.well_type_id=2 INTO positives;
+SELECT AVG(data_set.response) FROM data_set WHERE data_set.plate = plate_var AND data_set.well_type_id=3 INTO negatives;
+SELECT AVG(data_set.response) FROM data_set WHERE data_set.plate = plate_var AND data_set.well_type_id=4 INTO background;
+SELECT MAX(data_set.response) FROM data_set WHERE data_set.plate = plate_var AND data_set.well_type_id=1 INTO unk_max;
+
+SELECT plate_layout_name.plate_format_id FROM plate_layout_name, assay_run WHERE assay_run.plate_layout_name_id=plate_layout_name.ID AND assay_run.id=_assay_run_id INTO format;
+
+       FOR well_var IN 1..format LOOP
+
+          UPDATE assay_result SET bkgrnd_sub  = (assay_result.response-background), norm = ((assay_result.response-background)/unk_max), norm_pos = ((response-background)/positives) WHERE assay_result.assay_run_id=_assay_run_id AND assay_result.plate=plate_var AND assay_result.well = well_var;
+
+   END LOOP;
+
+END LOOP;
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;

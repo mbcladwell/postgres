@@ -45,6 +45,7 @@ SELECT * FROM plate_set WHERE plate_set.ID = 10;
 SELECT * FROM plate_plate_set WHERE plate_plate_set.plate_set_ID = 10 LIMIT 5;
 SELECT * FROM plate LIMIT 5;
 SELECT * FROM well_sample LIMIT 5;
+SELECT * FROM well LIMIT 5;
 
 
 ---------------------------
@@ -75,4 +76,34 @@ SELECT assay_result.plate, assay_result.well, assay_result.response, assay_resul
 
 
 --working on this
-SELECT assay_result.assay_run_id, assay_result.plate,assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target, sample.id FROM assay_result, plate_plate_set, plate,  well,  well_sample, sample JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)  WHERE assay_result.assay_run_id = 9 AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = 9) AND well_sample.sample_id = sample.ID AND well_sample.well_id = well.id AND plate_plate_set.plate_set_id = plate_set.ID AND plate_plate_set.plate_id = plate.ID LIMIT 5;
+SELECT assay_result.assay_run_id, assay_result.plate,assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target, sample.ID AS sample_id FROM  plate_plate_set, plate_set, plate,  well,  well_sample, sample, assay_run, assay_result JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)  WHERE assay_result.assay_run_id = 9 AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = 9)  AND assay_run.ID = 9 AND assay_run.plate_set_id = plate_set.ID AND assay_result.plate = plate_plate_set.plate_order AND plate_layout.plate_layout_name_id= assay_run.plate_layout_name_id AND well_sample.sample_id = sample.ID   AND  well_sample.well_id = well.ID AND well.plate_id = plate.id AND plate_plate_set.plate_set_id = plate_set.ID AND plate_plate_set.plate_id = plate.ID  LIMIT 5;
+
+
+assay_result.assay_run_id =9
+assay_result.response
+assay_result.norm
+assay_result.plate  --this is plate order
+
+assay_run.ID = 9
+assay_run.plate_set_id
+assay_run.plate_layout_name_id
+
+plate_set.id 
+plate_set.plate_format_id
+plate_set.plate_type_id
+plate_set.project_id
+plate_set.plate_layout_name_id
+
+
+
+plate_plate_set.plate_set_id
+plate_plate_set.plate_id
+plate_plate_set.plate_order
+
+
+plate.ID
+plate.plate_format_id
+plate.plate_layout_name_id
+
+well_sample.well_id
+well_sample.sample_id

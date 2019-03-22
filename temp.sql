@@ -2,37 +2,18 @@
 
 --https://postgres.cz/wiki/PostgreSQL_SQL_Tricks
 
-// table assay_result: sample_id, response, assay_run_id
-    // table temp_data: plate, well, response
-    // table assay_run: id, plate_set_id, plate_layout_name_id
-    // plate_layout:  plate_layout_name_id, well_by_col, well_type_id
-    // plate:  id plate_sys_name | plate_type_id | project_id | plate_format_id 
-    // plate_set: id  plate_set_name   | plate_set_sys_name | num_plates | plate_format_id | plate_type_id | project_id 
-    // well: plate_id id  well_name
-    // sample: id
-    // well_sample:  well_id  sample_id
-    // well_type: id  name
-    // well_numbers: format  well_name  by_col 
-    // plate_plate_set: plate_set_id | plate_id | plate_order 
-
---select data from a plate set
-
-SELECT assay_result.sample_id, assay_result.response, plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM assay_result, assay_run, plate_layout WHERE assay_result.assay_run_id = 6 AND assay_run.plate_layout_name_id = plate_layout.plate_layout_name_id  LIMIT 5;
-
-
-SELECT assay_result.sample_id, assay_result.response, plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM assay_result, assay_run, plate_layout WHERE assay_result.assay_run_id = 6 AND assay_run.plate_layout_name_id = plate_layout.plate_layout_name_id AND plate_layout.well_type_id = 2;
-
-
-SELECT assay_result.sample_id, assay_result.response  FROM assay_result  WHERE assay_result.assay_run_id = 6;
-
-
-SELECT  plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM  plate_layout WHERE  plate_layout.plate_layout_name_id =  (SELECT plate_layout_name_id FROM plate_layout WHERE plate_layout.ID = );
-
-
-
-SELECT *
-    FROM weather INNER JOIN cities ON (weather.city = cities.NAME);
-
+-- assay_result:    assay_run_id  plate(plate_order)  well  response  bkgrnd_sub    norm   norm_pos 
+-- assay_run:       id  assay_run_sys_name  assay_run_name  assay_type_id  plate_set_id  plate_layout_name_id
+-- plate_layout:    plate_layout_name_id  well_by_col, well_type_id replicates  target
+-- plate:           id plate_sys_name   plate_type_id   project_id   plate_format_id 
+-- plate_set:       id   plate_set_name  plate_set_sys_name  num_plates  plate_format_id  plate_type_id  project_id  plate_layout_name_id
+-- well:            id  plate_id  well_name
+-- sample:          id
+-- well_sample:     well_id  sample_id
+-- well_type:       id  name
+-- well_numbers:    plate_format  well_name  by_col quad 
+-- plate_plate_set: plate_set_id   plate_id   plate_order
+-- plate_layout_name  id  plate_format_id  replicates  targets  use_edge  num_controls control_loc source_dest 
 
 SELECT * FROM assay_result LIMIT 5;
 SELECT * FROM assay_run LIMIT 5;
@@ -76,34 +57,33 @@ SELECT assay_result.plate, assay_result.well, assay_result.response, assay_resul
 
 
 --working on this
-SELECT assay_result.assay_run_id, assay_result.plate,assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target, sample.ID AS sample_id FROM  plate_plate_set, plate_set, plate,  well,  well_sample, sample, assay_run, assay_result JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)  WHERE assay_result.assay_run_id = 9 AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = 9)  AND assay_run.ID = 9 AND assay_run.plate_set_id = plate_set.ID AND assay_result.plate = plate_plate_set.plate_order AND plate_layout.plate_layout_name_id= assay_run.plate_layout_name_id AND well_sample.sample_id = sample.ID   AND  well_sample.well_id = well.ID AND well.plate_id = plate.id AND plate_plate_set.plate_set_id = plate_set.ID AND plate_plate_set.plate_id = plate.ID  LIMIT 5;
+SELECT assay_result.assay_run_id, assay_result.plate,assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target, well_sample.sample_id FROM  plate_plate_set, plate_set, plate,  well,  well_sample, assay_run, assay_result JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)  WHERE assay_result.assay_run_id = 9 AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = 9)  AND assay_run.ID = 9 AND assay_run.plate_set_id = plate_set.ID AND assay_result.plate = plate_plate_set.plate_order AND plate_layout.plate_layout_name_id= assay_run.plate_layout_name_id  AND  well_sample.well_id = well.ID AND well.plate_id = plate.id AND plate_plate_set.plate_set_id = plate_set.ID AND plate_plate_set.plate_id = plate.ID  LIMIT 5;
 
 
-assay_result.assay_run_id =9
-assay_result.response
-assay_result.norm
-assay_result.plate  --this is plate order
+SELECT assay_result.assay_run_id, assay_result.plate,assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target
+FROM  plate_plate_set, plate_set, plate, plate_layout_name, well,  well_sample, assay_run, assay_result
+JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)
+WHERE assay_result.assay_run_id = 9 AND
+--plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = 9)  AND
+plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id AND
+assay_run.ID = 9 AND
+plate_set.ID = assay_run.plate_set_id AND
+assay_result.plate = plate_plate_set.plate_order AND
+plate_layout.plate_layout_name_id= assay_run.plate_layout_name_id  AND
 
-assay_run.ID = 9
-assay_run.plate_set_id
-assay_run.plate_layout_name_id
+well_sample.well_id = well.ID AND
+well.plate_id = plate.id AND
+plate_plate_set.plate_set_id = plate_set.ID AND
+plate_plate_set.plate_id = plate.ID AND
+--plate_plate_set.plate_id = well.plate_id
+plate_layout.plate_layout_name_id = plate_layout_name.ID 
 
-plate_set.id 
-plate_set.plate_format_id
-plate_set.plate_type_id
-plate_set.project_id
-plate_set.plate_layout_name_id
-
+LIMIT 5;
 
 
-plate_plate_set.plate_set_id
-plate_plate_set.plate_id
-plate_plate_set.plate_order
 
 
-plate.ID
-plate.plate_format_id
-plate.plate_layout_name_id
 
-well_sample.well_id
-well_sample.sample_id
+need well_by_col!!
+
+SELECT ARRAY (SELECT  dest.id  FROM ( SELECT plate_plate_set.plate_ID, well.well_name,  well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = dest_plate_set_id  AND plate_plate_set.plate_id = well.plate_id) AS dest JOIN (SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=dest_plate_format_id)  AS foo ON (dest.well_name=foo.well_name) ORDER BY plate_id, quad, by_col) INTO all_dest_well_ids;

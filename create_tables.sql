@@ -465,7 +465,7 @@ CREATE INDEX ON sample(project_id);
 
 DROP TABLE IF EXISTS well CASCADE;
 CREATE TABLE well (id SERIAL PRIMARY KEY,
-  		well_name VARCHAR(5),
+  		well_name VARCHAR(10),
 		plate_id INTEGER,
 		FOREIGN KEY (plate_id) REFERENCES plate(id));
 
@@ -547,7 +547,7 @@ DROP TABLE IF EXISTS assay_result CASCADE;
 
 CREATE TABLE assay_result (
 		assay_run_id INTEGER,
-		plate INTEGER,
+		plate_order INTEGER,
 		well INTEGER,
                 response REAL,
                 bkgrnd_sub REAL,

@@ -42,6 +42,10 @@ SELECT * FROM well_numbers LIMIT 5;
 
 
 SELECT * FROM plate_set WHERE plate_set.ID = 10;
+SELECT * FROM plate_plate_set WHERE plate_plate_set.plate_set_ID = 10 LIMIT 5;
+SELECT * FROM plate LIMIT 5;
+SELECT * FROM well_sample LIMIT 5;
+
 
 ---------------------------
 
@@ -64,10 +68,11 @@ SELECT get_scatter_plot_data(9);
 
 
 
-
-
-
 SELECT assay_result.assay_run_id, assay_result.plate,assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM assay_result JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)  WHERE assay_result.assay_run_id = 9 AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = 9) LIMIT 5;
 
 
 SELECT assay_result.plate, assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_type_id, plate_layout.replicates FROM assay_result JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)  WHERE assay_result.assay_run_id = 9 AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = 9) LIMIT 5;
+
+
+--working on this
+SELECT assay_result.assay_run_id, assay_result.plate,assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, plate_layout.well_by_col, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target, sample.id FROM assay_result, plate_plate_set, plate,  well,  well_sample, sample JOIN plate_layout  ON (assay_result.well = plate_layout.well_by_col)  WHERE assay_result.assay_run_id = 9 AND  plate_layout.plate_layout_name_id = (SELECT plate_layout_name_id FROM assay_run WHERE assay_run.ID = 9) AND well_sample.sample_id = sample.ID AND well_sample.well_id = well.id AND plate_plate_set.plate_set_id = plate_set.ID AND plate_plate_set.plate_id = plate.ID LIMIT 5;

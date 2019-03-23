@@ -92,5 +92,13 @@ SELECT ARRAY (SELECT  dest.id  FROM ( SELECT plate_plate_set.plate_ID, well.well
 -------------plate 404
 
 SELECT * FROM plate WHERE plate.id=40;
+SELECT * FROM plate_set;
+SELECT * FROM plate_layout_name;
+SELECT * FROM plate_layout;
 
-SELECT well_by_col  FROM plate_layout, plate_layout_name  WHERE plate_layout.plate_layout_name_id = plate_layout_name.id AND plate_layout.well_type_id = 1 AND plate_layout.plate_layout_name_id = _plate_layout_name_id;
+
+
+SELECT well_by_col 
+
+
+SELECT well_by_col  FROM plate_layout, plate_layout_name  WHERE plate_layout.plate_layout_name_id = plate_layout_name.id AND plate_layout.well_type_id = 1 AND plate_layout.plate_layout_name_id = 1;

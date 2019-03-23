@@ -267,9 +267,6 @@ $BODY$
 
 --well name converted to by_col integer
 
-SELECT * FROM sample;
-SELECT * FROM well;
-SELECT * FROM plate;
 
 DROP FUNCTION new_plate(INTEGER, INTEGER,INTEGER,INTEGER, BOOLEAN);
 
@@ -287,15 +284,16 @@ DECLARE
 
 BEGIN
 
-   INSERT INTO plate(plate_type_id,   plate_format_id)
-   VALUES (_plate_type_id,  _plate_format_id)
+   INSERT INTO plate(plate_type_id,   plate_format_id, plate_layout_name_id)
+   VALUES (_plate_type_id,  _plate_format_id, _plate_layout_name_id)
    RETURNING id  INTO plt_id;
 
     UPDATE plate SET plate_sys_name = 'PLT-'||plt_id WHERE id=plt_id;
 
 
-FOR w IN 1.. _plate_format_id LOOP
+FOR w IN 1.._plate_format_id LOOP
 
+--RAISE notice 'w: (%)', w;
        INSERT INTO well(by_col, plate_id) VALUES(w, plt_id)
        RETURNING id INTO w_id;
        
@@ -320,7 +318,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE;
 
 
---SELECT new_plate(1,1,96,1, TRUE);
+SELECT new_plate(1,1,96,1, TRUE);
 
 
 SELECT * FROM sample;

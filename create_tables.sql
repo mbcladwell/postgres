@@ -465,7 +465,7 @@ CREATE INDEX ON sample(project_id);
 
 DROP TABLE IF EXISTS well CASCADE;
 CREATE TABLE well (id SERIAL PRIMARY KEY,
-  		well_name VARCHAR(10),
+  		by_col integer,
 		plate_id INTEGER,
 		FOREIGN KEY (plate_id) REFERENCES plate(id));
 

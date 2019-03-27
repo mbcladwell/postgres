@@ -490,12 +490,13 @@ DROP TABLE IF EXISTS hit_list CASCADE;
 CREATE TABLE hit_list
 (id SERIAL PRIMARY KEY,
  hitlist_sys_name VARCHAR(30),
+ hitlist_name VARCHAR(250),
         descr VARCHAR(250),
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
- project_id INTEGER,
- FOREIGN KEY (project_id) REFERENCES project(id));
+ assay_run_id INTEGER,
+ FOREIGN KEY (assay_run_id) REFERENCES assay_run(id));
 
-CREATE INDEX ON hit_list(project_id);
+CREATE INDEX ON hit_list(assay_run_id);
 
 
 DROP TABLE IF EXISTS hit_sample CASCADE;

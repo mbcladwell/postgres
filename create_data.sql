@@ -54,5 +54,15 @@ select new_assay_run( 'assay_run4', 'PS-10 LYT-43;1536;8in47,48', 5, 10, 43);
 
 \i /home/mbc/projects/data/assay_data_for_import.sql
 
+SELECT process_assay_run_data(1);
+SELECT process_assay_run_data(2);
+SELECT process_assay_run_data(3);
+SELECT process_assay_run_data(4);
+SELECT process_assay_run_data(5);
+SELECT process_assay_run_data(6);
+SELECT process_assay_run_data(7);
+SELECT process_assay_run_data(8);
+SELECT process_assay_run_data(9);
+SELECT process_assay_run_data(10);
 
 

@@ -136,7 +136,7 @@ DROP FUNCTION IF EXISTS fill_well_numbers_a();
 DROP TABLE IF EXISTS pmuser_groups CASCADE;
 CREATE TABLE pmuser_groups
 (id SERIAL PRIMARY KEY,
-        usergroup VARCHAR(30),
+        usergroup VARCHAR(250),
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp);
 
 INSERT INTO pmuser_groups (usergroup) VALUES ('administrator');
@@ -146,8 +146,8 @@ DROP TABLE IF EXISTS pmuser CASCADE;
 CREATE TABLE pmuser
 (id SERIAL PRIMARY KEY,
         usergroup INTEGER,
-	pmuser_name VARCHAR(30) NOT NULL UNIQUE,
-	tags VARCHAR(30) ,
+	pmuser_name VARCHAR(250) NOT NULL UNIQUE,
+	tags VARCHAR(250) ,
         password VARCHAR(64) NOT NULL,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp);
 
@@ -176,8 +176,8 @@ DROP INDEX IF EXISTS project_pkey CASCADE;
 CREATE TABLE project
 (id SERIAL PRIMARY KEY,
         project_sys_name VARCHAR(30),
-        descr VARCHAR(30),
-	project_name VARCHAR(30),
+        descr VARCHAR(250),
+	project_name VARCHAR(250),
         pmuser_id INTEGER,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
         FOREIGN KEY (pmuser_id) REFERENCES pmuser(id));
@@ -216,8 +216,8 @@ DROP TABLE IF EXISTS plate_layout_name CASCADE;
 CREATE TABLE plate_layout_name (
 		id SERIAL PRIMARY KEY,
 		sys_name VARCHAR(30),
-                name VARCHAR(30),
-                descr VARCHAR(30),
+                name VARCHAR(250),
+                descr VARCHAR(250),
                 plate_format_id INTEGER,
 		replicates INTEGER,
 		targets INTEGER,
@@ -399,8 +399,8 @@ DROP SEQUENCE IF EXISTS plate_set_id_seq;
 
 CREATE TABLE plate_set
 (id SERIAL PRIMARY KEY,
-        barcode VARCHAR(30),
-	plate_set_name VARCHAR(30),
+        barcode VARCHAR(250),
+	plate_set_name VARCHAR(250),
         descr VARCHAR(250),
         plate_set_sys_name VARCHAR(30),
         num_plates INTEGER,
@@ -518,7 +518,7 @@ DROP TABLE IF EXISTS assay_run CASCADE;
 
 CREATE TABLE assay_run (id serial PRIMARY KEY,
                assay_run_sys_name VARCHAR(30),
-	       assay_run_name VARCHAR(30),
+	       assay_run_name VARCHAR(250),
                descr VARCHAR(250),
 		assay_type_id INTEGER,
                 plate_set_id INTEGER,
@@ -535,13 +535,13 @@ CREATE INDEX ON assay_run(plate_layout_name_id);
 
 DROP TABLE IF EXISTS assay_type CASCADE;
 CREATE TABLE assay_type (id SERIAL PRIMARY KEY,
-	assay_type_name VARCHAR(30));
+	assay_type_name VARCHAR(250));
 
 INSERT INTO assay_type (assay_type_name) VALUES ('ELISA');
 INSERT INTO assay_type (assay_type_name) VALUES ('Octet');
 INSERT INTO assay_type (assay_type_name) VALUES ('SNP');
 INSERT INTO assay_type (assay_type_name) VALUES ('HCS');
-INSERT INTO assay_type (assay_type_name) VALUES ('NGS');
+INSERT INTO assay_type (assay_type_name) VALUES ('HTRF');
 INSERT INTO assay_type (assay_type_name) VALUES ('FACS');		
 
 DROP TABLE IF EXISTS assay_result CASCADE;
@@ -592,4 +592,17 @@ CREATE INDEX ON plate_layout(well_by_col);
 
 -----------------------------------
 
-\i ./plate_layouts_for_import.sql
+\i /home/mbc/projects/postgres/plate_layouts_for_import.sql
+
+
+
+
+
+
+
+
+
+
+
+
+

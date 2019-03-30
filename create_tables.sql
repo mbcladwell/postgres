@@ -572,6 +572,7 @@ INSERT INTO well_type (name) VALUES ('unknown');
 INSERT INTO well_type (name) VALUES ('positive');
 INSERT INTO well_type (name) VALUES ('negative');
 INSERT INTO well_type (name) VALUES ('blank');
+INSERT INTO well_type (name) VALUES ('edge');
 
 
 DROP TABLE IF EXISTS plate_layout CASCADE;

@@ -44,3 +44,12 @@ SELECT assay_run.assay_run_sys_name AS "Sys-NAME", assay_run.assay_run_name AS "
 SELECT * FROM hit_list;
 
 SELECT hit_list.hitlist_sys_name AS "Sys-NAME", hit_list.hitlist_name AS "NAME", hit_list.descr AS "Description", assay_run.assay_run_sys_name AS "Assay Run ID", plate_set.plate_set_sys_name  FROM assay_run, plate_set, hit_list WHERE hit_list.assay_run_id= assay_run.id AND assay_run.plate_set_id= plate_set.ID AND plate_set.project_id=10;
+
+
+
+---------------get layout sources
+
+select sys_name AS "ID",plate_format_id AS "Format", NAME AS "Description", descr AS "Reps",   use_edge AS "Edge", num_controls AS "Controls", control_loc AS "Location" from plate_layout_name where source_dest = 'source';
+
+
+select sys_name AS "ID",plate_format_id AS "Format", NAME AS "Description", descr AS "Reps",   use_edge AS "Edge", num_controls AS "Controls", control_loc AS "Location" from plate_layout_name where source_dest = 'dest';

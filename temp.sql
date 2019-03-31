@@ -52,4 +52,10 @@ SELECT hit_list.hitlist_sys_name AS "Sys-NAME", hit_list.hitlist_name AS "NAME",
 select sys_name AS "ID",plate_format_id AS "Format", NAME AS "Description", descr AS "Reps",   use_edge AS "Edge", num_controls AS "Controls", control_loc AS "Location" from plate_layout_name where source_dest = 'source';
 
 
-select sys_name AS "ID",plate_format_id AS "Format", NAME AS "Description", descr AS "Reps",   use_edge AS "Edge", num_controls AS "Controls", control_loc AS "Location" from plate_layout_name where source_dest = 'dest';
+src_id
+
+select plate_layout_name.sys_name AS "ID",plate_layout_name.plate_format_id AS "Format", plate_layout_name.name AS "Description", plate_layout_name.descr AS "Reps",   plate_layout_name.use_edge AS "Edge", plate_layout_name.num_controls AS "Controls", plate_layout_name.control_loc AS "Location" from plate_layout_name, layout_source_dest WHERE layout_source_dest.src= 1 AND layout_source_dest.dest = plate_layout_name.id;
+
+
+SELECT * FROM plate_layout_name;
+SELECT * FROM layout_source_dest;

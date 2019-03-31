@@ -59,3 +59,7 @@ select plate_layout_name.sys_name AS "ID",plate_layout_name.plate_format_id AS "
 
 SELECT * FROM plate_layout_name;
 SELECT * FROM layout_source_dest;
+
+SELECT * FROM plate_layout LIMIT 5;
+
+SELECT * FROM well_type;

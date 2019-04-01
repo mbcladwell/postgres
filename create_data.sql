@@ -65,4 +65,22 @@ SELECT process_assay_run_data(8);
 SELECT process_assay_run_data(9);
 SELECT process_assay_run_data(10);
 
+-- assay_name descr assay_type_id plate_set_id plate_layout_name_id
+SELECT new_assay_run('assay run 1', 'PS-1 LYT-1;96;4in12' , 1, 1, 1);
+SELECT new_assay_run('assay run 2', 'PS-2 LYT-1;96;4in12' , 5, 2, 1);
+SELECT new_assay_run('assay run 3', 'PS-3 LYT-15;96;4in12' , 1, 3, 15);
+SELECT new_assay_run('assay run 4', 'PS-4 LYT-15;96;4in12' , 1, 4, 15);
+SELECT new_assay_run('assay run 5', 'PS-5 LYT-15;96;4in12' , 5, 5, 15);
+SELECT new_assay_run('assay run 6', 'PS-6 LYT-15;96;4in12' , 1, 6, 15);
+SELECT new_assay_run('assay run 7', 'PS-7 LYT-15;96;4in12' , 5, 7, 15);
+SELECT new_assay_run('assay run 8', 'PS-8 LYT-43;96;4in12' , 1, 8, 43);
+SELECT new_assay_run('assay run 9', 'PS-9 LYT-43;96;4in12' , 1, 9, 43);
+SELECT new_assay_run('assay run 10', 'PS-10 LYT-43;96;4in12' , 5, 10, 43);
+SELECT new_assay_run('assay run 11', 'PS-10 LYT-43;96;4in12' , 5, 10, 43);
+SELECT new_assay_run('assay run 12', 'PS-10 LYT-43;96;4in12' , 5, 10, 43);
+SELECT new_assay_run('assay run 13', 'PS-10 LYT-43;96;4in12' , 5, 10, 43);
+SELECT new_assay_run('assay run 14', 'PS-10 LYT-43;96;4in12' , 5, 10, 43);
+SELECT new_assay_run('assay run 15', 'PS-10 LYT-43;96;4in12' , 5, 10, 43);
 
+
+SELECT new_hit_list('hit list 1', 'descr1', 3, 1, ARRAY [125435, 125436, 125437]);

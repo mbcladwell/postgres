@@ -171,25 +171,6 @@ $BODY$
 --SELECT assoc_plate_ids_with_plate_set_id('{101,100,102}', 10);
 
 
----hit_list-------------------------
-   
-CREATE OR REPLACE FUNCTION new_hit_list(_descr VARCHAR(250), _project_id INTEGER)
-  RETURNS integer AS
-$BODY$
-DECLARE
-   v_id integer;
-BEGIN
-   
-   INSERT INTO hit_list(descr,  project_id)
-   VALUES (_descr,  _project_id )
-   RETURNING id INTO v_id;
-   UPDATE hit_list SET hitlist_sys_name = 'HL-'||v_id WHERE id=v_id;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE;
-
-
-
 -----Plate-----------------------
 --well name converted to by_col integer
 
@@ -544,3 +525,7 @@ END LOOP;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
+
+
+
+

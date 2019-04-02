@@ -387,10 +387,10 @@ INSERT INTO layout_source_dest( src, dest ) VALUES (36,40);
 INSERT INTO layout_source_dest( src, dest ) VALUES (36,41);
 INSERT INTO layout_source_dest( src, dest ) VALUES (36,42);
 
-INSERT INTO layout_source_dest( src, dest ) VALUES (43,44);
-INSERT INTO layout_source_dest( src, dest ) VALUES (43,45);
-INSERT INTO layout_source_dest( src, dest ) VALUES (43,46);
 INSERT INTO layout_source_dest( src, dest ) VALUES (43,47);
+INSERT INTO layout_source_dest( src, dest ) VALUES (44,47);
+INSERT INTO layout_source_dest( src, dest ) VALUES (45,47);
+INSERT INTO layout_source_dest( src, dest ) VALUES (46,47);
 
 
 -----------------------------
@@ -558,6 +558,8 @@ CREATE TABLE assay_result (
 		
 
 CREATE INDEX ON assay_result(assay_run_id);
+CREATE INDEX ON assay_result(plate_order);
+CREATE INDEX ON assay_result(well);
 
 
 ----------------------------

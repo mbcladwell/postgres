@@ -41,25 +41,36 @@ SELECT * FROM assay_type LIMIT 5;
 SELECT assay_run.assay_run_sys_name AS "Sys-NAME", assay_run.assay_run_name AS "NAME", assay_run.descr AS "Description", assay_type.assay_type_name AS "Assay TYPE", plate_set.plate_set_sys_name  FROM assay_run, plate_set, assay_type WHERE assay_run.assay_type_id=assay_type.id AND assay_run.plate_set_id= plate_set.ID AND plate_set.project_id=10;
 
 
-SELECT * FROM hit_list;
+SELECT * FROM hit_list LIMIT 5;
+SELECT * FROM hit_sample LIMIT 5;
+
 
 SELECT hit_list.hitlist_sys_name AS "Sys-NAME", hit_list.hitlist_name AS "NAME", hit_list.descr AS "Description", assay_run.assay_run_sys_name AS "Assay Run ID", plate_set.plate_set_sys_name  FROM assay_run, plate_set, hit_list WHERE hit_list.assay_run_id= assay_run.id AND assay_run.plate_set_id= plate_set.ID AND plate_set.project_id=10;
 
 
+-- get hit counts for plate set
 
----------------get layout sources
+-- input poject id and hit list id
 
-select sys_name AS "ID",plate_format_id AS "Format", NAME AS "Description", descr AS "Reps",   use_edge AS "Edge", num_controls AS "Controls", control_loc AS "Location" from plate_layout_name where source_dest = 'source';
-
-
-src_id
-
-select plate_layout_name.sys_name AS "ID",plate_layout_name.plate_format_id AS "Format", plate_layout_name.name AS "Description", plate_layout_name.descr AS "Reps",   plate_layout_name.use_edge AS "Edge", plate_layout_name.num_controls AS "Controls", plate_layout_name.control_loc AS "Location" from plate_layout_name, layout_source_dest WHERE layout_source_dest.src= 1 AND layout_source_dest.dest = plate_layout_name.id;
+SELECT sample_id FROM hit_sample, hit_list WHERE hit_list.ID= hit_sample.hitlist_id AND hit_list.id=1;
 
 
-SELECT * FROM plate_layout_name;
-SELECT * FROM layout_source_dest;
+SELECT * FROM plate_set WHERE plate_set.project_id=10;
+-- use plateset ids 1 through 10
+-- get all the sample ids from plate_set 10
+SELECT * FROM well_sample LIMIT 5;
 
-SELECT * FROM plate_layout LIMIT 5;
 
-SELECT * FROM well_type;
+SELECT plate_plate_set.plate_id, well.id FROM plate_plate_set, well WHERE plate_plate_set.plate_id=well.plate_id and plate_plate_set.plate_set_id=10;
+
+-----
+
+hit_sample.sample_id
+
+SELECT COUNT(*) FROM plate_plate_set, plate, hit_list, hit_sample, well_sample, well, sample where plate_plate_set.plate_id=plate.id and plate_plate_set.plate_set_id=10 AND  well.plate_id=plate.ID AND  well_sample.well_id=well.ID AND well_sample.sample_id = sample.ID and  hit_sample.sample_id = sample.id  and hit_list.ID= hit_sample.hitlist_id AND hit_list.id=1; 
+
+SELECT * FROM plate_plate_set LIMIT 5;
+SELECT * FROM plate_set LIMIT 5;
+SELECT * FROM plate LIMIT 5;
+SELECT * FROM well  LIMIT 5;
+

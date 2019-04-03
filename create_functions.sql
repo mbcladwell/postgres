@@ -512,8 +512,8 @@ DECLARE
 BEGIN
 
 
-  INSERT INTO hit_list(hitlist_name, descr, assay_run_id)
-   VALUES (_name, _descr, _assay_run_id)
+  INSERT INTO hit_list(hitlist_name, descr, n, assay_run_id)
+   VALUES (_name, _descr, _num_hits, _assay_run_id)
    RETURNING id INTO hl_id;
 
     UPDATE hit_list SET hitlist_sys_name = 'HL-'|| hl_id WHERE id=hl_id;

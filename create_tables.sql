@@ -492,6 +492,7 @@ CREATE TABLE hit_list
  hitlist_sys_name VARCHAR(30),
  hitlist_name VARCHAR(250),
         descr VARCHAR(250),
+	n INTEGER,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
  assay_run_id INTEGER,
  FOREIGN KEY (assay_run_id) REFERENCES assay_run(id));

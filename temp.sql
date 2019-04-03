@@ -65,12 +65,90 @@ SELECT plate_plate_set.plate_id, well.id FROM plate_plate_set, well WHERE plate_
 
 -----
 
-hit_sample.sample_id
+DROP FUNCTION get_hit_counts_for_plate_sets(integer,INTEGER);
+CREATE OR REPLACE FUNCTION get_hit_counts_for_plate_sets(project_id INTEGER, hit_list_id INTEGER)
+ RETURNS INTEGER[][] AS
+$BODY$
+DECLARE
+plate_sets INTEGER[];
+i INTEGER;
+results INTEGER[][];
+temp_count INTEGER;
+BEGIN
 
-SELECT COUNT(*) FROM plate_plate_set, plate, hit_list, hit_sample, well_sample, well, sample where plate_plate_set.plate_id=plate.id and plate_plate_set.plate_set_id=10 AND  well.plate_id=plate.ID AND  well_sample.well_id=well.ID AND well_sample.sample_id = sample.ID and  hit_sample.sample_id = sample.id  and hit_list.ID= hit_sample.hitlist_id AND hit_list.id=1; 
+--get all the plate sets within a given project
+SELECT ARRAY (SELECT plate_set.ID FROM project, plate_set WHERE plate_set.project_id = project.id) INTO plate_sets;
 
-SELECT * FROM plate_plate_set LIMIT 5;
+FOR i IN 1..array_length(plate_sets,1) loop
+select COUNT(*) FROM plate_plate_set, plate, hit_list, hit_sample, well_sample, well, sample, assay_run where plate_plate_set.plate_id=plate.id and plate_plate_set.plate_set_id=plate_sets[i] AND  well.plate_id=plate.ID AND  well_sample.well_id=well.ID AND well_sample.sample_id = sample.ID and  hit_sample.sample_id = sample.id  and hit_list.ID= hit_sample.hitlist_id AND hit_list.id=hit_list_id AND  INTO temp_count;
+
+RAISE notice 'results[i]: (%)', results[i];
+--RAISE notice 'temp_count: (%)', temp_count;
+
+END LOOP;
+
+RETURN results;
+END;
+
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+
+SELECT get_hit_counts_for_plate_sets(10, 1);
+
+
+
+SELECT * FROM plate_plate_set;
 SELECT * FROM plate_set LIMIT 5;
 SELECT * FROM plate LIMIT 5;
 SELECT * FROM well  LIMIT 5;
+SELECT * FROM plate_well LIMIT 5;
+SELECT * FROM hit_list;
+SELECT * FROM assay_run LIMIT 5;
 
+
+SELECT plate_set.ID, sample.id FROM plate_set, plate_plate_set, plate, hit_list, hit_sample, well_sample, well, sample, assay_run WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id  AND  well.plate_id=plate.ID AND  well_sample.well_id=well.ID AND well_sample.sample_id = sample.ID and  hit_sample.sample_id = sample.ID   and hit_list.ID= hit_sample.hitlist_id AND assay_run.plate_set_id=plate_set.ID AND hit_list.assay_run_id=assay_run.ID AND  plate_set.project_id=10 limit 20;
+
+SELECT plate_set.ID FROM plate_set WHERE plate_set.project_id=10;
+
+-- get all plate sets in a project
+SELECT plate_set.ID FROM plate_set WHERE plate_set.project_id=10;
+
+--this gets all samples from a plate set
+SELECT plate_set.ID, plate.ID, well.ID, sample.id FROM plate_set, plate_plate_set, plate, well, well_sample, sample WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id AND well.plate_id=plate.ID AND well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID and plate_set.id=1;
+
+
+--get all samples in a hit list
+SELECT sample_id FROM hit_sample WHERE hit_sample.hitlist_id=1;
+
+
+SELECT plate_set.ID, plate.ID, well.ID, sample.id FROM plate_set, plate_plate_set, plate, well, well_sample, sample WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id AND well.plate_id=plate.ID AND well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID and plate_set.id=1;
+
+--get all hit lists in a project
+
+SELECT plate_set.plate_set_sys_name, COUNT(sample.id) FROM hit_list, hit_sample, plate_set, assay_run, sample WHERE hit_sample.hitlist_id=hit_list.id  AND hit_sample.sample_id=sample.id  and assay_run.plate_set_id=plate_set.id AND   hit_list.assay_run_id=assay_run.id   AND  hit_sample.hitlist_id IN (SELECT hit_list.ID FROM hit_list, assay_run WHERE hit_list.assay_run_id=assay_run.ID and assay_run.ID IN (SELECT assay_run.ID FROM assay_run WHERE assay_run.plate_set_id IN (SELECT plate_set.ID FROM plate_set WHERE plate_set.project_id=10))) GROUP BY plate_set.ID;
+
+SELECT * FROM hit_list LIMIT 5;
+SELECT * FROM assay_run LIMIT 5;
+SELECT * FROM assay_result LIMIT 5;
+SELECT * FROM hit_sample LIMIT 5;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--save this
+SELECT plate_set.plate_set_sys_name, COUNT(sample_id) FROM hit_list, hit_sample, plate_set WHERE hit_sample.hitlist_id IN (SELECT hit_list.ID FROM hit_list, assay_run WHERE hit_list.assay_run_id=assay_run.ID and assay_run.ID IN (SELECT assay_run.ID FROM assay_run WHERE assay_run.plate_set_id IN (SELECT plate_set.ID FROM plate_set WHERE plate_set.project_id=10))) GROUP BY plate_set.id;

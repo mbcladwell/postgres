@@ -527,5 +527,37 @@ $BODY$
   LANGUAGE plpgsql VOLATILE;
 
 
+------------------------------------------------------
 
+DROP FUNCTION process_access_ids( INTEGER, VARCHAR);
+
+CREATE OR REPLACE FUNCTION process_access_ids(ps_id INTEGER, sql_statement VARCHAR )
+ RETURNS SETOF temp_accs_id AS
+$BODY$
+DECLARE
+  r temp_accs_id%rowtype;
+BEGIN
+
+TRUNCATE temp_accs_id RESTART IDENTITY CASCADE;
+
+--RAISE notice 'sql: (%)', sql_statement;
+execute sql_statement;
+
+
+   FOR r IN
+      SELECT * FROM temp_accs_id
+   loop
+
+UPDATE sample SET accs_id = r.accs_id WHERE sample.ID IN ( SELECT sample.id FROM plate_set, plate_plate_set, plate, well, well_sample, sample WHERE plate_plate_set.plate_set_id=ps_id AND plate_plate_set.plate_id=plate.id AND well.plate_id=plate.ID AND well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID AND plate_plate_set.plate_order=r.plate_order AND well.by_col=r.by_col);
+
+
+       RETURN NEXT r;
+   END LOOP;
+
+TRUNCATE temp_accs_id RESTART IDENTITY CASCADE;
+
+END;
+
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
 

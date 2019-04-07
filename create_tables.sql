@@ -457,7 +457,7 @@ CREATE INDEX ON plate_plate_set(plate_id);
 CREATE TABLE sample (id SERIAL PRIMARY KEY,
 		sample_sys_name VARCHAR(20),
 		project_id INTEGER,
-                accs_id INTEGER,
+                accs_id VARCHAR(30),
 		FOREIGN KEY (project_id) REFERENCES project(id));
 
 CREATE INDEX ON sample(project_id);
@@ -592,6 +592,17 @@ CREATE TABLE plate_layout (
 CREATE INDEX ON plate_layout(plate_layout_name_id);
 CREATE INDEX ON plate_layout(well_type_id);
 CREATE INDEX ON plate_layout(well_by_col);
+
+-----------------------------------
+DROP TABLE IF EXISTS temp_accs_id CASCADE;
+CREATE TABLE temp_accs_id(plate_order INTEGER,
+			by_col Integer, 
+                           accs_id VARCHAR(30));
+
+CREATE INDEX ON temp_accs_id(plate_order);
+CREATE INDEX ON temp_accs_id(by_col);
+
+
 
 
 -----------------------------------

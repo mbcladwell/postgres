@@ -138,27 +138,7 @@ SELECT * FROM assay_result LIMIT 5;
 SELECT * FROM hit_sample LIMIT 5;
 SELECT * FROM sample LIMIT 5;
 SELECT * FROM plate_set;
+SELECT * FROM plate_plate_set LIMIT 5;
+SELECT * FROM well LIMIT 5;
 
 
-SELECT * FROM plate_set WHERE plate_set.ID = 1;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---save this
-SELECT plate_set.plate_set_sys_name, COUNT(sample_id) FROM hit_list, hit_sample, plate_set WHERE hit_sample.hitlist_id IN (SELECT hit_list.ID FROM hit_list, assay_run WHERE hit_list.assay_run_id=assay_run.ID and assay_run.ID IN (SELECT assay_run.ID FROM assay_run WHERE assay_run.plate_set_id IN (SELECT plate_set.ID FROM plate_set WHERE plate_set.project_id=10))) GROUP BY plate_set.id;

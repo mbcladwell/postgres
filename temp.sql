@@ -142,3 +142,4 @@ SELECT * FROM plate_plate_set LIMIT 5;
 SELECT * FROM well LIMIT 5;
 
 
+SELECT COUNT(*) FROM plate_layout WHERE well_type_id=1 AND plate_layout_name_id=47;

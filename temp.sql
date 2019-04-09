@@ -137,9 +137,34 @@ SELECT * FROM assay_run LIMIT 5;
 SELECT * FROM assay_result LIMIT 5;
 SELECT * FROM hit_sample LIMIT 5;
 SELECT * FROM sample LIMIT 5;
-SELECT * FROM plate_set;
+SELECT * FROM plate_set LIMIT 5;
 SELECT * FROM plate_plate_set LIMIT 5;
 SELECT * FROM well LIMIT 5;
+SELECT * FROM well_sample LIMIT 5;
+SELECT * FROM plate LIMIT 5;
+SELECT * FROM plate_layout LIMIT 5;
 
 
-SELECT COUNT(*) FROM plate_layout WHERE well_type_id=1 AND plate_layout_name_id=47;
+ --  SELECT rearray_transfer_samples(source_plate_set 21, dest_plate_set 22, hit_list 21)
+
+
+SELECT hit_sample.sample_id FROM hit_sample WHERE hit_sample.hitlist_id = 21;
+
+--source
+SELECT plate.ID, well.ID, sample.id FROM plate_set, plate_plate_set, plate, well, well_sample, sample WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id AND well.plate_id=plate.ID AND well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID and plate_set.id=21 AND sample.ID  IN  (SELECT hit_sample.sample_id FROM hit_sample WHERE hit_sample.hitlist_id = 21) ORDER BY plate.ID, well.ID;
+
+
+--dest
+--this gets all samples from a plate set
+-- must get only "unknown" wells based on layout
+SELECT plate_set.ID, plate.ID, well.ID FROM plate_set, plate_plate_set, plate, well, plate_layout WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id AND well.plate_id=plate.ID AND plate_set.plate_layout_name_id=plate_layout.plate_layout_name_id AND plate_layout.well_by_col= well.by_col AND plate_set.id=22 AND plate_layout.well_type_id=1;
+
+plate_set.plate_layout_name_id
+plate_layout.plate_layout_name_id
+plate_layout.well_type_id=1
+plate_layout.well_by_col= well.by_col
+
+
+
+
+

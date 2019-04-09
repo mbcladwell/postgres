@@ -607,6 +607,30 @@ CREATE INDEX ON temp_accs_id(by_col);
 
 
 -----------------------------------
+DROP TABLE IF EXISTS rearray_pairs CASCADE;
+CREATE TABLE rearray_pairs(
+		id SERIAL PRIMARY KEY,
+                src INTEGER,
+			dest Integer);
+
+CREATE INDEX ON rearray_pairs(src);
+CREATE INDEX ON rearray_pairs(dest);
+
+
+-----------------------------------
+
+DROP TABLE IF EXISTS worklists CASCADE;
+CREATE TABLE worklists(
+		rearray_pairs_id INTEGER,
+		sample_id INTEGER,
+                source_plate VARCHAR(10),
+		source_well integer,
+		dest_plate VARCHAR(10),
+		dest_well integer,
+		FOREIGN KEY (rearray_pairs_id) REFERENCES rearray_pairs(id),
+		FOREIGN KEY (sample_id) REFERENCES sample(id));
+
+
 
 \i /home/mbc/projects/postgres/plate_layouts_for_import.sql
 

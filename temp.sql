@@ -246,3 +246,6 @@ $BODY$
 
 
 SELECT rearray_transfer_samples(21,22,21);
+
+SELECT * FROM hit_sample WHERE hit_sample.hitlist_id=21 ORDER BY sample_id;
+

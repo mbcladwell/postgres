@@ -563,43 +563,6 @@ $BODY$
 
 ------------------------------------------------------
 --called from DialogRearrayHitList
-DROP FUNCTION rearray_transfer_samples(integer, INTEGER, integer);
-CREATE OR REPLACE FUNCTION rearray_transfer_samples(source_plate_set_id INTEGER, dest_plate_set_id INTEGER, hit_list_id integer)
- RETURNS void AS
-$BODY$
-DECLARE
-   i INTEGER;
-all_hit_sample_ids INTEGER[];
-dest_wells INTEGER[];
-num_hits INTEGER;
-rp_id INTEGER;
-
-BEGIN
---select get in plate, well order, not necessarily sample order 
-SELECT ARRAY (SELECT  sample.id FROM plate_set, plate_plate_set, plate, well, well_sample, sample WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id AND well.plate_id=plate.ID AND well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID and plate_set.id=source_plate_set_id AND sample.ID  IN  (SELECT hit_sample.sample_id FROM hit_sample WHERE hit_sample.hitlist_id = hit_list_id) ORDER BY plate.ID, well.ID) INTO all_hit_sample_ids;
-
-num_hits := array_length(all_hit_sample_ids, 1);
-
-SELECT ARRAY (SELECT well.ID FROM plate_set, plate_plate_set, plate, well, plate_layout WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id AND well.plate_id=plate.ID AND plate_set.plate_layout_name_id=plate_layout.plate_layout_name_id AND plate_layout.well_by_col= well.by_col AND plate_set.id=22 AND plate_layout.well_type_id=1 ORDER BY well.ID) INTO dest_wells;
-
-
-  for i IN 1..num_hits
-  loop
-  INSERT INTO well_sample (well_id, sample_id) VALUES ( dest_wells[i], all_hit_sample_ids[i]);   
-
-END LOOP;
-
-INSERT INTO rearray_pairs (src, dest) VALUES (source_plate_set_id, dest_plate_set_id)  returning id INTO rp_id;
-
-
-
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE;
-
-------------------------------------------------------
-
-
 
 DROP FUNCTION rearray_transfer_samples(integer, INTEGER, integer);
 CREATE OR REPLACE FUNCTION rearray_transfer_samples(source_plate_set_id INTEGER, dest_plate_set_id INTEGER, hit_list_id integer)

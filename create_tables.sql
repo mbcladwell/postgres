@@ -594,6 +594,19 @@ CREATE INDEX ON plate_layout(plate_layout_name_id);
 CREATE INDEX ON plate_layout(well_type_id);
 CREATE INDEX ON plate_layout(well_by_col);
 
+----------------------------
+--for import only
+
+DROP TABLE IF EXISTS import_plate_layout CASCADE;
+
+CREATE TABLE import_plate_layout (
+		plate_layout_name_id INTEGER,
+                well_by_col INTEGER,
+                well_type_id INTEGER,
+		replicates VARCHAR(2),
+		target VARCHAR(2));
+
+
 -----------------------------------
 DROP TABLE IF EXISTS temp_accs_id CASCADE;
 CREATE TABLE temp_accs_id(plate_order INTEGER,

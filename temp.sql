@@ -148,3 +148,32 @@ SELECT * FROM plate_layout LIMIT 5;
 
 
 SELECT * FROM import_plate_layout;
+SELECT * FROM plate_layout_name;
+
+--insert the layout_name record
+--insert the source layout; it is waiting in the temp
+--create destination layouts for a source layout
+--link source and destinations
+DROP FUNCTION create_layout_records(VARCHAR, varchar);
+CREATE OR REPLACE FUNCTION create_layout_records(source_name VARCHAR, source_description varchar)
+ RETURNS void AS
+$BODY$
+DECLARE
+   i INTEGER;
+all_hit_sample_ids INTEGER[];
+dest_wells INTEGER[];
+num_hits INTEGER;
+rp_id INTEGER;
+
+
+BEGIN
+
+INSERT INTO 
+
+
+
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE;
+

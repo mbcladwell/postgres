@@ -400,7 +400,7 @@ BEGIN
 --here I am creating the destination plate set, no samples included
 SELECT new_plate_set(dest_descr ,dest_plate_set_name, dest_num_plates, dest_plate_format_id, dest_plate_type_id, project_id, dest_plate_layout_name_id, false) INTO dest_plate_set_id;
 
-RAISE notice 'dest_plate_set_id: (%)', dest_plate_set_id;
+--RAISE notice 'dest_plate_set_id: (%)', dest_plate_set_id;
 
 CREATE TEMP TABLE temp1(plate_id INT, well_name VARCHAR(10), well_id INT);
 

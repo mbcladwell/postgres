@@ -177,3 +177,55 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
 
+
+
+
+------bug no wells in viewer
+SELECT * FROM hit_list LIMIT 5;
+SELECT * FROM assay_run LIMIT 5;
+SELECT * FROM assay_result LIMIT 5;
+SELECT * FROM hit_sample LIMIT 5;
+SELECT * FROM sample LIMIT 5;
+SELECT * FROM plate_set LIMIT 5;
+SELECT * FROM plate_plate_set LIMIT 5;
+SELECT * FROM well LIMIT 5;
+SELECT * FROM well_sample LIMIT 5;
+SELECT * FROM plate LIMIT 5;
+SELECT * FROM plate_layout LIMIT 5;
+
+--query that doesnot work:    403 works, 409 doesn't
+      SELECT plate.plate_sys_name AS "PlateID", well_numbers.well_name AS "Well", well.by_col AS "Well_NUM", sample.sample_sys_name AS "Sample", sample.accs_id as "Accession" FROM  plate, sample, well_sample, well JOIN well_numbers ON ( well.by_col= well_numbers.by_col)  WHERE plate.id = well.plate_id AND well_sample.well_id=well.id AND well_sample.sample_id=sample.id AND well.plate_id = (SELECT plate.id FROM plate WHERE plate.plate_sys_name = 'PLT-409') AND  well_numbers.plate_format = (SELECT plate_format_id  FROM plate_set WHERE plate_set.ID =  (SELECT plate_set_id FROM plate_plate_set WHERE plate_id = 409 LIMIT 1) ) ORDER BY well.by_col DESC;
+
+SELECT plate.id FROM plate WHERE plate.plate_sys_name = 'PLT-403';  --works for both
+
+--works for both
+SELECT plate_format_id  FROM plate_set WHERE plate_set.ID =  (SELECT plate_set_id FROM plate_plate_set WHERE plate_id = 403 LIMIT 1);
+
+
+--reduced selection
+ SELECT plate.plate_sys_name AS "PlateID", well_numbers.well_name AS "Well", well.by_col AS "Well_NUM", sample.sample_sys_name AS "Sample", sample.accs_id as "Accession" FROM  plate, sample, well_sample, well JOIN well_numbers ON ( well.by_col= well_numbers.by_col)  WHERE
+ plate.id = well.plate_id AND
+ well_sample.well_id=well.id AND
+ well_sample.sample_id=sample.id AND
+ well.plate_id = 403 AND
+ well_numbers.plate_format = (SELECT plate_format_id  FROM plate_set WHERE plate_set.ID =  (SELECT plate_set_id FROM plate_plate_set WHERE plate_id = well.plate_id) )
+ ORDER BY well.by_col DESC;
+
+
+
+SELECT plate_format_id  FROM plate_set WHERE plate_set.ID =  (SELECT plate_set_id FROM plate_plate_set WHERE plate_id = 409);
+
+
+ SELECT plate.plate_sys_name AS "PlateID", well.by_col AS "Well_NUM", sample.sample_sys_name  FROM  plate, sample, well_sample, well   WHERE
+ plate.id = well.plate_id AND
+ well_sample.well_id=well.id AND
+ well_sample.sample_id=sample.id AND
+ well.plate_id = 409;
+
+
+ SELECT * FROM well WHERE plate_id = 403 LIMIT 5; --well is populated  well_ids are 268993 - 269088
+ SELECT * FROM well_sample WHERE well_id = 269087;  --well_sample not populated!!!!
+
+--the rearray function is rearray_transfer_samples(source_plate_set_id INTEGER, dest_plate_set_id INTEGER, hit_list_id integer)
+SELECT rearray_transfer_samples(22,24  ,25);
+ 

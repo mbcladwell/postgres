@@ -153,6 +153,8 @@ SELECT * FROM plate_layout_name;
 --insert the layout_name record
 --insert the source layout; it is waiting in the temp
 --create destination layouts for a source layout
+--     use existing patterns, format specific
+--insert destination
 --link source and destinations
 DROP FUNCTION create_layout_records(VARCHAR, VARCHAR, VARCHAR, INTEGER, INTEGER, INTEGER );
 CREATE OR REPLACE FUNCTION create_layout_records(source_name VARCHAR, source_description VARCHAR, control_location VARCHAR, n_controls INTEGER, n_unknowns INTEGER, format integer)
@@ -185,3 +187,9 @@ SELECT * FROM plate_layout_name;
 
 
 TRUNCATE TABLE import_plate_layout;
+
+
+--for 96 well plates layouts 2 through 7 are needed
+
+SELECT * FROM plate_layout WHERE plate_layout_name_id = 2 ORDER BY well_by_col;
+SELECT * FROM well_numbers WHERE plate_format = 384 LIMIT 5;

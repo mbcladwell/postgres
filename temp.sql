@@ -154,109 +154,34 @@ SELECT * FROM plate_layout_name;
 --insert the source layout; it is waiting in the temp
 --create destination layouts for a source layout
 --link source and destinations
-DROP FUNCTION create_layout_records(VARCHAR, varchar);
-CREATE OR REPLACE FUNCTION create_layout_records(source_name VARCHAR, source_description varchar)
+DROP FUNCTION create_layout_records(VARCHAR, VARCHAR, VARCHAR, INTEGER, INTEGER, INTEGER );
+CREATE OR REPLACE FUNCTION create_layout_records(source_name VARCHAR, source_description VARCHAR, control_location VARCHAR, n_controls INTEGER, n_unknowns INTEGER, format integer)
  RETURNS void AS
 $BODY$
 DECLARE
-   i INTEGER;
-all_hit_sample_ids INTEGER[];
-dest_wells INTEGER[];
-num_hits INTEGER;
-rp_id INTEGER;
+   source_id INTEGER;
 
 
 BEGIN
 
-INSERT INTO 
+INSERT INTO plate_layout_name (NAME, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES (source_name, source_description, format, '1', 'a', 1, control_location, 'source') RETURNING ID INTO source_id;
+
+    UPDATE plate_layout_name SET sys_name = 'LYT-'|| source_id WHERE id=source_id;
+
+SELECT source_id, well_by_col, well_type_id, replicates, target FROM import_plate_layout INTO plate_layout;
+
+--
 
 
-
-
+--TRUNCATE TABLE import_plate_layout;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
 
 
+INSERT INTO import_plate_layout ( replicates, target) VALUES ( 'aa', 'bb');
+SELECT * FROM import_plate_layout;
+SELECT * FROM plate_layout_name;
 
 
-------bug no wells in viewer
-SELECT * FROM hit_list LIMIT 5;
-SELECT * FROM assay_run LIMIT 5;
-SELECT * FROM assay_result LIMIT 5;
-SELECT * FROM hit_sample LIMIT 5;
-SELECT * FROM sample LIMIT 5;
-SELECT * FROM plate_set LIMIT 5;
-SELECT * FROM plate_plate_set LIMIT 5;
-SELECT * FROM well LIMIT 5;
-SELECT * FROM well_sample LIMIT 5;
-SELECT * FROM plate LIMIT 5;
-SELECT * FROM plate_layout LIMIT 5;
-
---query that doesnot work:    403 works, 409 doesn't
-      SELECT plate.plate_sys_name AS "PlateID", well_numbers.well_name AS "Well", well.by_col AS "Well_NUM", sample.sample_sys_name AS "Sample", sample.accs_id as "Accession" FROM  plate, sample, well_sample, well JOIN well_numbers ON ( well.by_col= well_numbers.by_col)  WHERE plate.id = well.plate_id AND well_sample.well_id=well.id AND well_sample.sample_id=sample.id AND well.plate_id = (SELECT plate.id FROM plate WHERE plate.plate_sys_name = 'PLT-409') AND  well_numbers.plate_format = (SELECT plate_format_id  FROM plate_set WHERE plate_set.ID =  (SELECT plate_set_id FROM plate_plate_set WHERE plate_id = 409 LIMIT 1) ) ORDER BY well.by_col DESC;
-
-SELECT plate.id FROM plate WHERE plate.plate_sys_name = 'PLT-403';  --works for both
-
---works for both
-SELECT plate_format_id  FROM plate_set WHERE plate_set.ID =  (SELECT plate_set_id FROM plate_plate_set WHERE plate_id = 403 LIMIT 1);
-
-
---reduced selection
- SELECT plate.plate_sys_name AS "PlateID", well_numbers.well_name AS "Well", well.by_col AS "Well_NUM", sample.sample_sys_name AS "Sample", sample.accs_id as "Accession" FROM  plate, sample, well_sample, well JOIN well_numbers ON ( well.by_col= well_numbers.by_col)  WHERE
- plate.id = well.plate_id AND
- well_sample.well_id=well.id AND
- well_sample.sample_id=sample.id AND
- well.plate_id = 403 AND
- well_numbers.plate_format = (SELECT plate_format_id  FROM plate_set WHERE plate_set.ID =  (SELECT plate_set_id FROM plate_plate_set WHERE plate_id = well.plate_id) )
- ORDER BY well.by_col DESC;
-
-
-
-SELECT plate_format_id  FROM plate_set WHERE plate_set.ID =  (SELECT plate_set_id FROM plate_plate_set WHERE plate_id = 409);
-
-
- SELECT plate.plate_sys_name AS "PlateID", well.by_col AS "Well_NUM", sample.sample_sys_name  FROM  plate, sample, well_sample, well   WHERE
- plate.id = well.plate_id AND
- well_sample.well_id=well.id AND
- well_sample.sample_id=sample.id AND
- well.plate_id = 409;
-
-
- SELECT * FROM well WHERE plate_id = 403 LIMIT 5; --well is populated  well_ids are 268993 - 269088
- SELECT * FROM well_sample WHERE well_id = 269087;  --well_sample not populated!!!!
-
---the rearray function is rearray_transfer_samples(source_plate_set_id INTEGER, dest_plate_set_id INTEGER, hit_list_id integer)
-SELECT rearray_transfer_samples(22,24  ,25);
- 
-
-
---looking got counts in plate sets
---https://medium.com/@riccardoodone/the-love-hate-relationship-between-select-and-group-by-in-sql-4957b2a70229
-
-CREATE OR REPLACE FUNCTION get_scatter_plot_data(_assay_run_id INTEGER)
-RETURNS TABLE(  plate INTEGER, well INTEGER, response REAL, bkgrnd_sub REAL,   norm REAL,   norm_pos REAL,  well_type_id INTEGER,  replicates VARCHAR(2), target VARCHAR(2), sample_id integer ) AS
-$BODY$
-begin
-
-CREATE TEMPORARY TABLE temp1 AS (SELECT  assay_result.plate_order,assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, assay_run.plate_set_id, assay_run.plate_layout_name_id, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND assay_run.ID = _assay_run_id AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id);
-
-
-CREATE TEMPORARY TABLE temp2 AS (SELECT plate_plate_set.plate_order, well.by_col, well_sample.sample_id FROM  plate_plate_set, plate_set, plate,  well,  well_sample, assay_run, sample WHERE plate_plate_set.plate_set_id = plate_set.ID AND plate_plate_set.plate_id = plate.ID AND well.plate_id = plate.id  and well_sample.well_id=well.ID AND well_sample.sample_id=sample.id AND plate_plate_set.plate_set_id = assay_run.plate_set_id AND assay_run.ID = _assay_run_id);
-
-
-RETURN query
-  SELECT temp1.plate_order,temp1.well, temp1.response, temp1.bkgrnd_sub, temp1.norm, temp1.norm_pos, temp1.well_type_id, temp1.replicates, temp1.target, temp2.sample_id FROM temp1 LEFT OUTER JOIN temp2 on (temp1.plate_order=temp2.plate_order AND temp1.well= temp2.by_col);
-
-DROP TABLE temp1;
-DROP TABLE temp2;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE;
-
-
-
-
-SELECT get_scatter_plot_data(32);
-
-SELECT  assay_result.plate_order,assay_result.well, assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, assay_run.plate_set_id, assay_run.plate_layout_name_id, plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM assay_run, assay_result JOIN plate_layout ON ( assay_result.well = plate_layout.well_by_col) WHERE assay_result.assay_run_id = assay_run.id  AND assay_run.ID = 32 AND plate_layout.plate_layout_name_id = assay_run.plate_layout_name_id;
+TRUNCATE TABLE import_plate_layout;

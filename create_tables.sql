@@ -39,11 +39,11 @@ CREATE TABLE well_numbers(plate_format INTEGER,
                            by_row INTEGER,
                            by_col INTEGER,
                            quad INTEGER,
-			   parent_well VARCHAR(5));
+			   parent_well integer);
 
-CREATE TRIGGER calculate_by_row_number
-before INSERT ON well_numbers
-FOR EACH row EXECUTE PROCEDURE calc_by_row_num_func();
+--CREATE TRIGGER calculate_by_row_number
+--before INSERT ON well_numbers
+--FOR EACH row EXECUTE PROCEDURE calc_by_row_num_func();
 CREATE INDEX ON well_numbers(by_col);
 
 

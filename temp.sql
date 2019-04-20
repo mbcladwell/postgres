@@ -191,5 +191,7 @@ TRUNCATE TABLE import_plate_layout;
 
 --for 96 well plates layouts 2 through 7 are needed
 
-SELECT * FROM plate_layout WHERE plate_layout_name_id = 2 ORDER BY well_by_col;
+SELECT  * FROM plate_layout WHERE plate_layout_name_id = 2 ORDER BY well_by_col;
+
+SELECT import_plate_layout.well_type_id FROM import_plate_layout JOIN ;
 SELECT * FROM well_numbers WHERE plate_format = 384 LIMIT 5;

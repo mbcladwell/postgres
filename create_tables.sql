@@ -27,6 +27,7 @@ END;
 $BODY$
   LANGUAGE plpgsql;
 
+
 DROP TRIGGER IF EXISTS calculate_by_row_number ON well_numbers;
 
 DROP TABLE IF EXISTS well_numbers CASCADE;
@@ -48,6 +49,7 @@ CREATE INDEX ON well_numbers(by_col);
 
 
 -----well_numbers-------------------------
+--not using this - importing table directly
 
 DROP FUNCTION IF EXISTS fill_well_numbers_a();
 
@@ -644,7 +646,7 @@ CREATE TABLE worklists(
 		FOREIGN KEY (sample_id) REFERENCES sample(id));
 
 
-
+\i /home/mbc/projects/postgres/well_numbers_for_import.sql
 \i /home/mbc/projects/postgres/plate_layouts_for_import.sql
 
 

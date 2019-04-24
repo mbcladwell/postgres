@@ -158,8 +158,6 @@ INSERT INTO pmuser ( pmuser_name, tags, usergroup, password) VALUES ('admin', 'p
 INSERT INTO pmuser ( pmuser_name, tags, usergroup, password) VALUES ('user', 'pmadmin2@postgres', 1, 'welcome');
 
 
-select * from pmuser;
-
 
 DROP TABLE IF EXISTS pmsession CASCADE;
 DROP SEQUENCE IF EXISTS  pmsession_id_seq CASCADE;
@@ -236,107 +234,81 @@ CREATE INDEX ON plate_layout_name(plate_format_id);
 INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-1','4 controls col 12', '1S1T', 96,1,1,1,4,92,'E12-H12','source');
 
 INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-2','4 controls cols 23,24', '1S4T', 384, 1,4,1,4,368,'I23-P24','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-3','4 controls cols 23,24', '1S2T', 384, 1,2,1,4,368,'I23-P24','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-4','4 controls cols 23,24', '1S1T', 384, 1,1,1,4,368,'I23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-3','4 controls cols 23,24', '2S2T', 384, 2,2,1,4,368,'I23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-4','4 controls cols 23,24', '2S4T', 384, 2,4,1,4,368,'I23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-5','4 controls cols 23,24', '4S1T', 384, 4,1,1,4,368,'I23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-6','4 controls cols 23,24', '4S2T', 384, 4,2,1,4,368,'I23-P24','dest');
 
-
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-5','4 controls cols 23,24', '2S2T', 384, 2,2,1,4,368,'I23-P24','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-6','4 controls cols 23,24', '2S1T', 384, 2,1,1,4,368,'I23-P24','dest');
-
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-7','4 controls cols 23,24', '4S1T', 384, 4,1,1,4,368,'I23-P24','dest');
 
 -- 96 well plate 8 controls
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-8','8 controls col 12', '1S1T', 96, 1,1,1,8,88,'A12-H12','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-7','8 controls col 12', '1S1T', 96, 1,1,1,8,88,'A12-H12','source');
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-9','8 controls cols 23,24', '1S4T', 384, 1,4,1,8,352,'A23-P24','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-10','8 controls cols 23,24', '1S2T', 384, 1,2,1,8,352,'A23-P24','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-11','8 controls cols 23,24', '1S1T', 384, 1,1,1,8,352,'A23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-8','8 controls cols 23,24', '1S4T', 384, 1,4,1,8,352,'A23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-9','8 controls cols 23,24', '2S2T', 384, 2,2,1,8,352,'A23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-10','8 controls cols 23,24', '2S4T', 384, 2,4,1,8,352,'A23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-11','8 controls cols 23,24', '4S1T', 384, 4,1,1,8,352,'A23-P24','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-12','8 controls cols 23,24', '4S2T', 384, 4,2,1,8,352,'A23-P24','dest');
 
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-12','8 controls cols 23,24', '2S2T', 384, 2,2,1,8,352,'A23-P24','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-13','8 controls cols 23,24', '2S1T', 384, 2,1,1,8,352,'A23-P24','dest');
-
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-14','8 controls cols 23,24', '4S1T', 384, 4,1,1,8,352,'A23-P24','dest');
 
 -- 384 well plate 8 controls
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-15','8 controls col 24', '1S1T', 384, 1,1,1,8,376,'I24-P24','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-13','8 controls col 24', '1S1T', 384, 1,1,1,8,376,'I24-P24','source');
 
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-16','8 controls cols 47,48', '1S4T', 1536, 1,4,1,8,1504,'Q47-AF48','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-17','8 controls cols 47,48', '1S2T', 1536, 1,2,1,8,1504,'Q47-AF48','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-18','8 controls cols 47,48', '1S1T', 1536, 1,1,1,8,1504,'Q47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-14','8 controls cols 47,48', '1S4T', 1536, 1,4,1,8,1504,'Q47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-15','8 controls cols 47,48', '2S2T', 1536, 2,2,1,8,1504,'Q47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-16','8 controls cols 47,48', '2S4T', 1536, 2,4,1,8,1504,'Q47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-17','8 controls cols 47,48', '4S1T', 1536, 4,1,1,8,1504,'Q47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-18','8 controls cols 47,48', '4S2T', 1536, 4,2,1,8,1504,'Q47-AF48','dest');
 
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-19','8 controls cols 47,48', '2S2T', 1536, 2,2,1,8,1504,'Q47-AF48','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-20','8 controls cols 47,48', '2S1T', 1536, 2,1,1,8,1504,'Q47-AF48','dest');
-
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-21','8 controls cols 47,48', '4S1T', 1536, 4,1,1,8,1504,'Q47-AF48','dest');
 
 -- 384 well plate 16 controls
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-22','16 controls col 24', '1S1T', 384, 1,1,1,16,368,'A24-P24','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-19','16 controls col 24', '1S1T', 384, 1,1,1,16,368,'A24-P24','source');
 
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-23','16 controls cols 47,48', '1S4T', 1536, 1,4,1,16,1472,'A47-AF48','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-24','16 controls cols 47,48', '1S2T', 1536, 1,2,1,16,1472,'A47-AF48','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-25','16 controls cols 47,48', '1S1T', 1536, 1,1,1,16,1472,'A47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-20','16 controls cols 47,48', '1S4T', 1536, 1,4,1,16,1472,'A47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-21','16 controls cols 47,48', '2S2T', 1536, 2,2,1,16,1472,'A47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-22','16 controls cols 47,48', '2S4T', 1536, 2,4,1,16,1472,'A47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-23','16 controls cols 47,48', '4S1T', 1536, 4,1,1,16,1472,'A47-AF48','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-24','16 controls cols 47,48', '4S2T', 1536, 4,2,1,16,1472,'A47-AF48','dest');
 
-
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-26','16 controls cols 47,48', '2S2T', 1536, 2,2,1,16,1472,'A47-AF48','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-27','16 controls cols 47,48', '2S1T', 1536, 2,1,1,16,1472,'A47-AF48','dest');
-
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-28','16 controls cols 47,48', '4S1T', 1536, 4,1,1,16,1472,'A47-AF48','dest');
 
 
 -- 384 well plate 7 controls no edge
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-29','7 controls col 23', '1S1T', 384, 1,1,0,7,301,'I23-O23','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-25','7 controls col 23', '1S1T', 384, 1,1,0,7,301,'I23-O23','source');
 
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-30','7 controls cols 46,47', '1S4T', 1536, 1,4,0,7,1204,'Q46-AE47','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-31','7 controls cols 46,47', '1S2T', 1536, 1,2,0,7,1204,'Q46-AE47','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-32','7 controls cols 46,47', '1S1T', 1536, 1,1,0,7,1204,'Q46-AE47','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-26','7 controls cols 46,47', '1S4T', 1536, 1,4,0,7,1204,'Q46-AE47','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-27','7 controls cols 46,47', '2S2T', 1536, 2,2,0,7,1204,'Q46-AE47','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-28','7 controls cols 46,47', '2S4T', 1536, 2,4,0,7,1204,'Q46-AE47','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-29','7 controls cols 46,47', '4S1T', 1536, 4,1,0,7,1204,'Q46-AE47','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-30','7 controls cols 46,47', '4S2T', 1536, 4,2,0,7,1204,'Q46-AE47','dest');
 
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-33','7 controls cols 46,47', '2S2T', 1536, 2,2,0,7,1204,'Q46-AE47','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-34','7 controls cols 46,47', '2S1T', 1536, 2,1,0,7,1204,'Q46-AE47','dest');
-
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-35','7 controls cols 46,47', '4S1T', 1536, 4,1,0,7,1204,'Q46-AE47','dest');
 
 -- 384 well plate 14 controls no edge
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-36','14 controls col 23', '1S1T', 384, 1,1,0,14,294,'B23-O23','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-31','14 controls col 23', '1S1T', 384, 1,1,0,14,294,'B23-O23','source');
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-37','14 controls cols 46,47', '1S4T', 1536, 1,4,0,14,1176,'B46-AE47','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-38','14 controls cols 46,47', '1S2T', 1536, 1,2,0,14,1176,'B46-AE47','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-39','14 controls cols 46,47', '1S1T', 1536, 1,1,0,14,1176,'B46-AE47','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-32','14 controls cols 46,47', '1S4T', 1536, 1,4,0,14,1176,'B46-AE47','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-33','14 controls cols 46,47', '2S2T', 1536, 2,2,0,14,1176,'B46-AE47','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-34','14 controls cols 46,47', '2S4T', 1536, 2,4,0,14,1176,'B46-AE47','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-35','14 controls cols 46,47', '4S1T', 1536, 4,1,0,14,1176,'B46-AE47','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-36','14 controls cols 46,47', '4S2T', 1536, 4,2,0,14,1176,'B46-AE47','dest');
 
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-40','14 controls cols 46,47', '2S2T', 1536, 2,2,0,14,1176,'B46-AE47','dest');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-41','14 controls cols 46,47', '2S1T', 1536, 2,1,0,14,1176,'B46-AE47','dest');
-
-
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-42','14 controls cols 46,47', '4S1T', 1536, 4,1,0,14,1176,'B46-AE47','dest');
 
 
 --1536 as source
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-43','8 controls cols 47,48', '1S1T', 1536, 1,1,1,8,1504,'Q47-AF48','source');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-44','16 controls cols 47,48', '1S1T', 1536, 1,1,1,16,1472,'A47-AF48','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-37','8 controls cols 47,48', '1S1T', 1536, 1,1,1,8,1504,'Q47-AF48','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-38','16 controls cols 47,48', '1S1T', 1536, 1,1,1,16,1472,'A47-AF48','source');
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-45','7 controls cols 46,47', '1S1T', 1536, 1,1,0,7,1204,'Q46-AE47','source');
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-46','14 controls cols 46,47', '1S1T', 1536, 1,1,0,14,1176,'B46-AE47','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-39','7 controls cols 46,47', '1S1T', 1536, 1,1,0,7,1204,'Q46-AE47','source');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-40','14 controls cols 46,47', '1S1T', 1536, 1,1,0,14,1176,'B46-AE47','source');
 
 
-INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-47','all blanks', 'not reformattable', 1536, 1,1,0,0,0,'none','dest');
+INSERT INTO plate_layout_name (sys_name, name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ('LYT-41','all blanks', 'not reformattable', 1536, 1,1,0,0,0,'none','dest');
 
 
 
@@ -352,48 +324,46 @@ INSERT INTO layout_source_dest( src, dest ) VALUES (1,3);
 INSERT INTO layout_source_dest( src, dest ) VALUES (1,4);
 INSERT INTO layout_source_dest( src, dest ) VALUES (1,5);
 INSERT INTO layout_source_dest( src, dest ) VALUES (1,6);
-INSERT INTO layout_source_dest( src, dest ) VALUES (1,7);
 
 
-INSERT INTO layout_source_dest( src, dest ) VALUES (8,9);
-INSERT INTO layout_source_dest( src, dest ) VALUES (8,10);
-INSERT INTO layout_source_dest( src, dest ) VALUES (8,11);
-INSERT INTO layout_source_dest( src, dest ) VALUES (8,12);
-INSERT INTO layout_source_dest( src, dest ) VALUES (8,13);
-INSERT INTO layout_source_dest( src, dest ) VALUES (8,14);
+INSERT INTO layout_source_dest( src, dest ) VALUES (7,8);
+INSERT INTO layout_source_dest( src, dest ) VALUES (7,9);
+INSERT INTO layout_source_dest( src, dest ) VALUES (7,10);
+INSERT INTO layout_source_dest( src, dest ) VALUES (7,11);
+INSERT INTO layout_source_dest( src, dest ) VALUES (7,12);
 
-INSERT INTO layout_source_dest( src, dest ) VALUES (15,16);
-INSERT INTO layout_source_dest( src, dest ) VALUES (15,17);
-INSERT INTO layout_source_dest( src, dest ) VALUES (15,18);
-INSERT INTO layout_source_dest( src, dest ) VALUES (15,19);
-INSERT INTO layout_source_dest( src, dest ) VALUES (15,20);
-INSERT INTO layout_source_dest( src, dest ) VALUES (15,21);
+INSERT INTO layout_source_dest( src, dest ) VALUES (13,14);
+INSERT INTO layout_source_dest( src, dest ) VALUES (13,15);
+INSERT INTO layout_source_dest( src, dest ) VALUES (13,16);
+INSERT INTO layout_source_dest( src, dest ) VALUES (13,17);
+INSERT INTO layout_source_dest( src, dest ) VALUES (13,18);
 
-INSERT INTO layout_source_dest( src, dest ) VALUES (22,23);
-INSERT INTO layout_source_dest( src, dest ) VALUES (22,24);
-INSERT INTO layout_source_dest( src, dest ) VALUES (22,25);
-INSERT INTO layout_source_dest( src, dest ) VALUES (22,26);
-INSERT INTO layout_source_dest( src, dest ) VALUES (22,27);
-INSERT INTO layout_source_dest( src, dest ) VALUES (22,28);
 
-INSERT INTO layout_source_dest( src, dest ) VALUES (29,30);
-INSERT INTO layout_source_dest( src, dest ) VALUES (29,31);
-INSERT INTO layout_source_dest( src, dest ) VALUES (29,32);
-INSERT INTO layout_source_dest( src, dest ) VALUES (29,33);
-INSERT INTO layout_source_dest( src, dest ) VALUES (29,34);
-INSERT INTO layout_source_dest( src, dest ) VALUES (29,35);
 
-INSERT INTO layout_source_dest( src, dest ) VALUES (36,37);
-INSERT INTO layout_source_dest( src, dest ) VALUES (36,38);
-INSERT INTO layout_source_dest( src, dest ) VALUES (36,39);
-INSERT INTO layout_source_dest( src, dest ) VALUES (36,40);
-INSERT INTO layout_source_dest( src, dest ) VALUES (36,41);
-INSERT INTO layout_source_dest( src, dest ) VALUES (36,42);
+INSERT INTO layout_source_dest( src, dest ) VALUES (19,20);
+INSERT INTO layout_source_dest( src, dest ) VALUES (19,21);
+INSERT INTO layout_source_dest( src, dest ) VALUES (19,22);
+INSERT INTO layout_source_dest( src, dest ) VALUES (19,23);
+INSERT INTO layout_source_dest( src, dest ) VALUES (19,24);
 
-INSERT INTO layout_source_dest( src, dest ) VALUES (43,47);
-INSERT INTO layout_source_dest( src, dest ) VALUES (44,47);
-INSERT INTO layout_source_dest( src, dest ) VALUES (45,47);
-INSERT INTO layout_source_dest( src, dest ) VALUES (46,47);
+
+INSERT INTO layout_source_dest( src, dest ) VALUES (25,26);
+INSERT INTO layout_source_dest( src, dest ) VALUES (25,27);
+INSERT INTO layout_source_dest( src, dest ) VALUES (25,28);
+INSERT INTO layout_source_dest( src, dest ) VALUES (25,29);
+INSERT INTO layout_source_dest( src, dest ) VALUES (25,30);
+
+INSERT INTO layout_source_dest( src, dest ) VALUES (31,32);
+INSERT INTO layout_source_dest( src, dest ) VALUES (31,33);
+INSERT INTO layout_source_dest( src, dest ) VALUES (31,34);
+INSERT INTO layout_source_dest( src, dest ) VALUES (31,35);
+INSERT INTO layout_source_dest( src, dest ) VALUES (31,36);
+
+
+INSERT INTO layout_source_dest( src, dest ) VALUES (37,41);
+INSERT INTO layout_source_dest( src, dest ) VALUES (38,41);
+INSERT INTO layout_source_dest( src, dest ) VALUES (39,41);
+INSERT INTO layout_source_dest( src, dest ) VALUES (40,41);
 
 
 -----------------------------
@@ -414,7 +384,7 @@ CREATE TABLE plate_set
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
         FOREIGN KEY (plate_type_id) REFERENCES plate_type(id),
         FOREIGN KEY (plate_format_id) REFERENCES plate_format(id),
-        FOREIGN KEY (project_id) REFERENCES project(ID),
+        FOREIGN KEY (project_id) REFERENCES project(ID) ON DELETE cascade,
 	FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id));
 
 CREATE INDEX ON plate_set(barcode);
@@ -449,8 +419,8 @@ CREATE TABLE plate_plate_set (
         	plate_set_id INTEGER,
         	plate_id INTEGER,
 		plate_order INTEGER,
-                FOREIGN KEY (plate_set_id) REFERENCES plate_set(id),
-                FOREIGN KEY (plate_id) REFERENCES plate(id));
+                FOREIGN KEY (plate_set_id) REFERENCES plate_set(id) ON DELETE cascade,
+                FOREIGN KEY (plate_id) REFERENCES plate(id) ON DELETE cascade);
 
 CREATE INDEX ON plate_plate_set(plate_set_id);
 CREATE INDEX ON plate_plate_set(plate_id);
@@ -461,7 +431,7 @@ CREATE TABLE sample (id SERIAL PRIMARY KEY,
 		sample_sys_name VARCHAR(20),
 		project_id INTEGER,
                 accs_id VARCHAR(30),
-		FOREIGN KEY (project_id) REFERENCES project(id));
+		FOREIGN KEY (project_id) REFERENCES project(id)  ON DELETE cascade);
 
 CREATE INDEX ON sample(project_id);
 
@@ -470,7 +440,7 @@ DROP TABLE IF EXISTS well CASCADE;
 CREATE TABLE well (id SERIAL PRIMARY KEY,
   		by_col integer,
 		plate_id INTEGER,
-		FOREIGN KEY (plate_id) REFERENCES plate(id));
+		FOREIGN KEY (plate_id) REFERENCES plate(id)  ON DELETE cascade);
 
 CREATE INDEX ON well(plate_id);
 
@@ -480,8 +450,8 @@ DROP TABLE IF EXISTS well_sample CASCADE;
 CREATE TABLE well_sample (
         	well_id INTEGER,
         	sample_id INTEGER,
-                FOREIGN KEY (well_id) REFERENCES well(id),
-                FOREIGN KEY (sample_id) REFERENCES sample(id));
+                FOREIGN KEY (well_id) REFERENCES well(id)  ON DELETE cascade,
+                FOREIGN KEY (sample_id) REFERENCES sample(id) ON DELETE cascade);
 
 CREATE INDEX ON well_sample(well_id);
 CREATE INDEX ON well_sample(sample_id);
@@ -498,7 +468,7 @@ CREATE TABLE hit_list
 	n INTEGER,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
  assay_run_id INTEGER,
- FOREIGN KEY (assay_run_id) REFERENCES assay_run(id));
+ FOREIGN KEY (assay_run_id) REFERENCES assay_run(id)  ON DELETE cascade);
 
 CREATE INDEX ON hit_list(assay_run_id);
 
@@ -509,8 +479,8 @@ CREATE TABLE hit_sample
  hitlist_id INTEGER,
   sample_id INTEGER,
 
- FOREIGN KEY (hitlist_id) REFERENCES hit_list(id),
- FOREIGN KEY (sample_id) REFERENCES sample(id));
+ FOREIGN KEY (hitlist_id) REFERENCES hit_list(id)  ON DELETE cascade,
+ FOREIGN KEY (sample_id) REFERENCES sample(id)  ON DELETE cascade);
 
 CREATE INDEX ON hit_sample(hitlist_id);
 CREATE INDEX ON hit_sample(sample_id);
@@ -528,7 +498,7 @@ CREATE TABLE assay_run (id serial PRIMARY KEY,
                 plate_set_id INTEGER,
 		plate_layout_name_id INTEGER,
                 updated  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
-               FOREIGN KEY (plate_set_id) REFERENCES plate_set(id),
+               FOREIGN KEY (plate_set_id) REFERENCES plate_set(id)  ON DELETE cascade,
                FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id),
 		FOREIGN KEY (assay_type_id) REFERENCES assay_type(id));
 
@@ -558,7 +528,7 @@ CREATE TABLE assay_result (
                 bkgrnd_sub REAL,
 		norm REAL,        -- max unknown signal set to 1
 		norm_pos REAL,    --positive control set to 1
-		FOREIGN KEY (assay_run_id) REFERENCES assay_run(id));
+		FOREIGN KEY (assay_run_id) REFERENCES assay_run(id)  ON DELETE cascade);
 		
 
 CREATE INDEX ON assay_result(assay_run_id);
@@ -587,8 +557,8 @@ CREATE TABLE plate_layout (
 		plate_layout_name_id INTEGER,
                 well_by_col INTEGER,
                 well_type_id INTEGER,
-		replicates VARCHAR(2),
-		target VARCHAR(2),
+		replicates integer,
+		target integer,
 		FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id),
                 FOREIGN KEY (well_type_id) REFERENCES well_type(id));
 
@@ -605,8 +575,8 @@ CREATE TABLE import_plate_layout (
 		plate_layout_name_id INTEGER,
                 well_by_col INTEGER,
                 well_type_id INTEGER,
-		replicates VARCHAR(2),
-		target VARCHAR(2));
+		replicates integer,
+		target INTEGER);
 
 
 -----------------------------------
@@ -642,7 +612,7 @@ CREATE TABLE worklists(
 		source_well integer,
 		dest_plate VARCHAR(10),
 		dest_well integer,
-		FOREIGN KEY (rearray_pairs_id) REFERENCES rearray_pairs(id),
+		FOREIGN KEY (rearray_pairs_id) REFERENCES rearray_pairs(id)  ON DELETE cascade,
 		FOREIGN KEY (sample_id) REFERENCES sample(id));
 
 

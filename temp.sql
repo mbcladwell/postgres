@@ -243,3 +243,14 @@ SELECT well_numbers.by_col, import_plate_layout.well_type_id FROM well_numbers, 
 INSERT INTO plate_layout (SELECT '46' AS "plate_layout_name_id", well_numbers.by_col AS "well_by_col", import_plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM well_numbers, import_plate_layout, plate_layout WHERE well_numbers.plate_format = 384 AND import_plate_layout.well_by_col=well_numbers.parent_well AND plate_layout.plate_layout_name_id=2 AND plate_layout.well_by_col=well_numbers.by_col);
 
 SELECT * FROM plate_layout WHERE plate_layout_name_id = 46;
+
+
+-----------------------
+
+SELECT * FROM project WHERE project.id=18;
+SELECT * FROM plate_set WHERE plate_set.id=29;
+SELECT * FROM plate WHERE plate.id=440;
+SELECT * FROM assay_run WHERE assay_run.id=32;
+
+
+DELETE FROM project WHERE project.id = 18;

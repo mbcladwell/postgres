@@ -478,8 +478,10 @@ $BODY$
 
 --------scatter plot data
 
+DROP FUNCTION IF exists get_scatter_plot_data( integer);
+
 CREATE OR REPLACE FUNCTION get_scatter_plot_data(_assay_run_id INTEGER)
-RETURNS TABLE(  plate INTEGER, well INTEGER, response REAL, bkgrnd_sub REAL,   norm REAL,   norm_pos REAL,  well_type_id INTEGER,  replicates VARCHAR(2), target VARCHAR(2), sample_id integer ) AS
+RETURNS TABLE(  plate INTEGER, well INTEGER, response REAL, bkgrnd_sub REAL,   norm REAL,   norm_pos REAL,  well_type_id INTEGER,  replicates integer, target integer, sample_id integer ) AS
 $BODY$
 begin
 

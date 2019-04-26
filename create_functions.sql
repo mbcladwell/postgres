@@ -626,7 +626,7 @@ DECLARE
    dest_id INTEGER;
    edge INTEGER;
 dest_layout_ids INTEGER[];
-dest_layout_descr VARCHAR[] := '{"1S4T","1S2T","1S1T","2S2T","2S1T","4S1T"}';
+dest_layout_descr VARCHAR[] := '{"1S4T","2S2T","2S4T","4S1T","4S2T"}';
 dest_format INTEGER;
 i INTEGER;
 
@@ -635,16 +635,16 @@ BEGIN
 IF n_edge >0 THEN edge = 0; ELSE edge = 1; END IF;
 
 IF format = 96 THEN
-dest_layout_ids := '{2,3,4,5,6,7}';
+dest_layout_ids := '{2,3,4,5,6}';
 dest_format := 384;
 END IF;
 
 IF format = 384 THEN
-dest_layout_ids := '{16,17,18,19,20,21}';
+dest_layout_ids := '{14,15,16,17,18}';
 dest_format := 1536;
 END IF;
 
-INSERT INTO plate_layout_name (NAME, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES (source_name, source_description, format, '1', 1, edge, n_controls, n_unknowns, control_location, 'source') RETURNING ID INTO source_id;
+INSERT INTO plate_layout_name (NAME, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES (source_name, source_description, format, 1, 1, edge, n_controls, n_unknowns, control_location, 'source') RETURNING ID INTO source_id;
 
     UPDATE plate_layout_name SET sys_name = 'LYT-'|| source_id WHERE id=source_id;
 
@@ -653,8 +653,8 @@ INSERT INTO plate_layout (SELECT source_id AS "plate_layout_name_id", well_by_co
 
 
 --insert destinations
-FOR i IN 1..6 loop
-INSERT INTO plate_layout_name ( descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ( dest_layout_descr[i], dest_format, '1', 1, edge, n_controls, n_unknowns, control_location, 'dest') RETURNING ID INTO dest_id;
+FOR i IN 1..5 loop
+INSERT INTO plate_layout_name ( descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ( dest_layout_descr[i], dest_format, 1, 1, edge, n_controls, n_unknowns, control_location, 'dest') RETURNING ID INTO dest_id;
  UPDATE plate_layout_name SET sys_name = 'LYT-'|| dest_id WHERE id=dest_id;
 
 INSERT INTO plate_layout (SELECT dest_id AS "plate_layout_name_id", well_numbers.by_col AS "well_by_col", import_plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM well_numbers, import_plate_layout, plate_layout WHERE well_numbers.plate_format = dest_format AND import_plate_layout.well_by_col=well_numbers.parent_well AND plate_layout.plate_layout_name_id=dest_layout_ids[i] AND plate_layout.well_by_col=well_numbers.by_col);

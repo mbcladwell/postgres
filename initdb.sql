@@ -43,6 +43,6 @@ GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO pm_admin;  -- SELECT, UPDATE are opt
 
 set schema 'plate_manager';
 CREATE EXTENSION pgcrypto;
-
+CREATE EXTENSION intarray;
 --Once set up:
 -- psql -U pm_admin -h 192.168.1.7 -d pmdb

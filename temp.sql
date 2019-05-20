@@ -15,119 +15,9 @@
 -- plate_plate_set: plate_set_id   plate_id   plate_order
 -- plate_layout_name  id  plate_format_id  replicates  targets  use_edge  num_controls control_loc source_dest 
 
-SELECT * FROM assay_result LIMIT 5;
-SELECT * FROM assay_run LIMIT 5;
-SELECT * FROM plate_layout LIMIT 5;
-SELECT * FROM plate_layout_name LIMIT 5;
-SELECT * FROM well_numbers LIMIT 5;
-
-
-SELECT * FROM plate_set WHERE plate_set.ID = 10;
-SELECT * FROM plate_plate_set WHERE plate_plate_set.plate_set_ID = 10 LIMIT 5;
-SELECT * FROM plate LIMIT 5;
-SELECT * FROM well_sample LIMIT 5;
-SELECT * FROM well LIMIT 5;
 
 --https://stackoverflow.com/questions/17864911/return-setof-rows-from-postgresql-function
 ---------------------------
-
---get assay runs for project
-
-SELECT * FROM assay_run;
-SELECT * FROM plate_set LIMIT 5;
-SELECT * FROM assay_type LIMIT 5;
-
-
-SELECT assay_run.assay_run_sys_name AS "Sys-NAME", assay_run.assay_run_name AS "NAME", assay_run.descr AS "Description", assay_type.assay_type_name AS "Assay TYPE", plate_set.plate_set_sys_name  FROM assay_run, plate_set, assay_type WHERE assay_run.assay_type_id=assay_type.id AND assay_run.plate_set_id= plate_set.ID AND plate_set.project_id=10;
-
-
-SELECT * FROM hit_list LIMIT 5;
-SELECT * FROM hit_sample LIMIT 5;
-
-
-SELECT hit_list.hitlist_sys_name AS "Sys-NAME", hit_list.hitlist_name AS "NAME", hit_list.descr AS "Description", assay_run.assay_run_sys_name AS "Assay Run ID", plate_set.plate_set_sys_name  FROM assay_run, plate_set, hit_list WHERE hit_list.assay_run_id= assay_run.id AND assay_run.plate_set_id= plate_set.ID AND plate_set.project_id=10;
-
-
--- get hit counts for plate set
-
--- input poject id and hit list id
-
-SELECT sample_id FROM hit_sample, hit_list WHERE hit_list.ID= hit_sample.hitlist_id AND hit_list.id=1;
-
-
-SELECT * FROM plate_set WHERE plate_set.project_id=10;
--- use plateset ids 1 through 10
--- get all the sample ids from plate_set 10
-SELECT * FROM well_sample LIMIT 5;
-
-
-SELECT plate_plate_set.plate_id, well.id FROM plate_plate_set, well WHERE plate_plate_set.plate_id=well.plate_id and plate_plate_set.plate_set_id=10;
-
------
-
-DROP FUNCTION get_hit_counts_for_plate_sets(integer,INTEGER);
-CREATE OR REPLACE FUNCTION get_hit_counts_for_plate_sets(project_id INTEGER, hit_list_id INTEGER)
- RETURNS table AS
-$BODY$
-
-BEGIN
-
-SELECT plate_set.plate_set_sys_name, MAX(plate_type.plate_type_name), COUNT(sample.ID) FROM plate_set, plate_plate_set, plate_type, plate, well, well_sample, sample WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id AND plate_set.plate_type_id = plate_type.id   and well.plate_id=plate.ID AND well_sample.well_id=well.ID AND well_sample.sample_id= sample.ID  AND sample.id  IN (SELECT  sample.id FROM hit_list, hit_sample, plate_set, assay_run, sample WHERE hit_sample.hitlist_id=hit_list.id  AND hit_sample.sample_id=sample.id  and assay_run.plate_set_id=plate_set.id AND   hit_list.assay_run_id=assay_run.id   AND  hit_sample.hitlist_id IN (SELECT hit_list.ID FROM hit_list, assay_run WHERE hit_list.assay_run_id=assay_run.ID AND hit_list.id=1 and assay_run.ID IN (SELECT assay_run.ID FROM assay_run WHERE assay_run.plate_set_id IN (SELECT plate_set.ID FROM plate_set WHERE plate_set.project_id=10)))) GROUP BY plate_set.plate_set_sys_name;
-
-
-END LOOP;
-
-RETURN results;
-END;
-
-$BODY$
-  LANGUAGE plpgsql VOLATILE;
-
-SELECT get_hit_counts_for_plate_sets(10, 1);
-
-
-
-SELECT * FROM plate_plate_set;
-SELECT * FROM plate_set LIMIT 5;
-SELECT * FROM plate LIMIT 5;
-SELECT * FROM well  LIMIT 5;
-SELECT * FROM plate_well LIMIT 5;
-SELECT * FROM hit_list;
-SELECT * FROM assay_run LIMIT 5;
-
-
-SELECT plate_set.ID, sample.id FROM plate_set, plate_plate_set, plate, hit_list, hit_sample, well_sample, well, sample, assay_run WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id  AND  well.plate_id=plate.ID AND  well_sample.well_id=well.ID AND well_sample.sample_id = sample.ID and  hit_sample.sample_id = sample.ID   and hit_list.ID= hit_sample.hitlist_id AND assay_run.plate_set_id=plate_set.ID AND hit_list.assay_run_id=assay_run.ID AND  plate_set.project_id=10 limit 20;
-
-SELECT plate_set.ID FROM plate_set WHERE plate_set.project_id=10;
-
--- get all plate sets in a project
-SELECT plate_set.ID FROM plate_set WHERE plate_set.project_id=10;
-
---this gets all samples from a plate set
-SELECT plate_set.ID, plate.ID, well.ID, sample.id FROM plate_set, plate_plate_set, plate, well, well_sample, sample WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id AND well.plate_id=plate.ID AND well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID and plate_set.id=1;
-
---all samples from a project
-SELECT plate_set.ID, plate.ID, well.ID, sample.id FROM plate_set, plate_plate_set, plate, well, well_sample, sample WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id AND well.plate_id=plate.ID AND well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID and plate_set.project_id=10;
-
-
-
-
-
-SELECT plate_set.ID, plate.ID, well.ID, sample.id FROM plate_set, plate_plate_set, plate, well, well_sample, sample WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id AND well.plate_id=plate.ID AND well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID and plate_set.id=1;
-
---get all hit lists in a project
-
-SELECT plate_set.plate_set_sys_name, COUNT(sample.id) FROM hit_list, hit_sample, plate_set, assay_run, sample WHERE hit_sample.hitlist_id=hit_list.id  AND hit_sample.sample_id=sample.id  and assay_run.plate_set_id=plate_set.id AND   hit_list.assay_run_id=assay_run.id   AND  hit_sample.hitlist_id IN (SELECT hit_list.ID FROM hit_list, assay_run WHERE hit_list.assay_run_id=assay_run.ID and assay_run.ID IN (SELECT assay_run.ID FROM assay_run WHERE assay_run.plate_set_id IN (SELECT plate_set.ID FROM plate_set WHERE plate_set.project_id=10))) GROUP BY plate_set.ID;
-
-
-
---this gets all samples in project
-SELECT plate_set.plate_set_sys_name,  sample.id FROM plate_set, plate_plate_set, plate, well, well_sample, sample WHERE plate_plate_set.plate_set_id=plate_set.ID AND plate_plate_set.plate_id=plate.id AND well.plate_id=plate.ID AND well_sample.well_id=well.ID AND well_sample.sample_id=sample.ID and plate_set.project_id=10;
-
-
-
---get all samples in a hit list
-SELECT hit_sample.hitlist_id AS "Hit List", sample.ID AS "Sample", sample.sample_sys_name AS "Sample Name", sample.accs_id AS "Accession" FROM hit_sample, sample WHERE hit_sample.hitlist_id=1 AND hit_sample.sample_id=sample.id;
 
 
 
@@ -144,113 +34,63 @@ SELECT * FROM well_sample LIMIT 5;
 SELECT * FROM plate LIMIT 5;
 SELECT * FROM plate_layout LIMIT 5;
 
-----make layouts
+---reformat
 
 
-SELECT * FROM import_plate_layout;
-SELECT * FROM plate_layout_name;
+DROP FUNCTION IF exists reformat_plate_set(source_plate_set_id INTEGER, source_num_plates INTEGER, n_reps_source INTEGER, dest_descr VARCHAR(30), dest_plate_set_name VARCHAR(30), dest_num_plates INTEGER, dest_plate_format_id INTEGER, dest_plate_type_id INTEGER, project_id INTEGER, dest_plate_layout_name_id INTEGER );
 
---insert the layout_name record
---insert the source layout; it is waiting in the temp
---create destination layouts for a source layout
---     use existing patterns, format specific
---insert destination
---link source and destinations
-DROP FUNCTION create_layout_records(VARCHAR, VARCHAR, VARCHAR, INTEGER, INTEGER, INTEGER, integer );
-CREATE OR REPLACE FUNCTION create_layout_records(source_name VARCHAR, source_description VARCHAR, control_location VARCHAR, n_controls INTEGER, n_unknowns INTEGER, format INTEGER, n_edge integer)
- RETURNS void AS
+CREATE OR REPLACE FUNCTION reformat_plate_set(source_plate_set_id INTEGER, source_num_plates INTEGER, n_reps_source INTEGER, dest_descr VARCHAR(30), dest_plate_set_name VARCHAR(30), dest_num_plates INTEGER, dest_plate_format_id INTEGER, dest_plate_type_id INTEGER, project_id INTEGER, dest_plate_layout_name_id INTEGER )
+ RETURNS integer AS
 $BODY$
 DECLARE
-   source_id INTEGER;
-   dest_id INTEGER;
-   edge INTEGER;
-dest_layout_ids INTEGER[];
-dest_layout_descr VARCHAR[] := '{"1S4T","1S2T","1S1T","2S2T","2S1T","4S1T"}';
-dest_format INTEGER;
-i INTEGER;
+
+dest_plate_set_id INTEGER;
+all_source_well_ids INTEGER[];
+all_dest_well_ids INTEGER[];
+ w INTEGER;
+holder INTEGER;
 
 BEGIN
+--here I am creating the destination plate set, no samples included
+SELECT new_plate_set(dest_descr ,dest_plate_set_name, dest_num_plates, dest_plate_format_id, dest_plate_type_id, project_id, dest_plate_layout_name_id, false) INTO dest_plate_set_id;
 
-IF n_edge >0 THEN edge = 0; ELSE edge = 1; END IF;
+RAISE notice 'dest_plate_set_id: (%)', dest_plate_set_id;
 
-IF format = 96 THEN
-dest_layout_ids := '{2,3,4,5,6,7}';
-dest_format := 384;
-END IF;
+CREATE TEMP TABLE temp1(plate_id INT, well_by_col INT, well_id INT);
 
-IF format = 384 THEN
-dest_layout_ids := '{16,17,18,19,20,21}';
-dest_format := 1536;
-END IF;
-
-INSERT INTO plate_layout_name (name, descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES (source_name, source_description, format, '1', 1, edge, n_controls, n_unknowns, control_location, 'source') RETURNING ID INTO source_id;
-
-    UPDATE plate_layout_name SET sys_name = 'LYT-'|| source_id WHERE id=source_id;
-
---insert source
-INSERT INTO plate_layout (SELECT source_id AS "plate_layout_name_id", well_by_col, well_type_id, replicates, target FROM import_plate_layout); 
-
-
---insert destinations
-FOR i IN 1..6 loop
-INSERT INTO plate_layout_name ( descr, plate_format_id, replicates, targets, use_edge, num_controls, unknown_n, control_loc, source_dest) VALUES ( dest_layout_descr[i], dest_format, '1', 1, edge, n_controls, n_unknowns, control_location, 'dest') RETURNING ID INTO dest_id;
- UPDATE plate_layout_name SET sys_name = 'LYT-'|| dest_id WHERE id=dest_id;
-
-INSERT INTO plate_layout (SELECT dest_id AS "plate_layout_name_id", well_numbers.by_col AS "well_by_col", import_plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM well_numbers, import_plate_layout, plate_layout WHERE well_numbers.plate_format = dest_format AND import_plate_layout.well_by_col=well_numbers.parent_well AND plate_layout.plate_layout_name_id=dest_layout_ids[i] AND plate_layout.well_by_col=well_numbers.by_col);
-
-
-INSERT INTO layout_source_dest (src, dest) VALUES (source_id, dest_id);
+FOR i IN 1..n_reps_source LOOP
+INSERT INTO temp1 select well.plate_id, well.by_col, well.id AS well_id FROM plate_plate_set, well  WHERE plate_plate_set.plate_set_id = source_plate_set_id AND plate_plate_set.plate_id = well.plate_id   ORDER BY plate_plate_set.plate_order, well.ID;
 END LOOP;
---
+
+SELECT ARRAY (SELECT well_id FROM temp1) INTO all_source_well_ids;
 
 
-TRUNCATE TABLE import_plate_layout;
+SELECT ARRAY (SELECT  dest.id  FROM ( SELECT plate_plate_set.plate_ID, well.by_col,  well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = dest_plate_set_id  AND plate_plate_set.plate_id = well.plate_id) AS dest JOIN (SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=dest_plate_format_id)  AS foo ON (dest.by_col=foo.by_col) ORDER BY plate_id, quad, dest.by_col) INTO all_dest_well_ids;
+
+
+FOR w IN 1..array_length(all_source_well_ids,1)  LOOP
+SELECT sample.id FROM sample, well, well_sample WHERE well_sample.well_id=well.id AND well_sample.sample_id=sample.id AND well.id= all_source_well_ids[w] INTO holder;
+INSERT INTO well_sample (well_id, sample_id) VALUES (all_dest_well_ids[w], holder );
+
+
+--RAISE notice  'w: (%)', w;
+--RAISE notice  'all_source_well_ids[w]: (%)', all_source_well_ids[w];
+--RAISE notice  'all_dest_well_ids[w]: (%)', all_dest_well_ids[w];
+
+END LOOP;
+
+RAISE notice  'all_source_well_ids: (%)', all_source_well_ids;
+RAISE notice  'all_dest_well_ids: (%)', all_dest_well_ids;
+
+
+DROP TABLE temp1;
+
+RETURN dest_plate_set_id;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
 
 
-SELECT create_layout_records('src_name', 'src_desc', 'col 7', 4 , 92 , 96 , 0);
-
-
-------------------------------------------------
-
-INSERT INTO import_plate_layout ( replicates, target) VALUES ( 'aa', 'bb');
-SELECT * FROM import_plate_layout;
-SELECT * FROM plate_layout_name;
-
-
---TRUNCATE TABLE import_plate_layout;
-
-
---for 96 well plates layouts 2 through 7 are needed
-
-SELECT  * FROM plate_layout WHERE plate_layout_name_id = 2 ORDER BY well_by_col LIMIT 2;
-pmdb=>  plate_layout_name_id | well_by_col | well_type_id | replicates | target 
-----------------------+-------------+--------------+------------+--------
-                    2 |           1 |            1 | 1          | a
-                    2 |           2 |            1 | 2          | A
-
-
-SELECT * FROM import_plate_layout LIMIT 2 ;
-
-SELECT * FROM well_numbers WHERE plate_format = 384 LIMIT 2;
-
---this works
-SELECT well_numbers.by_col, import_plate_layout.well_type_id FROM well_numbers, import_plate_layout WHERE well_numbers.plate_format = 384 AND import_plate_layout.well_by_col=well_numbers.parent_well;
-
---use this
-INSERT INTO plate_layout (SELECT '46' AS "plate_layout_name_id", well_numbers.by_col AS "well_by_col", import_plate_layout.well_type_id, plate_layout.replicates, plate_layout.target FROM well_numbers, import_plate_layout, plate_layout WHERE well_numbers.plate_format = 384 AND import_plate_layout.well_by_col=well_numbers.parent_well AND plate_layout.plate_layout_name_id=2 AND plate_layout.well_by_col=well_numbers.by_col);
-
-SELECT * FROM plate_layout WHERE plate_layout_name_id = 46;
-
-
------------------------
-
-SELECT * FROM project WHERE project.id=18;
-SELECT * FROM plate_set WHERE plate_set.id=29;
-SELECT * FROM plate WHERE plate.id=440;
-SELECT * FROM assay_run WHERE assay_run.id=32;
-
-
-DELETE FROM project WHERE project.id = 18;
+---------
+-- dest layout 10 is 2S4T
+SELECT reformat_plate_set( 1, 20, 2, 'descrtext', 'nameoftest', 10, 384, 1, 10, 10);

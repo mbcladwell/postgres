@@ -40,14 +40,14 @@ SELECT * FROM plate_layout LIMIT 5;
 DROP FUNCTION IF exists reformat_plate_set(source_plate_set_id INTEGER, source_num_plates INTEGER, n_reps_source INTEGER, dest_descr VARCHAR(30), dest_plate_set_name VARCHAR(30), dest_num_plates INTEGER, dest_plate_format_id INTEGER, dest_plate_type_id INTEGER, project_id INTEGER, dest_plate_layout_name_id INTEGER );
 
 CREATE OR REPLACE FUNCTION reformat_plate_set(source_plate_set_id INTEGER, source_num_plates INTEGER, n_reps_source INTEGER, dest_descr VARCHAR(30), dest_plate_set_name VARCHAR(30), dest_num_plates INTEGER, dest_plate_format_id INTEGER, dest_plate_type_id INTEGER, project_id INTEGER, dest_plate_layout_name_id INTEGER )
- RETURNS integer AS
+RETURNS integer AS
 $BODY$
 DECLARE
 
 dest_plate_set_id INTEGER;
 all_source_well_ids INTEGER[];
 all_dest_well_ids INTEGER[];
- w INTEGER;
+w INTEGER;
 holder INTEGER;
 
 BEGIN
@@ -56,10 +56,10 @@ SELECT new_plate_set(dest_descr ,dest_plate_set_name, dest_num_plates, dest_plat
 
 RAISE notice 'dest_plate_set_id: (%)', dest_plate_set_id;
 
-CREATE TEMP TABLE temp1(plate_id INT, well_by_col INT, well_id INT);
+CREATE TEMP TABLE temp1(plate_id INT, plate_order INT, well_by_col INT, well_id INT);
 
 FOR i IN 1..n_reps_source LOOP
-INSERT INTO temp1 select well.plate_id, well.by_col, well.id AS well_id FROM plate_plate_set, well  WHERE plate_plate_set.plate_set_id = source_plate_set_id AND plate_plate_set.plate_id = well.plate_id   ORDER BY plate_plate_set.plate_order, well.ID;
+INSERT INTO temp1 select well.plate_id, plate_plate_set.plate_order, well.by_col, well.id AS well_id FROM plate_plate_set, well  WHERE plate_plate_set.plate_set_id = source_plate_set_id AND plate_plate_set.plate_id = well.plate_id   ORDER BY well.plate_id, well.ID;
 END LOOP;
 
 SELECT ARRAY (SELECT well_id FROM temp1) INTO all_source_well_ids;
@@ -88,9 +88,24 @@ DROP TABLE temp1;
 RETURN dest_plate_set_id;
 END;
 $BODY$
-  LANGUAGE plpgsql VOLATILE;
+LANGUAGE plpgsql VOLATILE;
 
 
 ---------
 -- dest layout 10 is 2S4T
-SELECT reformat_plate_set( 1, 20, 2, 'descrtext', 'nameoftest', 10, 384, 1, 10, 10);
+SELECT reformat_plate_set( 25, 4, 2, 'descrtext', 'nameoftest', 2, 384, 1, 10, 10);
+
+
+
+
+CREATE TEMP TABLE temp1(plate_id INT, plate_order INT, well_by_col INT, well_id INT);
+
+FOR i IN 1..2 LOOP
+
+INSERT INTO temp1 select well.plate_id, plate_plate_set.plate_order, well.by_col, well.id AS well_id FROM plate_plate_set, well  WHERE plate_plate_set.plate_set_id = 25 AND plate_plate_set.plate_id = well.plate_id   ORDER BY well.plate_id, well.ID;
+
+END LOOP;
+
+SELECT ARRAY (SELECT plate_id, well_id FROM temp1) INTO all_source_well_ids;
+
+SELECT plate_id, well_id FROM temp1 ORDER BY plate_id;

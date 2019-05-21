@@ -200,7 +200,7 @@ BEGIN
 
 FOR w IN 1.._plate_format_id LOOP
 
---RAISE notice 'w: (%)', w;
+  --RAISE notice 'w: (%)', w;
        INSERT INTO well(by_col, plate_id) VALUES(w, plt_id)
        RETURNING id INTO w_id;
        

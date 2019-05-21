@@ -25,7 +25,6 @@ $BODY$
   LANGUAGE plpgsql;
 
 
-DROP TRIGGER IF EXISTS calculate_by_row_number ON well_numbers;
 
 DROP TABLE IF EXISTS well_numbers CASCADE;
 CREATE TABLE well_numbers(plate_format INTEGER,
@@ -44,90 +43,6 @@ CREATE TABLE well_numbers(plate_format INTEGER,
 --FOR EACH row EXECUTE PROCEDURE calc_by_row_num_func();
 CREATE INDEX ON well_numbers(by_col);
 
-
------well_numbers-------------------------
---not using this - importing table directly
-
-DROP FUNCTION IF EXISTS fill_well_numbers_a();
-
-CREATE OR REPLACE FUNCTION fill_well_numbers_a()
-  RETURNS void AS
-$BODY$
-DECLARE
-   plt_size INTEGER;
-   row_holder   VARCHAR[] := ARRAY['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF'];
-   row_names VARCHAR[];
-   r VARCHAR(2);	
-   col_holder   VARCHAR[] := ARRAY['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48'];
-   col_names VARCHAR[];
-   colm VARCHAR(2);	
-   i INTEGER;
-   rownum INTEGER;
-BEGIN
-
-   plt_size := 96;
-   row_names := row_holder[1:8];
-   col_names := col_holder[1:12];
-   i := 1;
-   rownum := 1;
-   --total_col_count*(rownum -1) + colnum
-
-    FOREACH colm IN ARRAY col_names
-   LOOP
-      FOREACH r  IN ARRAY row_names
-     LOOP
-       INSERT INTO well_numbers(plate_format, well_name, ROW, row_num, col, total_col_count, by_col, by_row, quad, parent_well )
-                          VALUES( plt_size, concat(r,colm), r, rownum, colm, 12, i, NULL , NULL, NULL);
-       i := i +1;
-       IF rownum = 8 THEN rownum :=1; ELSE rownum := rownum+1; END if;
-   END LOOP;
-   END LOOP;
-
-   plt_size := 384;
-   row_names := row_holder[1:16];
-   col_names := col_holder[1:24];
-   i := 1;
-   rownum := 1;
-
-   
-    FOREACH colm IN ARRAY col_names
-   LOOP
-      FOREACH r  IN ARRAY row_names
-     LOOP
-       INSERT INTO well_numbers(plate_format, well_name, ROW, row_num, col,total_col_count,  by_col, quad, parent_well )
-       VALUES( plt_size, concat(r,colm), r, rownum, colm, 24, i, NULL, NULL);
-       i := i +1;
-       IF rownum = 16 THEN rownum :=1; ELSE rownum := rownum+1; END if;
-   END LOOP;
-   END LOOP;
-
-   plt_size := 1536;
-   row_names := row_holder[1:32];
-   col_names := col_holder[1:48];
-   i := 1;
-   rownum := 1;
-
-   
-    FOREACH colm IN ARRAY col_names
-   LOOP
-      FOREACH r  IN ARRAY row_names
-     LOOP
-       INSERT INTO well_numbers(plate_format, well_name, row,row_num, col, total_col_count,  by_col, quad, parent_well ) VALUES( plt_size, concat(r,colm), r, rownum, colm, 48, i, NULL, NULL);
-       i := i +1;
-       IF rownum = 32 THEN rownum :=1; ELSE rownum := rownum+1; END if;
-   END LOOP;
-   END LOOP;
-
-
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE;
-
-SELECT fill_well_numbers_a();
-
-DROP TRIGGER IF EXISTS calculate_by_row_number ON well_numbers;
-DROP  FUNCTION IF EXISTS calc_by_row_num_func()  CASCADE;
-DROP FUNCTION IF EXISTS fill_well_numbers_a();
 
 
 --users------------------------------------------------------

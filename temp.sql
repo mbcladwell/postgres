@@ -93,3 +93,7 @@ SELECT * FROM worklists;
 SELECT * FROM rearray_pairs;
 
 
+-----------------
+
+
+SELECT plate_set.plate_set_sys_name AS "PlateSetID", plate_set_name As "Name", format AS "Format", num_plates AS "# plates" , plate_type.plate_type_name AS "Type", plate_layout_name.name AS "Layout", plate_set.descr AS "Description", rearray_pairs.ID AS "Worklist" FROM  plate_format, plate_type, plate_layout_name, plate_set FULL outer JOIN rearray_pairs ON plate_set.id= rearray_pairs.dest WHERE plate_format.id = plate_set.plate_format_id AND plate_set.plate_layout_name_id = plate_layout_name.id  AND plate_set.plate_type_id = plate_type.id  AND project_id = 1 ORDER BY plate_set.id DESC;

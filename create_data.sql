@@ -22,24 +22,25 @@ SELECT new_plate_set('using LYT-19;384;16in24','ps-name-by-user4',20,384,1,10,19
 SELECT new_plate_set('using LYT-19;384;16in24','ps-name-by-user5',20,384,1,10,19,TRUE);
 SELECT new_plate_set('using LYT-13;384;8in24','ps-name-by-user5',20,384,2,10,13,TRUE);
 SELECT new_plate_set('using LYT-13;384;8in24','ps-name-by-user5',20,384,2,10,13,TRUE);
-SELECT new_plate_set('using LYT-37;1536;8in47,48','ps-name-by-user5',20,1536,1,10,37,TRUE);
-SELECT new_plate_set('using LYT-37;1536;8in47,48','ps-name-by-user5',20,1536,1,10,37,TRUE);
-SELECT new_plate_set('using LYT-37;1536;8in47,48','ps-name-by-user5',20,1536,1,10,37,TRUE);
 
-SELECT new_plate_set('using loop1','ps-name-by-user1',20,96,1,9,1,TRUE);
-SELECT new_plate_set('using loop2','ps-name-by-user2',20,96,1,9,1,TRUE);
-SELECT new_plate_set('using loop3','ps-name-by-user3',20,384,1,9,13,TRUE);
-SELECT new_plate_set('using loop4','ps-name-by-user4',20,384,1,9,13,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,1,9,13,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,9,13,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,9,13,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,37,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,37,TRUE);
-SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,37,TRUE);
+--SELECT new_plate_set('using LYT-37;1536;8in47,48','ps-name-by-user5',20,1536,1,10,37,TRUE);
+--SELECT new_plate_set('using LYT-37;1536;8in47,48','ps-name-by-user5',20,1536,1,10,37,TRUE);
+--SELECT new_plate_set('using LYT-37;1536;8in47,48','ps-name-by-user5',20,1536,1,10,37,TRUE);
+
+--SELECT new_plate_set('using loop1','ps-name-by-user1',20,96,1,9,1,TRUE);
+--SELECT new_plate_set('using loop2','ps-name-by-user2',20,96,1,9,1,TRUE);
+--SELECT new_plate_set('using loop3','ps-name-by-user3',20,384,1,9,13,TRUE);
+--SELECT new_plate_set('using loop4','ps-name-by-user4',20,384,1,9,13,TRUE);
+--SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,1,9,13,TRUE);
+--SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,9,13,TRUE);
+--SELECT new_plate_set('using loop5','ps-name-by-user5',20,384,2,9,13,TRUE);
+--SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,37,TRUE);
+--SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,37,TRUE);
+--SELECT new_plate_set('using loop5','ps-name-by-user5',20,1536,1,9,37,TRUE);
 
 SELECT new_plate_set('for data import','2 96 well plates',2,96,1,1,1,TRUE);
-SELECT new_plate_set('for data import','2 96 well plates',2,96,1,2,1,TRUE);
-SELECT new_plate_set('for data import','2 96 well plates',2,96,1,3,1,TRUE);
+SELECT new_plate_set('for data import','2 96 well plates',2,96,1,1,1,TRUE);
+SELECT new_plate_set('for data import','2 96 well plates',2,96,1,1,1,TRUE);
 
 
 -- new_assay_run( _name VARCHAR(30), _descr VARCHAR(30), _assay_type_id INTEGER, _plate_set_id INTEGER, _plate_layout_name_id INTEGER)
@@ -48,11 +49,11 @@ select new_assay_run( 'assay_run2', 'PS-2 LYT-1;96;4in12', 5, 2, 1);
 select new_assay_run( 'assay_run3', 'PS-3 LYT-15;384;8in24', 1, 3, 13);
 select new_assay_run( 'assay_run4', 'PS-4 LYT-15;384;8in24', 1, 4, 13);
 select new_assay_run( 'assay_run5', 'PS-5 LYT-15;384;8in24', 5, 5, 13);
-select new_assay_run( 'assay_run6', 'PS-6 LYT-15;384;8in24', 1, 6, 13);
-select new_assay_run( 'assay_run7', 'PS-7 LYT-15;384;8in24', 5, 7, 13);
-select new_assay_run( 'assay_run8', 'PS-8 LYT-43;1536;8in47,48', 1, 8, 37);
-select new_assay_run( 'assay_run9', 'PS-9 LYT-43;1536;8in47,48', 1, 9, 37);
-select new_assay_run( 'assay_run10', 'PS-10 LYT-43;1536;8in47,48', 5, 10, 37);
+--select new_assay_run( 'assay_run6', 'PS-6 LYT-15;384;8in24', 1, 6, 13);
+--select new_assay_run( 'assay_run7', 'PS-7 LYT-15;384;8in24', 5, 7, 13);
+--select new_assay_run( 'assay_run8', 'PS-8 LYT-43;1536;8in47,48', 1, 8, 37);
+--select new_assay_run( 'assay_run9', 'PS-9 LYT-43;1536;8in47,48', 1, 9, 37);
+--select new_assay_run( 'assay_run10', 'PS-10 LYT-43;1536;8in47,48', 5, 10, 37);
 
 \i /home/mbc/projects/data/assay_data_for_import.sql
 
@@ -63,9 +64,9 @@ SELECT process_assay_run_data(4);
 SELECT process_assay_run_data(5);
 SELECT process_assay_run_data(6);
 SELECT process_assay_run_data(7);
-SELECT process_assay_run_data(8);
-SELECT process_assay_run_data(9);
-SELECT process_assay_run_data(10);
+--SELECT process_assay_run_data(8);
+--SELECT process_assay_run_data(9);
+--SELECT process_assay_run_data(10);
 
 -- assay_name descr assay_type_id plate_set_id plate_layout_name_id
 SELECT new_assay_run('assay run 1', 'PS-1 LYT-1;96;4in12' , 1, 1, 1);
@@ -75,14 +76,14 @@ SELECT new_assay_run('assay run 4', 'PS-4 LYT-15;384;8in24' , 1, 4, 13);
 SELECT new_assay_run('assay run 5', 'PS-5 LYT-15;384;8in24' , 5, 5, 13);
 SELECT new_assay_run('assay run 6', 'PS-6 LYT-15;384;8in24' , 1, 6, 13);
 SELECT new_assay_run('assay run 7', 'PS-7 LYT-15;384;8in24' , 5, 7, 13);
-SELECT new_assay_run('assay run 8', 'PS-8 LYT-43;1536;8in47,48' , 1, 8, 37);
-SELECT new_assay_run('assay run 9', 'PS-9 LYT-43;1536;8in47,48' , 1, 9, 37);
-SELECT new_assay_run('assay run 10', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
-SELECT new_assay_run('assay run 11', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
-SELECT new_assay_run('assay run 12', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
-SELECT new_assay_run('assay run 13', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
-SELECT new_assay_run('assay run 14', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
-SELECT new_assay_run('assay run 15', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
+--SELECT new_assay_run('assay run 8', 'PS-8 LYT-43;1536;8in47,48' , 1, 8, 37);
+--SELECT new_assay_run('assay run 9', 'PS-9 LYT-43;1536;8in47,48' , 1, 9, 37);
+--SELECT new_assay_run('assay run 10', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
+--SELECT new_assay_run('assay run 11', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
+--SELECT new_assay_run('assay run 12', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
+--SELECT new_assay_run('assay run 13', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
+--SELECT new_assay_run('assay run 14', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
+--SELECT new_assay_run('assay run 15', 'PS-10 LYT-43;1536;8in47,48' , 5, 10, 37);
 
 
 SELECT new_hit_list('hit list 1', 'descr1', 50, 10, ARRAY[95689, 96755, 96618, 96028, 96297, 95383, 96219, 96130, 95554, 96857, 96826, 95636, 96826, 95470, 96210, 96106, 96646, 95585, 95465, 95538, 96558, 96574, 96591, 96698, 96149, 95400, 96753, 96094, 95390, 96376, 95668, 95756, 96408, 96712, 96765, 96309, 95765, 96715, 96082, 96136, 95803, 96728, 96656, 96850, 96166, 96674, 96353, 96405, 96318, 96013]);

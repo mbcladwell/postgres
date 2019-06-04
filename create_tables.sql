@@ -370,6 +370,57 @@ CREATE INDEX ON well_sample(well_id);
 CREATE INDEX ON well_sample(sample_id);
 
 
+
+----------------------------
+DROP TABLE IF EXISTS assay_type CASCADE;
+CREATE TABLE assay_type (id SERIAL PRIMARY KEY,
+	assay_type_name VARCHAR(250));
+
+INSERT INTO assay_type (assay_type_name) VALUES ('ELISA');
+INSERT INTO assay_type (assay_type_name) VALUES ('Octet');
+INSERT INTO assay_type (assay_type_name) VALUES ('SNP');
+INSERT INTO assay_type (assay_type_name) VALUES ('HCS');
+INSERT INTO assay_type (assay_type_name) VALUES ('HTRF');
+INSERT INTO assay_type (assay_type_name) VALUES ('FACS');		
+
+
+DROP TABLE IF EXISTS assay_run CASCADE;
+
+CREATE TABLE assay_run (id serial PRIMARY KEY,
+               assay_run_sys_name VARCHAR(30),
+	       assay_run_name VARCHAR(250),
+               descr VARCHAR(250),
+		assay_type_id INTEGER,
+                plate_set_id INTEGER,
+		plate_layout_name_id INTEGER,
+                updated  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
+               FOREIGN KEY (plate_set_id) REFERENCES plate_set(id)  ON DELETE cascade,
+               FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id),
+		FOREIGN KEY (assay_type_id) REFERENCES assay_type(id));
+
+CREATE INDEX ON assay_run(assay_type_id);
+CREATE INDEX ON assay_run(plate_set_id);
+CREATE INDEX ON assay_run(plate_layout_name_id);
+
+
+
+DROP TABLE IF EXISTS assay_result CASCADE;
+
+CREATE TABLE assay_result (
+		assay_run_id INTEGER,
+		plate_order INTEGER,
+		well INTEGER,
+                response REAL,
+                bkgrnd_sub REAL,
+		norm REAL,        -- max unknown signal set to 1
+		norm_pos REAL,    --positive control set to 1
+		FOREIGN KEY (assay_run_id) REFERENCES assay_run(id)  ON DELETE cascade);
+		
+
+CREATE INDEX ON assay_result(assay_run_id);
+CREATE INDEX ON assay_result(plate_order);
+CREATE INDEX ON assay_result(well);
+
 ----------------------------
 DROP TABLE IF EXISTS hit_list CASCADE;
 
@@ -397,57 +448,6 @@ CREATE TABLE hit_sample
 
 CREATE INDEX ON hit_sample(hitlist_id);
 CREATE INDEX ON hit_sample(sample_id);
-
-----------------------------
-
-
-DROP TABLE IF EXISTS assay_run CASCADE;
-
-CREATE TABLE assay_run (id serial PRIMARY KEY,
-               assay_run_sys_name VARCHAR(30),
-	       assay_run_name VARCHAR(250),
-               descr VARCHAR(250),
-		assay_type_id INTEGER,
-                plate_set_id INTEGER,
-		plate_layout_name_id INTEGER,
-                updated  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
-               FOREIGN KEY (plate_set_id) REFERENCES plate_set(id)  ON DELETE cascade,
-               FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id),
-		FOREIGN KEY (assay_type_id) REFERENCES assay_type(id));
-
-CREATE INDEX ON assay_run(assay_type_id);
-CREATE INDEX ON assay_run(plate_set_id);
-CREATE INDEX ON assay_run(plate_layout_name_id);
-
-
-DROP TABLE IF EXISTS assay_type CASCADE;
-CREATE TABLE assay_type (id SERIAL PRIMARY KEY,
-	assay_type_name VARCHAR(250));
-
-INSERT INTO assay_type (assay_type_name) VALUES ('ELISA');
-INSERT INTO assay_type (assay_type_name) VALUES ('Octet');
-INSERT INTO assay_type (assay_type_name) VALUES ('SNP');
-INSERT INTO assay_type (assay_type_name) VALUES ('HCS');
-INSERT INTO assay_type (assay_type_name) VALUES ('HTRF');
-INSERT INTO assay_type (assay_type_name) VALUES ('FACS');		
-
-DROP TABLE IF EXISTS assay_result CASCADE;
-
-CREATE TABLE assay_result (
-		assay_run_id INTEGER,
-		plate_order INTEGER,
-		well INTEGER,
-                response REAL,
-                bkgrnd_sub REAL,
-		norm REAL,        -- max unknown signal set to 1
-		norm_pos REAL,    --positive control set to 1
-		FOREIGN KEY (assay_run_id) REFERENCES assay_run(id)  ON DELETE cascade);
-		
-
-CREATE INDEX ON assay_result(assay_run_id);
-CREATE INDEX ON assay_result(plate_order);
-CREATE INDEX ON assay_result(well);
-
 
 ----------------------------
 

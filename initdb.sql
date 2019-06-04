@@ -5,44 +5,44 @@
 
 
 --CREATE USER pm_admin WITH PASSWORD 'welcome';
-CREATE USER pm_admin WITH PASSWORD 'welcome' CREATEDB CREATEROLE; -- see below
-CREATE USER pm_mgr   WITH PASSWORD 'welcome';
-CREATE USER pm_usr   WITH PASSWORD 'welcome';
+CREATE USER ln_admin WITH PASSWORD 'welcome' CREATEDB CREATEROLE; -- see below
+CREATE USER ln_user   WITH PASSWORD 'welcome';
 
-GRANT pm_usr TO pm_mgr;
-GRANT pm_mgr TO pm_admin;
 
-CREATE DATABASE pmdb;
-REVOKE ALL ON DATABASE pmdb FROM public;  -- see notes below!
+GRANT ln_user TO ln_admin;
 
-GRANT CONNECT ON DATABASE pmdb TO pm_usr;  -- others inherit
+--CREATE DATABASE lndb;
+REVOKE ALL ON DATABASE lndb FROM public;  -- see notes below!
 
-\connect pmdb  -- psql syntax
+GRANT CONNECT ON DATABASE lndb TO ln_user;  -- others inherit
 
---I am naming the schema plate_manager (not pmdb which would be confusing). Pick any name. Optionally make pmuser_admin the owner of the schema:
+--\connect lndb  -- psql syntax
 
-CREATE SCHEMA plate_manager AUTHORIZATION pm_admin;
+--I am naming the schema lims_nucleus (not lndb which would be confusing). Pick any name. Optionally make ln_admin the owner of the schema:
 
-SET search_path = plate_manager;  -- see notes
+CREATE SCHEMA lims_nucleus AUTHORIZATION ln_admin;
 
-ALTER ROLE pm_admin IN DATABASE pmdb SET search_path = plate_manager; -- not inherited
-ALTER ROLE pm_mgr   IN DATABASE pmdb SET search_path = plate_manager;
-ALTER ROLE pm_usr   IN DATABASE pmdb SET search_path = plate_manager;
+SET search_path = lims_nucleus;  -- see notes
 
-GRANT USAGE  ON SCHEMA plate_manager TO pm_usr;
-GRANT CREATE ON SCHEMA plate_manager TO pm_admin;
+ALTER ROLE ln_admin IN DATABASE lndb SET search_path = lims_nucleus; -- not inherited
+ALTER ROLE ln_user   IN DATABASE lndb SET search_path = lims_nucleus;
 
-ALTER DEFAULT PRIVILEGES FOR ROLE pm_admin
-GRANT SELECT                           ON TABLES TO pm_usr;  -- only read
+GRANT USAGE  ON SCHEMA lims_nucleus TO ln_user;
+GRANT CREATE ON SCHEMA lims_nucleus TO ln_admin;
 
-ALTER DEFAULT PRIVILEGES FOR ROLE pm_admin
-GRANT INSERT, UPDATE, DELETE, TRUNCATE ON TABLES TO pm_mgr;  -- + write, TRUNCATE optional
+ALTER DEFAULT PRIVILEGES FOR ROLE ln_admin
+GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE  ON TABLES TO ln_admin;  
 
-ALTER DEFAULT PRIVILEGES FOR ROLE pm_admin
-GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO pm_admin;  -- SELECT, UPDATE are optional 
+ALTER DEFAULT PRIVILEGES FOR ROLE ln_user
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO ln_user;
 
-set schema 'plate_manager';
+
+GRANT TEMPORARY on DATABASE lndb to ln_admin;
+GRANT TEMPORARY on DATABASE lndb to ln_user;
+
+
+set schema 'lims_nucleus';
 CREATE EXTENSION pgcrypto;
 CREATE EXTENSION intarray;
 --Once set up:
--- psql -U pm_admin -h 192.168.1.7 -d pmdb
+-- psql -U ln_admin -h 192.168.1.1 -d lndb

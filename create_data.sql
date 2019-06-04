@@ -1,4 +1,4 @@
-TRUNCATE project, plate_set, plate, hit_sample, hit_list, assay_run, assay_result, sample, well, pmsession RESTART IDENTITY CASCADE;
+TRUNCATE project, plate_set, plate, hit_sample, hit_list, assay_run, assay_result, sample, well, lnsession RESTART IDENTITY CASCADE;
 
 
 SELECT new_project('Three plate sets with 2 96 well plates each', 'MyTestProj1', 1 );

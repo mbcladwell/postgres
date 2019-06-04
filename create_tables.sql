@@ -47,38 +47,39 @@ CREATE INDEX ON well_numbers(by_col);
 
 --users------------------------------------------------------
 
-DROP TABLE IF EXISTS pmuser_groups CASCADE;
-CREATE TABLE pmuser_groups
+DROP TABLE IF EXISTS lnuser_groups CASCADE;
+CREATE TABLE lnuser_groups
 (id SERIAL PRIMARY KEY,
         usergroup VARCHAR(250),
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp);
 
-INSERT INTO pmuser_groups (usergroup) VALUES ('administrator');
-INSERT INTO pmuser_groups (usergroup) VALUES ('user');
+INSERT INTO lnuser_groups (usergroup) VALUES ('administrator');
+INSERT INTO lnuser_groups (usergroup) VALUES ('user');
 
-DROP TABLE IF EXISTS pmuser CASCADE;
-CREATE TABLE pmuser
+DROP TABLE IF EXISTS lnuser CASCADE;
+CREATE TABLE lnuser
 (id SERIAL PRIMARY KEY,
         usergroup INTEGER,
-	pmuser_name VARCHAR(250) NOT NULL UNIQUE,
+	lnuser_name VARCHAR(250) NOT NULL UNIQUE,
 	tags VARCHAR(250) ,
         password VARCHAR(64) NOT NULL,
-	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp);
+	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (usergroup) REFERENCES lnuser_groups(id));
 
---INSERT INTO pmuser ( pmuser_name, email, permissions, password) VALUES ('admin1', 'pmadmin@postgres', 1, crypt('welcome',gen_salt('bf')));
-INSERT INTO pmuser ( pmuser_name, tags, usergroup, password) VALUES ('admin', 'pmadmin@postgres', 1, 'welcome');
-INSERT INTO pmuser ( pmuser_name, tags, usergroup, password) VALUES ('user', 'pmadmin2@postgres', 1, 'welcome');
+--INSERT INTO lnuser ( lnuser_name, email, permissions, password) VALUES ('admin1', 'pmadmin@postgres', 1, crypt('welcome',gen_salt('bf')));
+INSERT INTO lnuser ( lnuser_name, tags, usergroup, password) VALUES ('ln_admin', 'ln_admin@labsolns.com', 1, 'welcome');
+INSERT INTO lnuser ( lnuser_name, tags, usergroup, password) VALUES ('ln_user', 'ln_user@labsolns.com', 2, 'welcome');
 
 
 
-DROP TABLE IF EXISTS pmsession CASCADE;
-DROP SEQUENCE IF EXISTS  pmsession_id_seq CASCADE;
-DROP INDEX IF EXISTS pmsession_pkey CASCADE;
-CREATE TABLE pmsession
+DROP TABLE IF EXISTS lnsession CASCADE;
+DROP SEQUENCE IF EXISTS  lnsession_id_seq CASCADE;
+DROP INDEX IF EXISTS lnsession_pkey CASCADE;
+CREATE TABLE lnsession
 (id SERIAL PRIMARY key,
-        pmuser_id INTEGER,
+        lnuser_id INTEGER,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
-        FOREIGN KEY (pmuser_id) REFERENCES pmuser(id));
+        FOREIGN KEY (lnuser_id) REFERENCES lnuser(id));
 
 
 
@@ -90,11 +91,11 @@ CREATE TABLE project
         project_sys_name VARCHAR(30),
         descr VARCHAR(250),
 	project_name VARCHAR(250),
-        pmuser_id INTEGER,
+        lnuser_id INTEGER,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
-        FOREIGN KEY (pmuser_id) REFERENCES pmuser(id));
+        FOREIGN KEY (lnuser_id) REFERENCES lnuser(id));
 
-CREATE INDEX ON project(pmuser_id);
+CREATE INDEX ON project(lnuser_id);
 
 ------------------------------------------------
 DROP TABLE IF EXISTS plate_format CASCADE;

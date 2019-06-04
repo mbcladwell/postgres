@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION new_user(_name character varying, _tags character VAR
   RETURNS void AS
 $BODY$
 BEGIN
-   INSERT INTO pmuser(usergroup, pmuser_name, tags, password)
+   INSERT INTO lnuser(usergroup, lnuser_name, tags, password)
    VALUES (_group, _name, _tags, _password);
 END;
 $BODY$
@@ -17,16 +17,17 @@ $BODY$
 
 ----Project
 
+COMMENT ON FUNCTION new_project( character varying,  character VARYING,  INTEGER) IS 'Creates a new project.  Available under the admin menu item so only available to administrators. Project ID automatically assigned.';
 
-DROP FUNCTION IF EXISTS new_project(_descr character varying, _project_name character VARYING, _pmuser_id INTEGER);
-CREATE OR REPLACE FUNCTION new_project(_descr character varying, _project_name character VARYING, _pmuser_id INTEGER)
+DROP FUNCTION IF EXISTS new_project(_descr character varying, _project_name character VARYING, _lnuser_id INTEGER);
+CREATE OR REPLACE FUNCTION new_project(_descr character varying, _project_name character VARYING, _lnuser_id INTEGER)
   RETURNS void AS
 $BODY$
 DECLARE
    v_id integer;
 BEGIN
-   INSERT INTO project(descr, project_name, pmuser_id)
-   VALUES (_descr, _project_name, _pmuser_id)
+   INSERT INTO project(descr, project_name, lnuser_id)
+   VALUES (_descr, _project_name, _lnuser_id)
    RETURNING id INTO v_id;
    UPDATE project SET project_sys_name = 'PRJ-'||v_id WHERE id=v_id;
 END;

@@ -69,6 +69,7 @@ CREATE TABLE lnuser
 --INSERT INTO lnuser ( lnuser_name, email, permissions, password) VALUES ('admin1', 'pmadmin@postgres', 1, crypt('welcome',gen_salt('bf')));
 INSERT INTO lnuser ( lnuser_name, tags, usergroup, password) VALUES ('ln_admin', 'ln_admin@labsolns.com', 1, 'welcome');
 INSERT INTO lnuser ( lnuser_name, tags, usergroup, password) VALUES ('ln_user', 'ln_user@labsolns.com', 2, 'welcome');
+INSERT INTO lnuser ( lnuser_name, tags, usergroup, password) VALUES ('klohymim', 'klohymim@labsolns.com', 2, 'hwc3v4_rbkT-1EL2KI-JBaqFq0thCXM_');
 
 
 

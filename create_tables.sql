@@ -69,7 +69,6 @@ CREATE TABLE lnuser
 --INSERT INTO lnuser ( lnuser_name, email, permissions, password) VALUES ('admin1', 'pmadmin@postgres', 1, crypt('welcome',gen_salt('bf')));
 INSERT INTO lnuser ( lnuser_name, tags, usergroup, password) VALUES ('ln_admin', 'ln_admin@labsolns.com', 1, 'welcome');
 INSERT INTO lnuser ( lnuser_name, tags, usergroup, password) VALUES ('ln_user', 'ln_user@labsolns.com', 2, 'welcome');
-INSERT INTO lnuser ( lnuser_name, tags, usergroup, password) VALUES ('klohymim', 'klohymim@labsolns.com', 2, 'hwc3v4_rbkT-1EL2KI-JBaqFq0thCXM_');
 
 
 
@@ -295,6 +294,7 @@ CREATE TABLE plate_set
         plate_type_id INTEGER,
         project_id INTEGER,
 	plate_layout_name_id INTEGER,
+        lnsession_id INTEGER,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
         FOREIGN KEY (plate_type_id) REFERENCES plate_type(id),
         FOREIGN KEY (plate_format_id) REFERENCES plate_format(id),
@@ -394,6 +394,7 @@ CREATE TABLE assay_run (id serial PRIMARY KEY,
 		assay_type_id INTEGER,
                 plate_set_id INTEGER,
 		plate_layout_name_id INTEGER,
+        lnsession_id INTEGER,
                 updated  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
                FOREIGN KEY (plate_set_id) REFERENCES plate_set(id)  ON DELETE cascade,
                FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id),
@@ -431,6 +432,7 @@ CREATE TABLE hit_list
  hitlist_name VARCHAR(250),
         descr VARCHAR(250),
 	n INTEGER,
+        lnsession_id INTEGER,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
  assay_run_id INTEGER,
  FOREIGN KEY (assay_run_id) REFERENCES assay_run(id)  ON DELETE cascade);

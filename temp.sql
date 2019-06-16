@@ -46,3 +46,14 @@ SELECT * FROM lnsession;
 
 
 SELECT plate_set.plate_set_sys_name , plate.plate_sys_name as "Plate", assay_result.well, assay_result.response, assay_result.bkgrnd_sub,   assay_result.norm,  assay_result.norm_pos  FROM assay_result, assay_run, plate_plate_set, plate_set, plate WHERE assay_run.plate_set_id=plate_plate_set.plate_set_id and assay_result.assay_run_id=assay_run.id AND plate_plate_set.plate_order=assay_result.plate_order AND plate_plate_set.plate_set_id=plate_set.id AND plate_plate_set.plate_id=plate.ID and assay_run.id IN (3 ,2 ,1);
+
+
+--init problems
+
+SELECT project_sys_name AS \"ProjectID\", project_name As \"Name\", lnuser_name AS \"Owner\", descr AS \"Description\" FROM project, lnuser WHERE lnuser_id = lnuser.id ORDER BY project.id DESC;";
+
+
+SELECT project_sys_name , project_name As "Name", lnuser_name, descr AS "Description" FROM project, lnuser, lnsession WHERE project.lnsession_id=lnsession.ID AND lnuser.id=lnsession.lnuser_id ORDER BY project.id DESC;
+
+
+SELECT lnuser_id FROM lnuser, lnsession, plate_set WHERE plate_set.lnsession_id = lnsession.id AND lnsession.lnuser_id = lnuser.id AND  plate_set.id = 1;

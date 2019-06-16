@@ -91,11 +91,11 @@ CREATE TABLE project
         project_sys_name VARCHAR(30),
         descr VARCHAR(250),
 	project_name VARCHAR(250),
-        lnuser_id INTEGER,
+        lnsession_id INTEGER,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
-        FOREIGN KEY (lnuser_id) REFERENCES lnuser(id));
+        FOREIGN KEY (lnsession_id) REFERENCES lnsession(id));
 
-CREATE INDEX ON project(lnuser_id);
+CREATE INDEX ON project(lnsession_id);
 
 ------------------------------------------------
 DROP TABLE IF EXISTS plate_format CASCADE;
@@ -299,12 +299,14 @@ CREATE TABLE plate_set
         FOREIGN KEY (plate_type_id) REFERENCES plate_type(id),
         FOREIGN KEY (plate_format_id) REFERENCES plate_format(id),
         FOREIGN KEY (project_id) REFERENCES project(ID) ON DELETE cascade,
+        FOREIGN KEY (lnsession_id) REFERENCES lnsession(ID) ON DELETE cascade,
 	FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id));
 
 CREATE INDEX ON plate_set(barcode);
 CREATE INDEX ON plate_set(plate_format_id);
 CREATE INDEX ON plate_set(plate_type_id);
 CREATE INDEX ON plate_set(project_id);
+CREATE INDEX ON plate_set(lnsession_id);
 
 
 
@@ -398,12 +400,13 @@ CREATE TABLE assay_run (id serial PRIMARY KEY,
                 updated  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
                FOREIGN KEY (plate_set_id) REFERENCES plate_set(id)  ON DELETE cascade,
                FOREIGN KEY (plate_layout_name_id) REFERENCES plate_layout_name(id),
+               FOREIGN KEY (lnsession_id) REFERENCES lnsession(id),
 		FOREIGN KEY (assay_type_id) REFERENCES assay_type(id));
 
 CREATE INDEX ON assay_run(assay_type_id);
 CREATE INDEX ON assay_run(plate_set_id);
 CREATE INDEX ON assay_run(plate_layout_name_id);
-
+CREATE INDEX ON assay_run(lnsession_id);
 
 
 DROP TABLE IF EXISTS assay_result CASCADE;
@@ -416,6 +419,7 @@ CREATE TABLE assay_result (
                 bkgrnd_sub REAL,
 		norm REAL,        -- max unknown signal set to 1
 		norm_pos REAL,    --positive control set to 1
+		p_enhance REAL,   --% enhancement; Kelley 2004
 		FOREIGN KEY (assay_run_id) REFERENCES assay_run(id)  ON DELETE cascade);
 		
 
@@ -435,9 +439,11 @@ CREATE TABLE hit_list
         lnsession_id INTEGER,
 	updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
  assay_run_id INTEGER,
+ FOREIGN KEY (lnsession_id) REFERENCES lnsession(id)  ON DELETE CASCADE,
  FOREIGN KEY (assay_run_id) REFERENCES assay_run(id)  ON DELETE cascade);
 
 CREATE INDEX ON hit_list(assay_run_id);
+CREATE INDEX ON hit_list(lnsession_id);
 
 
 DROP TABLE IF EXISTS hit_sample CASCADE;

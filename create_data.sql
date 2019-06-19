@@ -2,28 +2,30 @@ TRUNCATE project, plate_set, plate, hit_sample, hit_list, assay_run, assay_resul
 
 INSERT INTO lnsession (lnuser_id) VALUES (1);
 
+--new_project(_descr character varying, _project_name character VARYING, _lnsession_id INTEGER)
 SELECT new_project('3 plate sets with 2 96 well plates each', 'With AR, HL', 1 );
 
+--new_plate_set(_descr VARCHAR(30),_plate_set_name VARCHAR(30), _num_plates INTEGER, _plate_format_id INTEGER, _plate_type_id INTEGER, _project_id INTEGER, _plate_layout_name_id INTEGER, _lnsession_id INTEGER, _with_samples boolean)
 SELECT new_plate_set('with AR (low values), HL','2 96 well plates',2,96,1,1,1,1,TRUE);
 SELECT new_plate_set('with AR (low values), HL','2 96 well plates',2,96,1,1,1,1,TRUE);
 SELECT new_plate_set('with AR (high values), HL','2 96 well plates',2,96,1,1,1,1,TRUE);
 
+--new_assay_run( _assay_run_name VARCHAR(30), _descr VARCHAR(30), _assay_type_id INTEGER, _plate_set_id INTEGER, _plate_layout_name_id INTEGER, _lnsession_id INTEGER )
 select new_assay_run( 'assay_run1', 'PS-1 LYT-1;96;4in12', 1, 1, 1,1);
 select new_assay_run( 'assay_run2', 'PS-2 LYT-1;96;4in12', 1, 2, 1,1);
 select new_assay_run( 'assay_run3', 'PS-3 LYT-1;96;4in12', 5, 3, 1,1);
 
 
 
-SELECT new_project('3 plate sets with 2 384 well plates each', 'With AR', 1 );
-SELECT new_plate_set('with AR (low values), HL','2 96 well plates',2,96,1,1,1,1,TRUE);
-SELECT new_plate_set('with AR (low values), HL','2 96 well plates',2,96,1,1,1,1,TRUE);
-SELECT new_plate_set('with AR (high values), HL','2 96 well plates',2,96,1,1,1,1,TRUE);
-
-
+SELECT new_project('1 plate sets with 2 384 well plates each', 'With AR', 1 );
+SELECT new_plate_set('with AR (low values), HL','2 384 well plates',2,384,1,2,13,1,TRUE);
+select new_assay_run( 'assay_run4', 'PS-4 LYT-13;384;8in24', 1, 4, 13, 1);
 
 
 
 SELECT new_project('1 plate sets with 1 1536 well plate', 'With AR', 1 );
+SELECT new_plate_set('with AR (low values), HL','1 1536 well plate',1, 1536, 1, 3, 37, 1,TRUE);
+select new_assay_run( 'assay_run4', 'PS-5 LYT-37;1536;32in47,48', 1, 5, 37, 1);
 
 
 
@@ -36,12 +38,8 @@ SELECT new_project('description 8', 'MyTestProj8', 1 );
 SELECT new_project('description 9', 'MyTestProj9', 1 );
 
 SELECT new_project('1 plate set with 20 96 well plates', 'Plates only, no data', 1 );
-SELECT new_plate_set('using LYT-1;96;4in12','ps-name-by-user2',20,96,1,10,1,1,TRUE);
-
-
-
-
-SELECT new_plate_set('for data import','2 96 well plates',2,96,1,1,1,1,TRUE);
+SELECT new_plate_set('using LYT-1;96;4in12','Plates only',10,96,1,10,1,1,TRUE);
+SELECT new_plate_set('using LYT-1;96;4in12','Plates only',10,96,1,10,1,1,TRUE);
 
 
 \i /home/mbc/projects/postgres/assay_data_for_elephantsql.sql
@@ -49,13 +47,14 @@ SELECT new_plate_set('for data import','2 96 well plates',2,96,1,1,1,1,TRUE);
 SELECT process_assay_run_data(1);
 SELECT process_assay_run_data(2);
 SELECT process_assay_run_data(3);
+SELECT process_assay_run_data(4);
+SELECT process_assay_run_data(5);
 
-SELECT new_hit_list('hit list 1', 'descr1', 10, 1,  ARRAY[3663, 3678, 3618, 3670, 3631, 3610, 3652, 3647, 3656, 3649]);
-SELECT new_hit_list('hit list 2', 'descr2', 20, 1,  ARRAY[3725, 3707, 3709, 3739, 3719, 3718, 3764, 3756, 3770, 3700, 3714, 3773, 3755, 3742, 3768, 3771, 3750, 3732, 3777, 3743]);
-SELECT new_hit_list('hit list 3', 'descr3', 10, 2,  ARRAY[3798, 3868, 3827, 3804, 3796, 3862, 3817, 3870, 3814, 3810]);
-SELECT new_hit_list('hit list 4', 'descr4', 20, 2,  ARRAY[3924, 3938, 3953, 3880, 3919, 3881, 3907, 3933, 3877, 3883, 3963, 3914, 3879, 3965, 3952, 3961, 3891, 3962, 3902, 3955]);
-SELECT new_hit_list('hit list 5', 'descr5', 10, 3,  ARRAY[4017, 4030, 4055, 4027, 4045, 3985, 3976, 3993, 3987, 4048]);
-SELECT new_hit_list('hit list 6', 'descr6', 20, 3,  ARRAY[4151, 4090, 4130, 4097, 4126, 4072, 4137, 4108, 4096, 4088, 4091, 4112, 4139, 4111, 4082, 4136, 4098, 4134, 4092, 4138]);
-
-
+--new_hit_list(_name VARCHAR, _descr VARCHAR, _num_hits INTEGER, _assay_run_id INTEGER, _lnsession_id INTEGER, hit_list integer[])
+SELECT new_hit_list('hit list 1', 'descr1', 10, 1,  ARRAY[87, 39, 51, 59, 16, 49, 53, 73, 65, 43]);
+SELECT new_hit_list('hit list 2', 'descr2', 20, 1,  ARRAY[154, 182, 124, 172, 171, 164, 133, 155, 152, 160, 118, 93, 123, 142, 183, 145, 95, 120, 158, 131]);
+SELECT new_hit_list('hit list 3', 'descr3', 10, 2,  ARRAY[216, 193, 221, 269, 244, 252, 251, 204, 217, 256]);
+SELECT new_hit_list('hit list 4', 'descr4', 20, 2,  ARRAY[311, 277, 357, 314, 327, 303, 354, 279, 346, 318, 344, 299, 355, 300, 325, 290, 278, 326, 282, 334]);
+SELECT new_hit_list('hit list 5', 'descr5', 10, 3,  ARRAY[410, 412, 393, 397, 442, 447, 428, 374, 411, 437]);
+SELECT new_hit_list('hit list 6', 'descr6', 20, 3,  ARRAY[545, 514, 479, 516, 528, 544, 501, 472, 463, 494, 531, 482, 513, 468, 465, 510, 535, 478, 502, 488]);
 

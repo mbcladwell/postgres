@@ -56,5 +56,37 @@ SELECT * FROM well_sample LIMIT 5;
 SELECT * FROM sample LIMIT 5;
 SELECT * FROM assay_run WHERE assay_run.ID = 3;  LIMIT 5;
 SELECT * FROM assay_result WHERE assay_result.assay_run_ID = 3;   5;
+SELECT * FROM plate_layout_name;
 
-SELECT *  FROM assay_result, assay_run WHERE assay_result.assay_run_id=assay_run.ID and assay_run.ID IN (3) LIMIT 5;
+SELECT *  FROM assay_result, assay_run WHERE assay_result.assay_run_id=assay_run.ID and assay_run.ID IN (3,2,1);
+
+LIMIT 5;
+
+--get the plate set
+SELECT plate_set.plate_set_sys_name , plate.plate_sys_name as "Plate", well.by_col  FROM  plate_set, plate_plate_set, plate, well WHERE plate_plate_set.plate_set_id=plate_set.id AND plate_plate_set.plate_id=plate.ID and plate.id=well.plate_id  AND plate_set.ID = (SELECT plate_set_id FROM assay_run WHERE assay_run.ID =1);
+
+--join to well numbers
+SELECT well_numbers.well_name, well_numbers.by_col FROM well_numbers WHERE well_numbers.plate_format = (SELECT plate_layout_name.plate_format_id FROM plate_layout_name, assay_run WHERE plate_layout_name.ID= assay_run.plate_layout_name_id AND assay_run.ID =1);
+
+
+SELECT ARRAY (SELECT  dest.id  FROM ( SELECT plate_plate_set.plate_ID, well.by_col,  well.id  FROM well, plate_plate_set  WHERE plate_plate_set.plate_set_id = dest_plate_set_id  AND plate_plate_set.plate_id = well.plate_id) AS dest JOIN (SELECT well_numbers.well_name, well_numbers.by_col, well_numbers.quad FROM well_numbers WHERE well_numbers.plate_format=dest_plate_format_id)  AS foo ON (dest.by_col=foo.by_col) ORDER BY plate_id, quad, dest.by_col) INTO all_dest_well_ids;
+
+
+
+
+
+(SELECT plate_set.plate_set_sys_name , plate.plate_sys_name, well.by_col  FROM  plate_set, plate_plate_set, plate, well  WHERE plate_plate_set.plate_set_id=plate_set.id AND plate_plate_set.plate_id=plate.ID AND plate_set.ID  = (SELECT plate_set_id FROM assay_run WHERE assay_run.ID =1) AND  plate.id=well.plate_id) AS foo JOIN (SELECT well_numbers.well_name, well_numbers.by_col FROM well_numbers WHERE well_numbers.plate_format = (SELECT plate_layout_name.plate_format_id FROM plate_layout_name, assay_run WHERE plate_layout_name.ID= assay_run.plate_layout_name_id AND assay_run.ID =1)) AS bar ON  (foo.by_col = bar.by_col);
+
+
+
+--join to well numbers
+(SELECT well_numbers.well_name, well_numbers.by_col FROM well_numbers WHERE well_numbers.plate_format = (SELECT plate_layout_name.plate_format_id FROM plate_layout_name, assay_run WHERE plate_layout_name.ID= assay_run.plate_layout_name_id AND assay_run.ID =1))
+
+
+
+
+
+--get the results
+
+
+--join to plate set

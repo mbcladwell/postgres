@@ -682,33 +682,37 @@ $BODY$
 
 --this query provides a full assay run of data annotated with sample ids
 --left join includes control wells
-DROP FUNCTION  get_all_data_for_assay_run(_assay_run_id INTEGER );
+DROP FUNCTION  get_all_data_for_assay_run(_assay_run_ids INTEGER );
 CREATE OR REPLACE FUNCTION get_all_data_for_assay_run(_assay_run_id INTEGER )
-RETURNS TABLE(assay_run_sys_name VARCHAR,  plate_set_sys_name VARCHAR(32),  plate_sys_name VARCHAR(32), plate_order INT, well_name VARCHAR,   by_col INTEGER, response REAL, bkgrnd_sub REAL, norm REAL, norm_pos REAL, p_enhance REAL, sample_sys_name VARCHAR(32) ) AS
+RETURNS TABLE(assay_run_sys_name VARCHAR,  plate_set_sys_name VARCHAR(32),  plate_sys_name VARCHAR(32), plate_order INT, well_name VARCHAR, type_well VARCHAR,  by_col INTEGER, response REAL, bkgrnd_sub REAL, norm REAL, norm_pos REAL, p_enhance REAL, sample_sys_name VARCHAR(32), accs_id varchar)  AS
 $BODY$
 DECLARE
 
 v_assay_run_id INTEGER := _assay_run_id;
 v_plate_set_id INTEGER;
 v_plate_format INTEGER;
+v_layout_id INTEGER;
 
 BEGIN
 
 SELECT assay_run.plate_set_id FROM assay_run WHERE assay_run.ID =v_assay_run_id INTO v_plate_set_id;
 SELECT plate_layout_name.plate_format_id FROM plate_layout_name, assay_run WHERE plate_layout_name.ID= assay_run.plate_layout_name_id AND assay_run.ID =v_assay_run_id INTO v_plate_format;
+SELECT assay_run.plate_layout_name_id FROM assay_run WHERE assay_run.ID =v_assay_run_id INTO v_layout_id;
+
+
 
 --get the plate set
-CREATE TEMP TABLE plate_set_data(assay_run_sys_name VARCHAR, plate_set_sys_name VARCHAR, plate_sys_name VARCHAR, plate_order INT, well_name VARCHAR, by_col INT, well_id INT, response REAL, bkgrnd_sub REAL, norm REAL, norm_pos REAL, p_enhance REAL );
+CREATE TEMP TABLE plate_set_data(assay_run_sys_name VARCHAR, plate_set_sys_name VARCHAR, plate_sys_name VARCHAR, plate_order INT, well_name VARCHAR, type_well VARCHAR, by_col INT, well_id INT, response REAL, bkgrnd_sub REAL, norm REAL, norm_pos REAL, p_enhance REAL );
 
-INSERT INTO plate_set_data SELECT assay_run.assay_run_sys_name, plate_set.plate_set_sys_name , plate.plate_sys_name, plate_plate_set.plate_order, well_numbers.well_name, well.by_col, well.ID AS "well_id", assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, assay_result.p_enhance  FROM  plate_set, plate_plate_set, plate, well, assay_result, assay_run, well_numbers WHERE plate_plate_set.plate_set_id=plate_set.id AND plate_plate_set.plate_id=plate.ID and plate.id=well.plate_id  AND plate_set.ID = v_plate_set_id AND assay_result.assay_run_id= v_assay_run_id AND assay_result.plate_order=plate_plate_set.plate_order AND assay_result.well=well.by_col AND assay_run.ID = v_assay_run_id AND well_numbers.plate_format= v_plate_format AND well_numbers.by_col=well.by_col;
+INSERT INTO plate_set_data SELECT assay_run.assay_run_sys_name, plate_set.plate_set_sys_name , plate.plate_sys_name, plate_plate_set.plate_order, well_numbers.well_name, well_type.name, well.by_col, well.ID AS "well_id", assay_result.response, assay_result.bkgrnd_sub, assay_result.norm, assay_result.norm_pos, assay_result.p_enhance  FROM  plate_set, plate_plate_set, plate, well, assay_result, assay_run, well_numbers, plate_layout, well_type WHERE plate_plate_set.plate_set_id=plate_set.id AND plate_plate_set.plate_id=plate.ID and plate.id=well.plate_id  AND plate_set.ID = v_plate_set_id AND assay_result.assay_run_id= v_assay_run_id AND assay_result.plate_order=plate_plate_set.plate_order AND assay_result.well=well.by_col AND assay_run.ID = v_assay_run_id AND well_numbers.plate_format= v_plate_format AND well_numbers.by_col=well.by_col AND plate_layout.plate_layout_name_id=v_layout_id AND plate_layout.well_type_id=well_type.ID AND plate_layout.well_by_col=well.by_col ;
 
-CREATE TEMP TABLE sample_names(well_id INT, sample_sys_name VARCHAR);
+CREATE TEMP TABLE sample_names(well_id INT, sample_sys_name VARCHAR, accs_id VARCHAR);
 
-INSERT INTO sample_names SELECT well.ID AS "well_id", sample.sample_sys_name  FROM well, well_sample, sample WHERE well_sample.sample_id=sample.ID AND well_sample.well_id=well.ID AND well.ID IN (SELECT well.ID FROM  plate_plate_set, plate, well WHERE plate_plate_set.plate_id = plate.ID AND well.plate_id = plate.ID AND plate_plate_set.plate_set_id = v_plate_set_id);
+INSERT INTO sample_names SELECT well.ID AS "well_id", sample.sample_sys_name, sample.accs_id  FROM well, well_sample, sample WHERE well_sample.sample_id=sample.ID AND well_sample.well_id=well.ID AND well.ID IN (SELECT well.ID FROM  plate_plate_set, plate, well WHERE plate_plate_set.plate_id = plate.ID AND well.plate_id = plate.ID AND plate_plate_set.plate_set_id = v_plate_set_id);
 
 
 RETURN query
-  SELECT  plate_set_data.assay_run_sys_name,  plate_set_data.plate_set_sys_name, plate_set_data.plate_sys_name, plate_set_data.plate_order, plate_set_data.well_name, plate_set_data.by_col, plate_set_data.response, plate_set_data.bkgrnd_sub, plate_set_data.norm, plate_set_data.norm_pos, plate_set_data.p_enhance, sample_names.sample_sys_name FROM plate_set_data LEFT JOIN sample_names on (plate_set_data.well_id=sample_names.well_id) ORDER BY plate_set_data.plate_order desc, plate_set_data.by_col DESC;
+  SELECT  plate_set_data.assay_run_sys_name,  plate_set_data.plate_set_sys_name, plate_set_data.plate_sys_name, plate_set_data.plate_order, plate_set_data.well_name, plate_set_data.type_well ,  plate_set_data.by_col, plate_set_data.response, plate_set_data.bkgrnd_sub, plate_set_data.norm, plate_set_data.norm_pos, plate_set_data.p_enhance, sample_names.sample_sys_name, sample_names.accs_id FROM plate_set_data LEFT JOIN sample_names on (plate_set_data.well_id=sample_names.well_id) ORDER BY plate_set_data.plate_order desc, plate_set_data.by_col DESC;
 
 DROP TABLE plate_set_data;
 DROP TABLE sample_names;
@@ -717,3 +721,4 @@ DROP TABLE sample_names;
 END;
 $BODY$
 LANGUAGE plpgsql VOLATILE;
+

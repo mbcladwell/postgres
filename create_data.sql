@@ -17,13 +17,13 @@ select new_assay_run( 'assay_run3', 'PS-3 LYT-1;96;4in12', 5, 3, 1,1);
 
 
 
-SELECT new_project('1 plate sets with 2 384 well plates each', 'With AR', 1 );
+SELECT new_project('1 plate set with 2 384 well plates each', 'With AR', 1 );
 SELECT new_plate_set('with AR (low values), HL','2 384 well plates',2,384,1,2,13,1,TRUE);
 select new_assay_run( 'assay_run4', 'PS-4 LYT-13;384;8in24', 1, 4, 13, 1);
 
 
 
-SELECT new_project('1 plate sets with 1 1536 well plate', 'With AR', 1 );
+SELECT new_project('1 plate set with 1 1536 well plate', 'With AR', 1 );
 SELECT new_plate_set('with AR (low values), HL','1 1536 well plate',1, 1536, 1, 3, 37, 1,TRUE);
 select new_assay_run( 'assay_run4', 'PS-5 LYT-37;1536;32in47,48', 1, 5, 37, 1);
 
@@ -37,7 +37,7 @@ SELECT new_project('description 7', 'MyTestProj7', 1 );
 SELECT new_project('description 8', 'MyTestProj8', 1 );
 SELECT new_project('description 9', 'MyTestProj9', 1 );
 
-SELECT new_project('1 plate set with 20 96 well plates', 'Plates only, no data', 1 );
+SELECT new_project('2 plate sets with 10 96 well plates each', 'Plates only, no data', 1 );
 SELECT new_plate_set('using LYT-1;96;4in12','Plates only',10,96,1,10,1,1,TRUE);
 SELECT new_plate_set('using LYT-1;96;4in12','Plates only',10,96,1,10,1,1,TRUE);
 

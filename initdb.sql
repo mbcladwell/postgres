@@ -42,7 +42,7 @@ GRANT TEMPORARY on DATABASE lndb to ln_user;
 
 
 set schema 'lims_nucleus';
-CREATE EXTENSION pgcrypto;
-CREATE EXTENSION intarray;
+--CREATE EXTENSION pgcrypto;
+--CREATE EXTENSION intarray;
 --Once set up:
 -- psql -U ln_admin -h 192.168.1.1 -d lndb

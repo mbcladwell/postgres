@@ -25,7 +25,7 @@ select new_assay_run( 'assay_run4', 'PS-4 LYT-13;384;8in24', 1, 4, 13, 1);
 
 SELECT new_project('1 plate set with 1 1536 well plate', 'With AR', 1 );
 SELECT new_plate_set('with AR (low values), HL','1 1536 well plate',1, 1536, 1, 3, 37, 1,TRUE);
-select new_assay_run( 'assay_run4', 'PS-5 LYT-37;1536;32in47,48', 1, 5, 37, 1);
+select new_assay_run( 'assay_run5', 'PS-5 LYT-37;1536;32in47,48', 1, 5, 37, 1);
 
 
 
